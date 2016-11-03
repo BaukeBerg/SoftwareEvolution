@@ -16,13 +16,13 @@ void DetermineSoftwareMetrics()
   TotalHtml += TableCell("FileName") + TableCell("Total lines") + TableCell("WhiteSpaces") + TableCell("LLOC");
   
   /// Fill table
-  list[loc] FilesToParse = enumerateFiles("slocmodule");
+  list[loc] FilesToParse = enumerateDirFiles("smallsql");
   for(int n <- [0 .. size(FilesToParse)])
   {
     TotalHtml += ScanJavaFile(FilesToParse[n]);
   }
   /// Close table and generate report
   TotalHtml += CloseTable();
-  loc FileLocation = toLocation("file:///D:/RascalReport.html");
+  loc FileLocation = toLocation("project://SoftwareMetrics/output/RascalReport.html");
   writeFile(FileLocation, TotalHtml);  
 }
