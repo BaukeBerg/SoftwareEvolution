@@ -4,29 +4,28 @@ import List;
 import IO;
 import String;
 
-list[loc] enumerateFiles() = enumerateFiles("smallsql/");
-
 list[loc] enumerateDirFiles(str FolderPath) =	enumerateDirFiles(|project://SoftwareMetrics/sampleFiles/<FolderPath>|);
+
+// Maybe create a nice little Listcomprehension :)
+
 list[loc] enumerateDirFiles(loc FolderLoc)
 {
-  /// Do a recursive check and append the file if recursive
   list[loc] FilesFolders = FolderLoc.ls;
-  
-  /// if dir => enumerateFiles with same dir and append. List comprehension? 
+  list [loc] LocationList = [];
   for (int n <- [0 .. size(FilesFolders)])
   {
   	str localPath = FilesFolders[n].path;  
   	int javaPos = findLast(localPath, ".java");
   	if (javaPos == -1)
   	{
-  		enumerateDirFiles(FilesFolders[n]);
+  		LocationList += enumerateDirFiles(FilesFolders[n]);
   	}
   	else
   	{
-  		println(localPath);
+  		LocationList += FilesFolders[n];
   	}
 	}
-	return [];
+	return LocationList;
 }
 
 bool IsDirectory(loc Path)
@@ -38,7 +37,7 @@ bool IsDirectory(loc Path)
 
 test bool FindFilesInDirectory()
 {
-	int s = size(enumerateFiles("smallsql"));
+	int s = size(enumerateDirFiles("smallsql"));
 	println(s);
   return 186 == s;
     
