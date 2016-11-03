@@ -13,7 +13,7 @@ void DetermineSoftwareMetrics()
   
   /// Write table top
   TotalHtml += Caption("SoftwareMetrics");
-  TotalHtml += TableCell("FileName") + TableCell("Total lines") + TableCell("WhiteSpaces") + TableCell("LLOC");
+  TotalHtml += TableCell("FileName") + TableCell("Total lines") + TableCell("WhiteSpaces") + TableCell("LLOC") + TableCell("Declarations");
   
   /// Fill table
   list[loc] FilesToParse = enumerateDirFiles("smallsql");
