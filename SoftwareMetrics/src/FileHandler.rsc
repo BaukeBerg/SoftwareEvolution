@@ -2,16 +2,31 @@ module FileHandler
 
 import List;
 import IO;
+import String;
 
-list[loc] enumerateFiles() = enumerateFiles("smallsql/database");
+list[loc] enumerateFiles() = enumerateFiles("smallsql/");
 
-/// Enumerate all java files in a folder
-list[loc] enumerateFiles(str FolderPath)
+list[loc] enumerateDirFiles(str FolderPath) =	enumerateDirFiles(|project://SoftwareMetrics/sampleFiles/<FolderPath>|);
+list[loc] enumerateDirFiles(loc FolderLoc)
 {
   /// Do a recursive check and append the file if recursive
-  list[loc] FilesFolders = (|project://SoftwareMetrics/sampleFiles/<FolderPath>|.ls);
+  list[loc] FilesFolders = FolderLoc.ls;
+  
   /// if dir => enumerateFiles with same dir and append. List comprehension? 
-  return FilesFolders;
+  for (int n <- [0 .. size(FilesFolders)])
+  {
+  	str localPath = FilesFolders[n].path;  
+  	int javaPos = findLast(localPath, ".java");
+  	if (javaPos == -1)
+  	{
+  		enumerateDirFiles(FilesFolders[n]);
+  	}
+  	else
+  	{
+  		println(localPath);
+  	}
+	}
+	return [];
 }
 
 bool IsDirectory(loc Path)
@@ -23,6 +38,8 @@ bool IsDirectory(loc Path)
 
 test bool FindFilesInDirectory()
 {
-  return 3 == size(enumerateFiles("smallsql"));
+	int s = size(enumerateFiles("smallsql"));
+	println(s);
+  return 186 == s;
     
 }
