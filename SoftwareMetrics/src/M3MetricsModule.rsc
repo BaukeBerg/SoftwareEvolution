@@ -1,6 +1,7 @@
 module M3MetricsModule
 
 import lang::java::jdt::m3::Core;
+import IO;
 
 void CheckEclipseProject()
 {
