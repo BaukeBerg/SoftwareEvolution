@@ -18,7 +18,7 @@ void DetermineSoftwareMetrics()
   list[loc] FilesToParse = enumerateDirFiles("smallsql");
   for(int n <- [0 .. size(FilesToParse)])
   {
-    TotalHtml += ScanJavaFile(FilesToParse[n]);
+    TotalHtml += ScanJavaFileAsString(FilesToParse[n]);
   }
   /// Close table and generate report
   TotalHtml += CloseTable();

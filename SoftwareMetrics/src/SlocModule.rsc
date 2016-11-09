@@ -6,24 +6,33 @@ import IO;
 import List;
 import Debugging;
 
-str TableColumns() = TableCell("FileName") + TableCell("Total lines") + TableCell("WhiteSpaces") + TableCell("LLOC") + TableCell("Curlies") + TableCell("Comments") + TableCell("Declarations");
+
+data TStaticMetrics = FileInfo(str FileName,
+                               int TotalLines,     
+                               int CodeLines,                          
+                               int WhiteSpaces,
+                               int LLOC,
+                               int Curlies,
+                               int Comments
+                               );
+
+str TableColumns() = TableCell("FileName") + TableCell("File lines") + TableCell("CodeLines") + TableCell("WhiteSpaces") + TableCell("LLOC") + TableCell("Curlies") + TableCell("Comments");
    
 
 str ScanJavaFile(str FileToCheck) = ScanJavaFile(toLocation(FileToCheck));
 
-str ScanJavaFile(loc FileToCheck)
+// Fill in and return
+TStaticMetrics ScanJavaFile(loc FileToCheck)
 {
+  TStaticMetrics Metrics = FileInfo("NONE!",0,0,0,0,0,0);
   bool CommentActive = false;
-  int Comments = 0 ;
-  int WhiteSpaces = 0;
-  int LLOC = 0;
-  int Procedures = 0;
-  int Curlies = 0;
   list[str] FileLines = readFileLines(FileToCheck);
   int TotalLines = size(FileLines);
+  Metrics.TotalLines = TotalLines;
+  Metrics.FileName = FileToCheck.path;
   for(int n <- [0 .. TotalLines])
   { 
-    str CurrentLine = trim(FileLines[n]);
+    str CurrentLine = trim(FileLines[n]);    
     // Extract this, probalby violates if */  ... /* occurs, instead of /* ... */
     if((false == CommentActive)
       && (true == contains(CurrentLine, "/*")))
@@ -38,42 +47,92 @@ str ScanJavaFile(loc FileToCheck)
       && (true == contains(CurrentLine, "*/")))
     {
       CommentActive = false;
-      Comments += 1;
+      Metrics.Comments += 1;
+      if(true == endsWith(CurrentLine, "*/"))
+      {
+        continue; // no statements behind the closing quote, so next loop
+      }
     }
     
     if(false == CommentActive)
     {
-      if(true == contains(CurrentLine, "//"))
+      if(true == startsWith(CurrentLine, "//"))
       {
-        Comments += 1; // inline comment
+        Metrics.Comments += 1;
+        continue ; // Skip rest of line
       }
-      if(true == isEmpty(CurrentLine))
-      {
-        WhiteSpaces += 1;
-      }
-      else if(("{" == CurrentLine) || ("}" == CurrentLine))
-      {
-        Curlies += 1;
-      } 
-      else if(true == contains(CurrentLine, "//")) // Perhaps should be something with starting ? or inserting a newline
-      {
-        Comments += 1;
-      }    
       else
       {
-        DebugPrint(CurrentLine);
-        if(true == startsWith(CurrentLine, "void"))
+        if(true == contains(CurrentLine, "//"))
         {
-          Procedures +=1;
+          Metrics.Comments += 1; // inline comment
         }
-        
-        LLOC += 1;
+        if(true == isEmpty(CurrentLine))
+        {
+          Metrics.WhiteSpaces += 1;
+          continue;
+        }
+        else if(("{" == CurrentLine) || ("}" == CurrentLine))
+        {
+          Metrics.Curlies += 1;
+        } 
+        else
+        {
+          DebugPrint(CurrentLine);
+          Metrics.LLOC += 1;
+        }
+        DebugPrint(CurrentLine);
+        Metrics.CodeLines += 1;          
       }
     }    
   }  
-  return OpenRow() + TableCell(FileLink(FileToCheck.path)) + TableCell("<TotalLines>") + TableCell("<WhiteSpaces>") + TableCell("<LLOC>") + TableCell("<Curlies>") + TableCell("<Comments>") + TableCell("<Procedures>") + CloseRow();
+  return Metrics;
 }
 
+str ScanJavaFileAsString(loc FileToCheck)
+{
+  TStaticMetrics StaticMetrics = ScanJavaFile(FileToCheck);
+  return OpenRow() + TableCell(FileLink(StaticMetrics.FileName)) + TableCell("<StaticMetrics.TotalLines>") + TableCell("<StaticMetrics.CodeLines>") + TableCell("<StaticMetrics.WhiteSpaces>") + TableCell("<StaticMetrics.LLOC>") + TableCell("<StaticMetrics.Curlies>") + TableCell("<StaticMetrics.Comments>") + CloseRow();
+}
 
+test bool ScanColumnJava()
+{
+  TStaticMetrics ExpectedMetrics = FileInfo("/sampleFiles/slocmodule/ColumnsSample.java", 161,48,14,35,13,7);  
+  TStaticMetrics ActualMetrics = ScanJavaFile(|project://SoftwareMetrics/sampleFiles/slocmodule/ColumnsSample.java|);
+ 
+  return StaticMetricsCheck(ExpectedMetrics, ActualMetrics);      
+}
 
+test bool ScanWhiteLineJavaFile()
+{
+  TStaticMetrics ActualMetrics = ScanJavaFile(|project://SoftwareMetrics/sampleFiles/slocmodule/WhiteLines.java|);  
+  return ExpectEqualInt(14, ActualMetrics.WhiteSpaces);  
+}
 
+// Checks the CodeLines sample java file
+test bool ScanSourceCodeLines()
+{
+  TStaticMetrics ActualMetrics = ScanJavaFile(|project://SoftwareMetrics/sampleFiles/slocmodule/CodeLines.java|);  
+  return ExpectEqualInt(48, ActualMetrics.CodeLines);  
+}
+
+bool StaticMetricsCheck(TStaticMetrics Expected, TStaticMetrics Actual)
+{
+  if(Actual != Expected)
+  {
+    iprintln(Expected);
+    iprintln(Actual);
+    return false;
+  }
+  return true;
+}
+
+bool ExpectEqualInt(int Expected, int Actual)
+{
+  if(Expected != Actual)
+  {
+    println("Expected: <Expected>, but received <Actual>");
+    return false;
+  }
+  return true;
+}

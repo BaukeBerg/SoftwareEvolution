@@ -2,16 +2,30 @@ module FileHandler
 
 import List;
 import IO;
+import String;
 
-list[loc] enumerateFiles() = enumerateFiles("smallsql/database");
+list[loc] enumerateDirFiles(str FolderPath) =	enumerateDirFiles(|project://SoftwareMetrics/sampleFiles/<FolderPath>|);
 
-/// Enumerate all java files in a folder
-list[loc] enumerateFiles(str FolderPath)
+// Maybe create a nice little Listcomprehension :)
+
+list[loc] enumerateDirFiles(loc FolderLoc)
 {
-  /// Do a recursive check and append the file if recursive
-  list[loc] FilesFolders = (|project://SoftwareMetrics/sampleFiles/<FolderPath>|.ls);
-  /// if dir => enumerateFiles with same dir and append. List comprehension? 
-  return FilesFolders;
+  list[loc] FilesFolders = FolderLoc.ls;
+  list [loc] LocationList = [];
+  for (int n <- [0 .. size(FilesFolders)])
+  {
+  	str localPath = FilesFolders[n].path;  
+  	int javaPos = findLast(localPath, ".java");
+  	if (javaPos == -1)
+  	{
+  		LocationList += enumerateDirFiles(FilesFolders[n]);
+  	}
+  	else
+  	{
+  		LocationList += FilesFolders[n];
+  	}
+	}
+	return LocationList;
 }
 
 bool IsDirectory(loc Path)
@@ -23,6 +37,8 @@ bool IsDirectory(loc Path)
 
 test bool FindFilesInDirectory()
 {
-  return 3 == size(enumerateFiles("smallsql"));
+	int s = size(enumerateDirFiles("smallsql"));
+	println(s);
+  return 186 == s;
     
 }
