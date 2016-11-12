@@ -3,33 +3,21 @@ module M3MetricsModule
 import lang::java::jdt::m3::Core;
 import IO;
 import List;
-
-//int GetMethodCount(loc file) = numberOfMethods(createM3FromEclipseFile(file));
 import String;
 
 /// Extracts classname from file location
 str GetClassName(loc FileToCheck)
 {
   str TotalPath = FileToCheck.path;
-  return substring(TotalPath, findLast(TotalPath, "/")+1, findLast(TotalPath, "."));
+  str subPath = substring(TotalPath, findFirst(TotalPath, "/")+1, findLast(TotalPath, "."));
+  return substring(subPath, findFirst(subPath, "/")+1);
 }
 
-int GetMethodCount(loc file)
-{
-	M3 model = createM3FromEclipseFile(file);
-	//<loc Location, int MethodAmount> Info;
-//	<loc,int> Info = <file,0>;
-	Info = model@containment;
-	//helloWorldMethods = [ e | e <- model@containment[|java+class:///Column|], e.scheme == "java+method"];
-	//return numberOfMethods(cl, model) | , isClass(cl);
-	//return numberOfMethods(cl, model);
-	return numberOfMethods(file, "java+class:///Column");
-}
+int GetMethodCount(loc file) = size([m | m <- createM3FromEclipseFile(file)@containment[|java+class:///<GetClassName(file)>|], isMethod(m)]);
 
 map [loc class, int methodCount] NumberOfMethodsPerClass()
 {
   M3 model = createM3FromEclipseProject(|project://SmallSqleclipse|);
-
   return numberOfMethodsPerClass(model);
 }
 
