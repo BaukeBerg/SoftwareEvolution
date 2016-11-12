@@ -5,6 +5,8 @@ import String;
 import IO;
 import List;
 import Debugging;
+import M3MetricsModule;
+import lang::java::jdt::m3::Core;
 
 
 data TStaticMetrics = FileInfo(str FileName,
@@ -13,10 +15,11 @@ data TStaticMetrics = FileInfo(str FileName,
                                int WhiteSpaces,
                                int LLOC,
                                int Curlies,
-                               int Comments
+                               int Comments,
+                               int Methods
                                );
 
-str TableColumns() = TableCell("FileName") + TableCell("File lines") + TableCell("CodeLines") + TableCell("WhiteSpaces") + TableCell("LLOC") + TableCell("Curlies") + TableCell("Comments");
+str TableColumns() = TableCell("FileName") + TableCell("File lines") + TableCell("CodeLines") + TableCell("WhiteSpaces") + TableCell("LLOC") + TableCell("Curlies") + TableCell("Comments") + TableCell("Methods");
    
 
 str ScanJavaFile(str FileToCheck) = ScanJavaFile(toLocation(FileToCheck));
@@ -24,12 +27,13 @@ str ScanJavaFile(str FileToCheck) = ScanJavaFile(toLocation(FileToCheck));
 // Fill in and return
 TStaticMetrics ScanJavaFile(loc FileToCheck)
 {
-  TStaticMetrics Metrics = FileInfo("NONE!",0,0,0,0,0,0);
+  TStaticMetrics Metrics = FileInfo("NONE!",0,0,0,0,0,0,0);
   bool CommentActive = false;
   list[str] FileLines = readFileLines(FileToCheck);
   int TotalLines = size(FileLines);
   Metrics.TotalLines = TotalLines;
   Metrics.FileName = FileToCheck.path;
+  Metrics.Methods = GetMethodCount(FileToCheck);
   for(int n <- [0 .. TotalLines])
   { 
     str CurrentLine = trim(FileLines[n]);    
@@ -92,7 +96,7 @@ TStaticMetrics ScanJavaFile(loc FileToCheck)
 str ScanJavaFileAsString(loc FileToCheck)
 {
   TStaticMetrics StaticMetrics = ScanJavaFile(FileToCheck);
-  return OpenRow() + TableCell(FileLink(StaticMetrics.FileName)) + TableCell("<StaticMetrics.TotalLines>") + TableCell("<StaticMetrics.CodeLines>") + TableCell("<StaticMetrics.WhiteSpaces>") + TableCell("<StaticMetrics.LLOC>") + TableCell("<StaticMetrics.Curlies>") + TableCell("<StaticMetrics.Comments>") + CloseRow();
+  return OpenRow() + TableCell(FileLink(StaticMetrics.FileName)) + TableCell("<StaticMetrics.TotalLines>") + TableCell("<StaticMetrics.CodeLines>") + TableCell("<StaticMetrics.WhiteSpaces>") + TableCell("<StaticMetrics.LLOC>") + TableCell("<StaticMetrics.Curlies>") + TableCell("<StaticMetrics.Comments>") + TableCell("<StaticMetrics.Methods>") + CloseRow();
 }
 
 test bool ScanColumnJava()
