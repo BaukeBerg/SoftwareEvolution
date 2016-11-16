@@ -10,6 +10,7 @@ list[loc] enumerateDirFiles(str FolderPath) =	enumerateDirFiles(|project://Softw
 
 list[loc] enumerateDirFiles(loc FolderLoc)
 {
+  print(FolderLoc);
   list[loc] FilesFolders = FolderLoc.ls;
   list [loc] LocationList = [];
   for (int n <- [0 .. size(FilesFolders)])
