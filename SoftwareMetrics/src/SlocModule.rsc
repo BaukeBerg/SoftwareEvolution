@@ -7,7 +7,7 @@ import List;
 import Debugging;
 import M3MetricsModule;
 import lang::java::jdt::m3::Core;
-
+import JavaHelpers;
 
 data TStaticMetrics = FileInfo(str FileName,
                                int TotalLines,     
@@ -19,7 +19,7 @@ data TStaticMetrics = FileInfo(str FileName,
                                int Methods
                                );
 
-str TableColumns() = TableCell("FileName") + TableCell("File lines") + TableCell("CodeLines") + TableCell("WhiteSpaces") + TableCell("LLOC") + TableCell("Curlies") + TableCell("Comments") + TableCell("Methods");
+str TableColumns() = TableCell("FileName") + TableCell("File lines") + TableCell("CodeLines") + TableCell("WhiteSpaces") + TableCell("LLOC") + TableCell("Curlies") + TableCell("Comments") + TableCell("Methods") + TableCell("Details");
    
 
 str ScanJavaFile(str FileToCheck) = ScanJavaFile(toLocation(FileToCheck));
@@ -96,7 +96,7 @@ TStaticMetrics ScanJavaFile(loc FileToCheck)
 str ScanJavaFileAsString(loc FileToCheck)
 {
   TStaticMetrics StaticMetrics = ScanJavaFile(FileToCheck);
-  return OpenRow() + TableCell(FileLink(StaticMetrics.FileName)) + TableCell("<StaticMetrics.TotalLines>") + TableCell("<StaticMetrics.CodeLines>") + TableCell("<StaticMetrics.WhiteSpaces>") + TableCell("<StaticMetrics.LLOC>") + TableCell("<StaticMetrics.Curlies>") + TableCell("<StaticMetrics.Comments>") + TableCell("<StaticMetrics.Methods>") + CloseRow();
+  return OpenRow() + TableCell(FileLink(StaticMetrics.FileName)) + TableCell("<StaticMetrics.TotalLines>") + TableCell("<StaticMetrics.CodeLines>") + TableCell("<StaticMetrics.WhiteSpaces>") + TableCell("<StaticMetrics.LLOC>") + TableCell("<StaticMetrics.Curlies>") + TableCell("<StaticMetrics.Comments>") + TableCell("<StaticMetrics.Methods>") + TableCell(ClassLink(GetClassName(FileToCheck))) + CloseRow();
 }
 
 test bool ScanColumnJava()
