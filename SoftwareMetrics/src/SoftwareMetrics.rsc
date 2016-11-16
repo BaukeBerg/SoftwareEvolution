@@ -10,8 +10,10 @@ import JavaHelpers;
 import ComplexityCalculator;
 
 
-loc RootLocation() = toLocation("project://SoftwareMetrics/output/");
+//str ProjectName = "smallsql";
+str ProjectName = "hsqldb";
 
+loc RootLocation() = toLocation("project://SoftwareMetrics/output/<ProjectName>");
 void DetermineSoftwareMetrics()
 {
   str TotalHtml = OpenTable();
@@ -20,12 +22,12 @@ void DetermineSoftwareMetrics()
   TotalHtml += Caption("SoftwareMetrics");
   TotalHtml += TableColumns();
   /// Fill table
-  list[loc] FilesToParse = enumerateDirFiles("smallsql");
+  list[loc] FilesToParse = enumerateDirFiles(ProjectName);
   for(int n <- [0 .. size(FilesToParse)])
   {
     TotalHtml += ScanJavaFileAsString(FilesToParse[n]);
     DetailedReport = GenerateDetailedTable(FilesToParse[n]);
-    writeFile(RootLocation()+"/details/<GetClassName(FilesToParse[n])>.html", DetailedReport);     
+    writeFile(RootLocation()+"/details/<toLowerCase(GetClassName(FilesToParse[n]))>.html", DetailedReport);     
   }
   /// Close table and generate report
   TotalHtml += CloseTable();
@@ -39,7 +41,7 @@ str GenerateDetailedTable(loc FileName)
   lrel[loc Location, int Complexity] Declarations = CyclomaticComplexity(FileName);
   TotalHtml += Caption(ClassName +" (<size(Declarations)> Methods)");
   TotalHtml += RowWithValues(["Method declaration", "Complexity", "Definition"]);
-  println("Generating data for <ClassName>");
+  println("Parsing file <ClassName>");
   for(int n <- [0 .. size(Declarations)])
   {
     str MethodName = ExtractMethodDeclaration(Declarations[n].Location);
