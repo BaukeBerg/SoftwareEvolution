@@ -1,5 +1,7 @@
 module Debugging
 
+import IO;
+
 bool LoggingEnabled = false;
 
 // simple funtion to print, disabling LoggingEnabled will quickly disable printing
