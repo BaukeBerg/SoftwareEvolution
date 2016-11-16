@@ -20,12 +20,9 @@ str GenerateReportForClass(loc JavaFile)
   MethodCount = size(Complexity);
 }
 
-lrel[int CyclomaticComplexity, str MethodDeclaration] CyclomaticComplexity(loc file) 
-  = [<cyclomaticComplexity(m), ExtractMethodDeclaration(m@\loc)> | m <- allMethods(file)];
+lrel[loc MethodLocation, int CyclomaticComplexity] CyclomaticComplexity(loc file) 
+  = [<m@\loc, cyclomaticComplexity(m)> | m <- allMethods(file)];
   
-// Quick an dirty implmentation of getting a java declaration from a function body
-str ExtractMethodDeclaration(loc FunctionBody) = substring(readFile(FunctionBody), 0, findFirst(readFile(FunctionBody),"{"));
-
 // Finds all the methods in the java file
 set[MethodDec] AllColumnsMethods() = allMethods(|project://SoftwareMetrics/sampleFiles/smallsql/database/Columns.java|);
 
