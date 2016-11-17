@@ -15,13 +15,11 @@ loc SampleFile = |project://SoftwareMetrics/sampleFiles/clonedetection/Clone.jav
 
 test bool CheckDupes() = ExpectedDupes == DetectClones(SampleFile);
 
-
 void PrintSomeThings()
 {
   list[tuple[int, list[int]]] Samples = ExpectedDupes;
-  tuple[int First, list[int] Clones] Sample = Samples[0];
-  print(Sample.First);
+  tuple[int Source, list[int] Clones] Sample = Samples[0];
+  print(Sample.Source);
   print(Sample.Clones[0]);
- // print
 }
 
