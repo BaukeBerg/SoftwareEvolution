@@ -6,7 +6,7 @@ import IO; // Used to print on screen
 
 test bool ScanColumnJava()
 {
-  TStaticMetrics ExpectedMetrics = Init("/sampleFiles/slocmodule/ColumnsSample.java", 161,48,14,35,13, 7);  
+  TStaticMetrics ExpectedMetrics = Init("/sampleFiles/slocmodule/ColumnsSample.java", 161,48,14,35,13,7,16);  
   TStaticMetrics ActualMetrics = ScanJavaFile(|project://SoftwareMetrics/sampleFiles/slocmodule/ColumnsSample.java|); 
   return StaticMetricsCheck(ExpectedMetrics, ActualMetrics);      
 }
@@ -32,7 +32,8 @@ bool StaticMetricsCheck(TStaticMetrics Expected, TStaticMetrics Actual)
   && (Expected.WhiteSpaces == Actual.WhiteSpaces)
   && (Expected.Comments == Actual.Comments)
   && (Expected.LLOC == Actual.LLOC)
-  && (Expected.Curlies == Actual.Curlies));
+  && (Expected.Curlies == Actual.Curlies)
+  && (Expected.MaxIndent == Actual.MaxIndent));
   
   if(false == Equal)
   { 
