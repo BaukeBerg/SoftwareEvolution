@@ -7,14 +7,18 @@ import List;
 import Debugging;
 import JavaHelpers;
 import CalculateCC;
+import StringHelpers; // Utility functions for string
+import util::Math; // Calc functions
 
+/// Simple data structures 
 public data TStaticMetrics = Init(str FileName = "NoFileNameSpecified",
                                int TotalLines = 0,     
                                int CodeLines = 0,                          
                                int WhiteSpaces = 0,
                                int LLOC = 0,
                                int Curlies = 0,
-                               int Comments = 0
+                               int Comments = 0,
+                               int MaxIndent = 0
                                )
                                |
                                Init(str FileName,
@@ -23,11 +27,12 @@ public data TStaticMetrics = Init(str FileName = "NoFileNameSpecified",
                                int WhiteSpaces,
                                int LLOC,
                                int Curlies,
-                               int Comments
+                               int Comments,
+                               int MaxIndent
                                );
                                
 
-str TableColumns() = TableCell("FileName") + TableCell("File lines") + TableCell("CodeLines") + TableCell("WhiteSpaces") + TableCell("LLOC") + TableCell("Curlies") + TableCell("Comments") + TableCell("Details");
+str TableColumns() = RowWithValues(["FileName","File lines","CodeLines","WhiteSpaces","LLOC","Curlies","Comments","MaxIndent","Details"]);
    
 
 str ScanJavaFile(str FileToCheck) = ScanJavaFile(toLocation(FileToCheck));
@@ -41,9 +46,13 @@ TStaticMetrics ScanJavaFile(loc FileToCheck)
   int TotalLines = size(FileLines);
   Metrics.TotalLines = TotalLines;
   Metrics.FileName = FileToCheck.path;
+  int MaxIndent = 0;
   for(int n <- [0 .. TotalLines])
   { 
-    str CurrentLine = trim(FileLines[n]);    
+    str CurrentLine = FileLines[n];
+    int CurrentIndent = Indent(CurrentLine); 
+    
+    CurrentLine = trim(CurrentLine);    
     // Extract this, probalby violates if */  ... /* occurs, instead of /* ... */
     if((false == CommentActive)
       && (true == contains(CurrentLine, "/*")))
@@ -67,6 +76,7 @@ TStaticMetrics ScanJavaFile(loc FileToCheck)
     
     if(false == CommentActive)
     {
+      MaxIndent = max(CurrentIndent, MaxIndent);
       if(true == startsWith(CurrentLine, "//"))
       {
         Metrics.Comments += 1;
@@ -96,7 +106,8 @@ TStaticMetrics ScanJavaFile(loc FileToCheck)
         Metrics.CodeLines += 1;          
       }
     }    
-  }  
+  } 
+  Metrics.MaxIndent = MaxIndent;
   return Metrics;
 }
 
@@ -111,7 +122,7 @@ str GenerateDetailedTable(loc FileName)
   for(int n <- [0 .. size(Declarations)])
   {
     str MethodName = ExtractMethodDeclaration(Declarations[n].Location);
-    TotalHtml += RowWithValues([MethodName, "<Declarations[n].Complexity>", HtmlPrint(readFile(Declarations[0].Location))]);
+    TotalHtml += RowWithValues([MethodName, "<Declarations[n].Complexity>", HtmlPrint(readFile(Declarations[n].Location))]);
   }
   TotalHtml += CloseTable();
   return TotalHtml;
@@ -120,5 +131,13 @@ str GenerateDetailedTable(loc FileName)
 str ScanJavaFileAsString(loc FileToCheck)
 {
   TStaticMetrics StaticMetrics = ScanJavaFile(FileToCheck);
-  return OpenRow() + TableCell(FileLink(StaticMetrics.FileName)) + TableCell("<StaticMetrics.TotalLines>") + TableCell("<StaticMetrics.CodeLines>") + TableCell("<StaticMetrics.WhiteSpaces>") + TableCell("<StaticMetrics.LLOC>") + TableCell("<StaticMetrics.Curlies>") + TableCell("<StaticMetrics.Comments>") + TableCell(ClassLink(GetClassName(FileToCheck))) + CloseRow();
+  return RowWithValues([FileLink(StaticMetrics.FileName),
+                        "<StaticMetrics.TotalLines>",
+                        "<StaticMetrics.CodeLines>",
+                        "<StaticMetrics.WhiteSpaces>",
+                        "<StaticMetrics.LLOC>",
+                        "<StaticMetrics.Curlies>",
+                        "<StaticMetrics.Comments>",
+                        "<StaticMetrics.MaxIndent>",
+                        ClassLink(GetClassName(FileToCheck))]);
 }
