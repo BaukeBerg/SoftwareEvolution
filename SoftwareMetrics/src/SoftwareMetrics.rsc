@@ -8,6 +8,8 @@ import List;
 import JavaHelpers; // Used for Getting some java specifics
 import HtmlHelpers; // Used for Html creation
 
+
+
 //str ProjectName = "smallsql";
 str ProjectName = "hsqldb";
 
@@ -15,7 +17,6 @@ loc RootLocation() = toLocation("project://SoftwareMetrics/output/<ProjectName>"
 void DetermineSoftwareMetrics()
 {
   str TotalHtml = OpenTable();
-  
   /// Write table top
   TotalHtml += Caption("SoftwareMetrics");
   TotalHtml += TableColumns();
@@ -23,7 +24,7 @@ void DetermineSoftwareMetrics()
   list[loc] FilesToParse = enumerateDirFiles(ProjectName);
   for(int n <- [0 .. size(FilesToParse)])
   {
-    TotalHtml += ScanJavaFileAsString(FilesToParse[n]);
+    TotalHtml += ScanJavaFileToHtml(FilesToParse[n]);
     DetailedReport = GenerateDetailedTable(FilesToParse[n]);
     writeFile(RootLocation()+"/details/<toLowerCase(GetClassName(FilesToParse[n]))>.html", DetailedReport);     
   }

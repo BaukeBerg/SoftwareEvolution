@@ -37,8 +37,8 @@ bool StaticMetricsCheck(TStaticMetrics Expected, TStaticMetrics Actual)
   
   if(false == Equal)
   { 
-  iprintln(Expected);
-  iprintln(Actual);
+    iprintln(Expected);
+    iprintln(Actual);
   }
   return Equal;
 }

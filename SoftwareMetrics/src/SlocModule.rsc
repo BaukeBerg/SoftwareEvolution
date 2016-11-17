@@ -34,8 +34,9 @@ public data TStaticMetrics = Init(str FileName = "NoFileNameSpecified",
 
 str TableColumns() = RowWithValues(["FileName","File lines","CodeLines","WhiteSpaces","LLOC","Curlies","Comments","MaxIndent","Details"]);
 
+str ScanJavaFileToHtml(str FileToCheck) = ScanJavaFileToHtml(toLocation(FileToCheck));
 
-str ScanJavaFileAsString(loc FileToCheck)
+str ScanJavaFileToHtml(loc FileToCheck)
 {
   TStaticMetrics StaticMetrics = ScanJavaFile(FileToCheck);
   return RowWithValues([FileLink(StaticMetrics.FileName),
@@ -49,10 +50,9 @@ str ScanJavaFileAsString(loc FileToCheck)
                         ClassLink(GetClassName(FileToCheck))]);
 }   
 
-str ScanJavaFile(str FileToCheck) = ScanJavaFile(toLocation(FileToCheck));
 
-// Fill in and return
-TStaticMetrics ScanJavaFile(loc FileToCheck)
+// Fill in and return, can be used to get some graphs
+public TStaticMetrics ScanJavaFile(loc FileToCheck)
 {
   TStaticMetrics Metrics = Init();
   bool CommentActive = false;
@@ -125,6 +125,19 @@ TStaticMetrics ScanJavaFile(loc FileToCheck)
   return Metrics;
 }
 
+// Generates pivots for the graph
+public list[int] GenerateGraphData(loc FileName)
+{
+  list[int] Pivots = [];
+  lrel[loc Location, int Complexity] Declarations = CyclomaticComplexity(FileName);
+  for(n <- [0 .. size(Declarations)])
+  {
+    Pivots = push(Declarations[n].Complexity, Pivots);
+  }
+  return Pivots;
+}
+
+// Generates the HTML View
 str GenerateDetailedTable(loc FileName)
 {
   str TotalHtml = OpenTable();
