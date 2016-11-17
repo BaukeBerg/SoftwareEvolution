@@ -18,8 +18,11 @@ list [tuple[int, list[int]]] DetectClones(loc FileLoc)
 		{
 			Clones += subCompareLine;
 		}
-		ListOfDuplications += <i, Clones>;
-		println(FileLines[i]);
+		
+		if([] != Clones)
+		{
+			ListOfDuplications += <i, Clones>;
+		}
 	}
 	println(ListOfDuplications);
 	return ListOfDuplications;
