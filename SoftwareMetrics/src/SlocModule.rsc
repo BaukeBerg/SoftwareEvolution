@@ -132,7 +132,7 @@ public list[int] GenerateGraphData(loc FileName)
   lrel[loc Location, int Complexity] Declarations = CyclomaticComplexity(FileName);
   for(n <- [0 .. size(Declarations)])
   {
-    Pivots = push(Declarations[n].Complexity, Pivots);
+    Pivots += Declarations[n].Complexity;
   }
   return Pivots;
 }

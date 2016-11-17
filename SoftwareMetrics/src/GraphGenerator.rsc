@@ -10,14 +10,12 @@ public void PlotGraph(list[int] BoxPlots) = PlotGraph("GraphPlot", BoxPlots);
 
 public void PlotGraph(str Name, list[int] BoxPlots)
 {
-  BoxPlots = reverse(BoxPlots);
   list[Figure] Boxes = [];
   num Divider = max(BoxPlots);
   for(int n <- [0 .. size(BoxPlots)])
   {  
    num Height = BoxPlots[n] / Divider;
-   ThisBox = box(vshrink(Height), fillColor(DetermineColour(Height)));
-   Boxes = push(ThisBox, Boxes);
+   Boxes += box(vshrink(Height), fillColor(DetermineColour(Height)));
   }
   render(Name, hcat(Boxes,std(bottom())));
 }
