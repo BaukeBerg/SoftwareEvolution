@@ -47,7 +47,7 @@ bool IsDirectory(loc Path)
 
 test bool FindFilesInDirectory()
 {
-	int s = size(enumerateDirFiles("smallsql"));
+	int s = size(EnumerateDirFiles("smallsql"));
 	println(s);
   return 186 == s;
     
