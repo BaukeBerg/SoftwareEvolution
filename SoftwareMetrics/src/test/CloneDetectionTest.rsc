@@ -2,12 +2,12 @@ module \test::CloneDetectionTest
 
 import List;
 import IO; // Printing
-//import CloneDetection;
+import CloneDetection;
 
-public list[tuple[int, list[int]]] ExpectedDupes = [ <1, [5]>, 
-                                                     <2, [6]>,
-                                                     <3, [7,8]>,
-                                                     <7, [8]>
+public list[tuple[int, list[int]]] ExpectedDupes = [ <0, [4]>, 
+                                                     <1, [5]>,
+                                                     <2, [6,7]>,
+                                                     <6, [7]>
                                                    ];
 
 
