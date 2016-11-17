@@ -6,15 +6,26 @@ import IO;
 import List;
 import Debugging;
 import JavaHelpers;
+import CalculateCC;
 
-data TStaticMetrics = FileInfo(str FileName,
-                               int TotalLines,     
-                               int CodeLines,                          
+public data TStaticMetrics = Init(str FileName = "NoFileNameSpecified",
+                               int TotalLines = 0,     
+                               int CodeLines = 0,                          
+                               int WhiteSpaces = 0,
+                               int LLOC = 0,
+                               int Curlies = 0,
+                               int Comments = 0
+                               )
+                               |
+                               Init(str FileName,
+                               int TotalLines,
+                               int CodeLines,
                                int WhiteSpaces,
                                int LLOC,
                                int Curlies,
                                int Comments
                                );
+                               
 
 str TableColumns() = TableCell("FileName") + TableCell("File lines") + TableCell("CodeLines") + TableCell("WhiteSpaces") + TableCell("LLOC") + TableCell("Curlies") + TableCell("Comments") + TableCell("Details");
    
@@ -24,7 +35,7 @@ str ScanJavaFile(str FileToCheck) = ScanJavaFile(toLocation(FileToCheck));
 // Fill in and return
 TStaticMetrics ScanJavaFile(loc FileToCheck)
 {
-  TStaticMetrics Metrics = FileInfo("NONE!",0,0,0,0,0,0);
+  TStaticMetrics Metrics = Init();
   bool CommentActive = false;
   list[str] FileLines = readFileLines(FileToCheck);
   int TotalLines = size(FileLines);
@@ -89,50 +100,25 @@ TStaticMetrics ScanJavaFile(loc FileToCheck)
   return Metrics;
 }
 
+str GenerateDetailedTable(loc FileName)
+{
+  str TotalHtml = OpenTable();
+  str ClassName = GetClassName(FileName);
+  lrel[loc Location, int Complexity] Declarations = CyclomaticComplexity(FileName);
+  TotalHtml += Caption(ClassName +" (<size(Declarations)> Methods)");
+  TotalHtml += RowWithValues(["Method declaration", "Complexity", "Definition"]);
+  println("Parsing file <ClassName>");
+  for(int n <- [0 .. size(Declarations)])
+  {
+    str MethodName = ExtractMethodDeclaration(Declarations[n].Location);
+    TotalHtml += RowWithValues([MethodName, "<Declarations[n].Complexity>", HtmlPrint(readFile(Declarations[0].Location))]);
+  }
+  TotalHtml += CloseTable();
+  return TotalHtml;
+}
+
 str ScanJavaFileAsString(loc FileToCheck)
 {
   TStaticMetrics StaticMetrics = ScanJavaFile(FileToCheck);
   return OpenRow() + TableCell(FileLink(StaticMetrics.FileName)) + TableCell("<StaticMetrics.TotalLines>") + TableCell("<StaticMetrics.CodeLines>") + TableCell("<StaticMetrics.WhiteSpaces>") + TableCell("<StaticMetrics.LLOC>") + TableCell("<StaticMetrics.Curlies>") + TableCell("<StaticMetrics.Comments>") + TableCell(ClassLink(GetClassName(FileToCheck))) + CloseRow();
-}
-
-test bool ScanColumnJava()
-{
-  TStaticMetrics ExpectedMetrics = FileInfo("/sampleFiles/slocmodule/ColumnsSample.java", 161,48,14,35,13,7);  
-  TStaticMetrics ActualMetrics = ScanJavaFile(|project://SoftwareMetrics/sampleFiles/slocmodule/ColumnsSample.java|);
- 
-  return StaticMetricsCheck(ExpectedMetrics, ActualMetrics);      
-}
-
-test bool ScanWhiteLineJavaFile()
-{
-  TStaticMetrics ActualMetrics = ScanJavaFile(|project://SoftwareMetrics/sampleFiles/slocmodule/WhiteLines.java|);  
-  return ExpectEqualInt(14, ActualMetrics.WhiteSpaces);  
-}
-
-// Checks the CodeLines sample java file
-test bool ScanSourceCodeLines()
-{
-  TStaticMetrics ActualMetrics = ScanJavaFile(|project://SoftwareMetrics/sampleFiles/slocmodule/CodeLines.java|);  
-  return ExpectEqualInt(48, ActualMetrics.CodeLines);  
-}
-
-bool StaticMetricsCheck(TStaticMetrics Expected, TStaticMetrics Actual)
-{
-  if(Actual != Expected)
-  {
-    iprintln(Expected);
-    iprintln(Actual);
-    return false;
-  }
-  return true;
-}
-
-bool ExpectEqualInt(int Expected, int Actual)
-{
-  if(Expected != Actual)
-  {
-    println("Expected: <Expected>, but received <Actual>");
-    return false;
-  }
-  return true;
 }
