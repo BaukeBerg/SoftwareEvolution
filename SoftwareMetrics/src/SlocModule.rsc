@@ -61,6 +61,7 @@ public TStaticMetrics ScanJavaFile(loc FileToCheck)
   Metrics.TotalLines = TotalLines;
   Metrics.FileName = FileToCheck.path;
   int MaxIndent = 0;
+  str SanitizedText = "";
   for(int n <- [0 .. TotalLines])
   { 
     str CurrentLine = FileLines[n];
@@ -101,27 +102,33 @@ public TStaticMetrics ScanJavaFile(loc FileToCheck)
         if(true == contains(CurrentLine, "//"))
         {
           Metrics.Comments += 1; // inline comment
-        }
+          CurrentLine = substring(CurrentLine, 0, findFirst(CurrentLine, "//")); // Strip the comment
+        }        
         if(true == isEmpty(CurrentLine))
         {
           Metrics.WhiteSpaces += 1;
           continue;
         }
-        else if(("{" == CurrentLine) || ("}" == CurrentLine))
-        {
-          Metrics.Curlies += 1;
-        } 
         else
         {
+          SanitizedText += replaceAll(CurrentLine," ", "") + "\n";
+          if(("{" == CurrentLine) || ("}" == CurrentLine))
+          {
+            Metrics.Curlies += 1;
+          } 
+          else
+          {
+            DebugPrint(CurrentLine);
+            Metrics.LLOC += 1;
+          }
           DebugPrint(CurrentLine);
-          Metrics.LLOC += 1;
+          Metrics.CodeLines += 1;          
         }
-        DebugPrint(CurrentLine);
-        Metrics.CodeLines += 1;          
       }
     }    
   } 
   Metrics.MaxIndent = MaxIndent;
+  writeFile(|project://SoftwareMetrics/sampleFiles/sanitizedsql/<toLowerCase(GetClassName(Metrics.FileName))>|, SanitizedText);
   return Metrics;
 }
 

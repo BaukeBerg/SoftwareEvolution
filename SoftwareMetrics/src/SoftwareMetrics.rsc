@@ -10,8 +10,8 @@ import HtmlHelpers; // Used for Html creation
 
 
 
-//str ProjectName = "smallsql";
-str ProjectName = "hsqldb";
+str ProjectName = "smallsql";
+//str ProjectName = "hsqldb";
 
 loc RootLocation() = toLocation("project://SoftwareMetrics/output/<ProjectName>");
 void DetermineSoftwareMetrics()
@@ -21,7 +21,7 @@ void DetermineSoftwareMetrics()
   TotalHtml += Caption("SoftwareMetrics");
   TotalHtml += TableColumns();
   /// Fill table
-  list[loc] FilesToParse = enumerateDirFiles(ProjectName);
+  list[loc] FilesToParse = EnumerateDirFiles(ProjectName);
   for(int n <- [0 .. size(FilesToParse)])
   {
     TotalHtml += ScanJavaFileToHtml(FilesToParse[n]);
@@ -30,5 +30,5 @@ void DetermineSoftwareMetrics()
   }
   /// Close table and generate report
   TotalHtml += CloseTable();
-  writeFile(RootLocation()+"index.html", TotalHtml);  
-}
+  writeFile(RootLocation()+"index.html", TotalHtml);
+ }
