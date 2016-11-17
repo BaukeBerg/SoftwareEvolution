@@ -4,7 +4,7 @@ import List;
 import IO;
 import String;
 
-list[loc] EnumerateDirFiles(str FolderPath) =	enumerateDirFiles(|project://SoftwareMetrics/sampleFiles/<FolderPath>|);
+list[loc] EnumerateDirFiles(str FolderPath) =	EnumerateDirFiles(|project://SoftwareMetrics/sampleFiles/<FolderPath>|);
 
 // Maybe create a nice little Listcomprehension :)
 

@@ -2,3 +2,5 @@
 .metadata
 SoftwareMetrics/bin
 SoftwareMetrics/output
+SoftwareMetrics/sampleFiles/sanitizedsql
+SoftwareMetrics/sampleFiles/bulk
