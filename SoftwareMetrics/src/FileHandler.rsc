@@ -28,14 +28,14 @@ list[loc] EnumerateDirFiles(loc FolderLoc)
 	return LocationList;
 }
 
-str MonsterFile(loc FileFolder)
+list[str] MonsterFile(loc FileFolder)
 {
 	str lines = "";
 	for(file <- EnumerateDirFiles(FileFolder)) {
 		lines += readFile(file);		
 	}
-	//writeFile(|project://SoftwareMetrics/sampleFiles/bulk/monsterFile.java|, lines);
-	return lines;
+	writeFile(|project://SoftwareMetrics/sampleFiles/bulk/monsterFile.java|, lines);
+	return readFileLines(|project://SoftwareMetrics/sampleFiles/bulk/monsterFile.java|);
 }
 
 bool IsDirectory(loc Path)
