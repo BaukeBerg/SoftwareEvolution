@@ -4,11 +4,11 @@ import List;
 import IO;
 import String;
 
-list[loc] enumerateDirFiles(str FolderPath) =	enumerateDirFiles(|project://SoftwareMetrics/sampleFiles/<FolderPath>|);
+list[loc] EnumerateDirFiles(str FolderPath) =	enumerateDirFiles(|project://SoftwareMetrics/sampleFiles/<FolderPath>|);
 
 // Maybe create a nice little Listcomprehension :)
 
-list[loc] enumerateDirFiles(loc FolderLoc)
+list[loc] EnumerateDirFiles(loc FolderLoc)
 {
   list[loc] FilesFolders = FolderLoc.ls;
   list [loc] LocationList = [];
@@ -18,7 +18,7 @@ list[loc] enumerateDirFiles(loc FolderLoc)
   	int javaPos = findLast(localPath, ".java");
   	if (javaPos == -1)
   	{
-  		LocationList += enumerateDirFiles(FilesFolders[n]);
+  		LocationList += EnumerateDirFiles(FilesFolders[n]);
   	}
   	else
   	{
@@ -26,6 +26,16 @@ list[loc] enumerateDirFiles(loc FolderLoc)
   	}
 	}
 	return LocationList;
+}
+
+str MonsterFile(loc FileFolder)
+{
+	str lines = "";
+	for(file <- EnumerateDirFiles(FileFolder)) {
+		lines += readFile(file);		
+	}
+	//writeFile(|project://SoftwareMetrics/sampleFiles/bulk/monsterFile.java|, lines);
+	return lines;
 }
 
 bool IsDirectory(loc Path)
