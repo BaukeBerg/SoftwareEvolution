@@ -33,7 +33,21 @@ public data TStaticMetrics = Init(str FileName = "NoFileNameSpecified",
                                
 
 str TableColumns() = RowWithValues(["FileName","File lines","CodeLines","WhiteSpaces","LLOC","Curlies","Comments","MaxIndent","Details"]);
-   
+
+
+str ScanJavaFileAsString(loc FileToCheck)
+{
+  TStaticMetrics StaticMetrics = ScanJavaFile(FileToCheck);
+  return RowWithValues([FileLink(StaticMetrics.FileName),
+                        "<StaticMetrics.TotalLines>",
+                        "<StaticMetrics.CodeLines>",
+                        "<StaticMetrics.WhiteSpaces>",
+                        "<StaticMetrics.LLOC>",
+                        "<StaticMetrics.Curlies>",
+                        "<StaticMetrics.Comments>",
+                        "<StaticMetrics.MaxIndent>",
+                        ClassLink(GetClassName(FileToCheck))]);
+}   
 
 str ScanJavaFile(str FileToCheck) = ScanJavaFile(toLocation(FileToCheck));
 
@@ -128,16 +142,3 @@ str GenerateDetailedTable(loc FileName)
   return TotalHtml;
 }
 
-str ScanJavaFileAsString(loc FileToCheck)
-{
-  TStaticMetrics StaticMetrics = ScanJavaFile(FileToCheck);
-  return RowWithValues([FileLink(StaticMetrics.FileName),
-                        "<StaticMetrics.TotalLines>",
-                        "<StaticMetrics.CodeLines>",
-                        "<StaticMetrics.WhiteSpaces>",
-                        "<StaticMetrics.LLOC>",
-                        "<StaticMetrics.Curlies>",
-                        "<StaticMetrics.Comments>",
-                        "<StaticMetrics.MaxIndent>",
-                        ClassLink(GetClassName(FileToCheck))]);
-}
