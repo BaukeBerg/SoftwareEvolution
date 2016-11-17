@@ -16,14 +16,11 @@ list [tuple[int, list[int]]] DetectClones(list[str] FileLines)
 		list [int] Clones = [];
 		for(subCompareLine <- [i+1 .. TotalLines], FileLines[i] == FileLines[subCompareLine])
 		{
-			Clones += subCompareLine;
+			Clones += subCompareLine+1;
 		}
 		
-		if([] != Clones)
-		{
-			ListOfDuplications += <i, Clones>;
-		}
-		println(i);
+		ListOfDuplications += <i+1, Clones>;
 	}
+	
 	return ListOfDuplications;
 }
