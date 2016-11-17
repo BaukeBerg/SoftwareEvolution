@@ -3,11 +3,17 @@ module GraphGenerator
 import vis::Figure;
 import vis::Render;
 
+import List;
 
-void renderGraph()
+void PlotGraph(list[int] BoxPlots)
 {
-	b1 = box(vshrink(0.5), fillColor("Red"));
-	b2 = box(vshrink(0.8), fillColor("Blue"));
-	b3 = box(vshrink(1.0), fillColor("Yellow"));
-	render(hcat([b1, b2, b3],std(bottom())));
+  BoxPlots = reverse(BoxPlots);
+  list[Figure] Boxes = [];
+  for(int n <- [0 .. size(BoxPlots)])
+  {  
+   num Height = BoxPlots[n] / 10.0;
+   ThisBox = box(vshrink(Height), fillColor("Blue"));
+   Boxes = push(ThisBox, Boxes);
+  }
+  render(hcat(Boxes,std(bottom())));
 }
