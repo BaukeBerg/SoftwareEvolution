@@ -25,6 +25,5 @@ list [tuple[int, list[int]]] DetectClones(list[str] FileLines)
 		}
 		println(i);
 	}
-	println(ListOfDuplications);
 	return ListOfDuplications;
 }
