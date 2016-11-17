@@ -2,9 +2,19 @@ module CalculateCC
 
 import lang::java::\syntax::Java15;
 
-// As 'Stolen' from Jurgen Vinju, since all definitions are wrong, we assumed his was best? 
+//import vis::Render;
+import ParseTree;
 
-int cyclomaticComplexity(MethodDec m) {
+/// Gives the relation between a method and its complexity
+lrel[loc MethodLocation, int CyclomaticComplexity] CyclomaticComplexity(loc file) = [<m@\loc, CalculateCyclomaticComplexity(m)> | m <- AllMethods(file)];
+
+set[MethodDec] AllMethods(loc file) = {m | /MethodDec m := parse(#start[CompilationUnit], file)};
+
+
+// As taken from Jurgen Vinju, since all definitions are wrong, we assumed his was best? 
+// It calculates the number of independant paths
+int CalculateCyclomaticComplexity(MethodDec m) 
+{
   result = 1;
   visit (m) {
     case (Stm)`do <Stm _> while (<Expr _>);`: result += 1;

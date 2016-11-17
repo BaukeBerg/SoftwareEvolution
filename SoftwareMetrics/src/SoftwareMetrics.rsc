@@ -7,7 +7,7 @@ import String;
 import FileHandler;
 import List;
 import JavaHelpers;
-import ComplexityCalculator;
+import CalculateCC;
 
 
 //str ProjectName = "smallsql";
