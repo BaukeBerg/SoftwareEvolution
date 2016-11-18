@@ -11,7 +11,7 @@ bool Contains(list[&T] Items, &T Item)
   return false; 
 }
 
-// Stores list of clones in readable format (as you would expect from println
+/// Stores list of clones in readable format (as you would expect from println)
 str StoreClones(list[tuple[int SourceLine, list[int] Clones]] ListToStore)
 {
   str TotalText = "";
@@ -22,7 +22,7 @@ str StoreClones(list[tuple[int SourceLine, list[int] Clones]] ListToStore)
   return TotalText;
 }
 
-// Present list as in println
+/// Present list as in println
 str EncodeListContents(list[int] Items)
 {  
   str Contents = "[";
