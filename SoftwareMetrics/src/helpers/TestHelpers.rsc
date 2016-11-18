@@ -12,3 +12,13 @@ bool ExpectEqual(&T Expected, &T Actual)
   }
   return true;
 }
+
+bool ExpectNotEqual(&T Expected, &T Actual)
+{
+  if(Expected == Actual)
+  {
+    println("Equal values passed: <Expected>!");
+    return false;
+  }
+  return true;
+}
