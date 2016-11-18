@@ -1,14 +1,16 @@
 module SlocModule
 
-import HtmlHelpers;
-import String;
+import CalculateCC;
+import Debugging;
 import IO;
 import List;
-import Debugging;
-import JavaHelpers;
-import CalculateCC;
-import StringHelpers; // Utility functions for string
+import String;
+
 import util::Math; // Calc functions
+import \helpers::HtmlHelpers;
+import \helpers::JavaHelpers;
+import \helpers::StringHelpers; // Utility functions for string
+
 
 
 bool IncludeCurlies = false;
@@ -156,7 +158,7 @@ public TStaticMetrics ScanJavaFile(loc FileToCheck)
     }    
   } 
   Metrics.MaxIndent = MaxIndent;
-  writeFile(|project://SoftwareMetrics/sampleFiles/sanitizedsql/<toLowerCase(GetClassName(Metrics.FileName))>|, SanitizedText);
+  writeFile(|project://SoftwareMetrics/output/sanitizedsql/<toLowerCase(GetClassName(Metrics.FileName))>|, SanitizedText);
   return Metrics;
 }
 

@@ -5,6 +5,8 @@ import String;
 import List;
 import DateTime;
 
+import \helpers::ListHelpers;
+
 list [tuple[int, list[int]]] DetectClones()  = DetectClones(-1);
 list [tuple[int, list[int]]] DetectClones(int MaxLineAmount)  = DetectClones(|project://SoftwareMetrics/sampleFiles/bulk/monsterFile.java|, MaxLineAmount);
 list [tuple[int, list[int]]] DetectClones(loc FileLoc, int MaxLineAmount) = DetectClones(readFileLines(FileLoc), MaxLineAmount); 
@@ -30,7 +32,6 @@ list [tuple[int, list[int]]] DetectClones(list[str] FileLines, int MaxLineAmount
 		println(i);
 	}
 	println("DuplicationsDuration : <createDuration(StartTime, now())>");
-	//writeFile("|project://SoftwareMetrics/sampleFiles/clones.txt|", <ListOfDuplications>);
-	return [];
-	//return ListOfDuplications;
+	writeFile("|project://SoftwareMetrics/output/ClonesList.txt|", StoreClones(ListOfDuplications));
+	return [];	
 }
