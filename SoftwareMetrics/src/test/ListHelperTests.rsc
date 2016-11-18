@@ -14,9 +14,12 @@ test bool CheckCenterItem() = false == Contains(SampleCollection, 5);
 test bool CheckListPrint() = ExpectEqual("[1,2,3,4,6]", EncodeListContents(SampleCollection));
 test bool CheckEmptyListPrint() = ExpectEqual("[]", EncodeListContents([]));
 
+test bool CheckBackAndForth() = ExpectEqual(SampleCollection, DecodeListContents(EncodeListContents(SampleCollection)));
+
 list[tuple[int, list[int]]] SampleClones = [
                                               < 1, [1,2,3] >,
                                               < 3, [4,6,5] >
                                            ];
                                            
-test bool CheckClonesPrint() = ExpectEqual("\<1,[1,2,3]\>\n\<3,[4,6,5]\>\n", StoreClones(SampleClones));
+test bool CheckClonesPrint() = ExpectEqual("1$[1,2,3]\n3$[4,6,5]\n", StoreClones(SampleClones));
+test bool CheckClonesBackAndForth() = ExpectEqual(SampleClones, LoadClones(StoreClones(SampleClones)));
