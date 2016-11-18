@@ -10,6 +10,9 @@ import CalculateCC;
 import StringHelpers; // Utility functions for string
 import util::Math; // Calc functions
 
+
+bool IncludeCurlies = false;
+
 /// Simple data structures 
 public data TStaticMetrics = Init(str FileName = "NoFileNameSpecified",
                                int TotalLines = 0,     
@@ -35,6 +38,19 @@ public data TStaticMetrics = Init(str FileName = "NoFileNameSpecified",
 str TableColumns() = RowWithValues(["FileName","File lines","CodeLines","WhiteSpaces","LLOC","Curlies","Comments","MaxIndent","Details"]);
 
 str ScanJavaFileToHtml(str FileToCheck) = ScanJavaFileToHtml(toLocation(FileToCheck));
+int ScanJavaFileSloc(loc FileToCheck) = ScanJavaFile(FileToCheck).LLOC;
+
+list[tuple[int,int]] ScanJavaFileMethodLengthAndComplexity(loc FileToCheck)
+{
+  lrel[loc Location, int Complexity] Declarations = CyclomaticComplexity(FileToCheck);
+  list[tuple[int,int]] Results = [];
+  for(tuple[loc Location, int Complexity] Declaration <- Declarations)
+  {
+    str MethodDefinition = readFile(Declaration.Location);
+    Results += <LineCount(MethodDefinition), Declaration.Complexity>;
+  }
+  return Results;  
+}
 
 str ScanJavaFileToHtml(loc FileToCheck)
 {
@@ -61,6 +77,7 @@ public TStaticMetrics ScanJavaFile(loc FileToCheck)
   Metrics.TotalLines = TotalLines;
   Metrics.FileName = FileToCheck.path;
   int MaxIndent = 0;
+  str SanitizedText = "";
   for(int n <- [0 .. TotalLines])
   { 
     str CurrentLine = FileLines[n];
@@ -101,27 +118,45 @@ public TStaticMetrics ScanJavaFile(loc FileToCheck)
         if(true == contains(CurrentLine, "//"))
         {
           Metrics.Comments += 1; // inline comment
-        }
+          CurrentLine = substring(CurrentLine, 0, findFirst(CurrentLine, "//")); // Strip the comment
+        }        
         if(true == isEmpty(CurrentLine))
         {
           Metrics.WhiteSpaces += 1;
           continue;
         }
-        else if(("{" == CurrentLine) || ("}" == CurrentLine))
-        {
-          Metrics.Curlies += 1;
-        } 
         else
         {
+          bool IsCurly = ("{" == CurrentLine) || ("}" == CurrentLine); 
+          if(true == IsCurly)
+          {
+            Metrics.Curlies += 1;
+          } 
+          else
+          {
+            DebugPrint(CurrentLine);
+            Metrics.LLOC += 1;
+          }
+          if( ((false == IsCurly)
+            || (true == IsCurly) && (true == IncludeCurlies)))
+                        
+          {
+            // skip import statements
+            if((false == startsWith(CurrentLine, "import "))
+              && (false == startsWith(CurrentLine, "package ")))
+            {
+              SanitizedText += EncodeString(replaceAll(CurrentLine," ", "")) + "\n";
+            }
+          }
+          
           DebugPrint(CurrentLine);
-          Metrics.LLOC += 1;
+          Metrics.CodeLines += 1;          
         }
-        DebugPrint(CurrentLine);
-        Metrics.CodeLines += 1;          
       }
     }    
   } 
   Metrics.MaxIndent = MaxIndent;
+  writeFile(|project://SoftwareMetrics/sampleFiles/sanitizedsql/<toLowerCase(GetClassName(Metrics.FileName))>|, SanitizedText);
   return Metrics;
 }
 

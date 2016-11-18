@@ -3,7 +3,7 @@ module TestHelpers
 import IO;
 
 // Prints the resuls when they are not expected, faster debugging of tests
-bool ExpectEqualInt(int Expected, int Actual)
+bool ExpectEqual(&T Expected, &T Actual)
 {
   if(Expected != Actual)
   {

@@ -4,13 +4,12 @@ import List;
 import IO;
 import String;
 
-list[loc] enumerateDirFiles(str FolderPath) =	enumerateDirFiles(|project://SoftwareMetrics/sampleFiles/<FolderPath>|);
+list[loc] EnumerateDirFiles(str FolderPath) =	EnumerateDirFiles(|project://SoftwareMetrics/sampleFiles/<FolderPath>|);
 
 // Maybe create a nice little Listcomprehension :)
 
-list[loc] enumerateDirFiles(loc FolderLoc)
+list[loc] EnumerateDirFiles(loc FolderLoc)
 {
-  print(FolderLoc);
   list[loc] FilesFolders = FolderLoc.ls;
   list [loc] LocationList = [];
   for (int n <- [0 .. size(FilesFolders)])
@@ -19,7 +18,7 @@ list[loc] enumerateDirFiles(loc FolderLoc)
   	int javaPos = findLast(localPath, ".java");
   	if (javaPos == -1)
   	{
-  		LocationList += enumerateDirFiles(FilesFolders[n]);
+  		LocationList += EnumerateDirFiles(FilesFolders[n]);
   	}
   	else
   	{
@@ -27,6 +26,16 @@ list[loc] enumerateDirFiles(loc FolderLoc)
   	}
 	}
 	return LocationList;
+}
+
+list[str] MonsterFile(loc FileFolder)
+{
+	str lines = "";
+	for(file <- EnumerateDirFiles(FileFolder)) {
+		lines += readFile(file);		
+	}
+	writeFile(|project://SoftwareMetrics/sampleFiles/bulk/monsterFile.java|, lines);
+	return readFileLines(|project://SoftwareMetrics/sampleFiles/bulk/monsterFile.java|);
 }
 
 bool IsDirectory(loc Path)
@@ -38,7 +47,7 @@ bool IsDirectory(loc Path)
 
 test bool FindFilesInDirectory()
 {
-	int s = size(enumerateDirFiles("smallsql"));
+	int s = size(EnumerateDirFiles("smallsql"));
 	println(s);
   return 186 == s;
     
