@@ -10,6 +10,9 @@ import CalculateCC;
 import StringHelpers; // Utility functions for string
 import util::Math; // Calc functions
 
+
+bool IncludeCurlies = false;
+
 /// Simple data structures 
 public data TStaticMetrics = Init(str FileName = "NoFileNameSpecified",
                                int TotalLines = 0,     
@@ -35,6 +38,19 @@ public data TStaticMetrics = Init(str FileName = "NoFileNameSpecified",
 str TableColumns() = RowWithValues(["FileName","File lines","CodeLines","WhiteSpaces","LLOC","Curlies","Comments","MaxIndent","Details"]);
 
 str ScanJavaFileToHtml(str FileToCheck) = ScanJavaFileToHtml(toLocation(FileToCheck));
+int ScanJavaFileSloc(loc FileToCheck) = ScanJavaFile(FileToCheck).LLOC;
+
+list[tuple[int,int]] ScanJavaFileMethodLengthAndComplexity(loc FileToCheck)
+{
+  lrel[loc Location, int Complexity] Declarations = CyclomaticComplexity(FileToCheck);
+  list[tuple[int,int]] Results = [];
+  for(tuple[loc Location, int Complexity] Declaration <- Declarations)
+  {
+    str MethodDefinition = readFile(Declaration.Location);
+    Results += <LineCount(MethodDefinition), Declaration.Complexity>;
+  }
+  return Results;  
+}
 
 str ScanJavaFileToHtml(loc FileToCheck)
 {
@@ -111,8 +127,8 @@ public TStaticMetrics ScanJavaFile(loc FileToCheck)
         }
         else
         {
-          SanitizedText += replaceAll(CurrentLine," ", "") + "\n";
-          if(("{" == CurrentLine) || ("}" == CurrentLine))
+          bool IsCurly = ("{" == CurrentLine) || ("}" == CurrentLine); 
+          if(true == IsCurly)
           {
             Metrics.Curlies += 1;
           } 
@@ -121,6 +137,18 @@ public TStaticMetrics ScanJavaFile(loc FileToCheck)
             DebugPrint(CurrentLine);
             Metrics.LLOC += 1;
           }
+          if( ((false == IsCurly)
+            || (true == IsCurly) && (true == IncludeCurlies)))
+                        
+          {
+            // skip import statements
+            if((false == startsWith(CurrentLine, "import "))
+              && (false == startsWith(CurrentLine, "package ")))
+            {
+              SanitizedText += EncodeString(replaceAll(CurrentLine," ", "")) + "\n";
+            }
+          }
+          
           DebugPrint(CurrentLine);
           Metrics.CodeLines += 1;          
         }
