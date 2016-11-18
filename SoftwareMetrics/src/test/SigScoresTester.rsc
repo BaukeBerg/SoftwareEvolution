@@ -1,7 +1,7 @@
 module \test::SigScoresTester
 
 import SigScores;
-import TestHelpers;
+import \helpers::TestHelpers;
 
 // Check star rating for VolumeScore
 test bool TestVolumePlusPlus() = ExpectEqual(4, VolumeScore(66000));

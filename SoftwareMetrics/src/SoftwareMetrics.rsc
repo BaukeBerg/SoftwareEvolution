@@ -5,8 +5,8 @@ import SlocModule;
 import String;
 import FileHandler;
 import List;
-import JavaHelpers; // Used for Getting some java specifics
-import HtmlHelpers; // Used for Html creation
+import \helpers::JavaHelpers; // Used for Getting some java specifics
+import \helpers::HtmlHelpers; // Used for Html creation
 
 import SigScores;
 import DateTime;

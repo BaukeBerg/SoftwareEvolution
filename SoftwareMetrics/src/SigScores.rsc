@@ -1,7 +1,7 @@
 module SigScores
 
 import List;
-import MathHelpers;
+import \helpers::MathHelpers;
 
 public int VolumeScore(int SLOC) = ReturnScore(SLOC, [66000,246000,655000,1310000]);
 public int UnitComplexityIndex(int Complexity) = ReturnScore(Complexity, [10,20,50]);

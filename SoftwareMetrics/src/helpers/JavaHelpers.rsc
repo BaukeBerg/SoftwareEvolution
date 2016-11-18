@@ -1,4 +1,4 @@
-module JavaHelpers
+module \helpers::JavaHelpers
 
 import String;
 import IO;

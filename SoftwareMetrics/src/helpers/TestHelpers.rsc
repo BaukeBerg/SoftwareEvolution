@@ -1,4 +1,4 @@
-module TestHelpers
+module \helpers::TestHelpers
 
 import IO;
 

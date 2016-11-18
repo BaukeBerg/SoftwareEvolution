@@ -1,4 +1,4 @@
-module MathHelpers
+module \helpers::MathHelpers
 
 import util::Math;
 import List;

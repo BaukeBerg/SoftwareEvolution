@@ -1,4 +1,4 @@
-module StringHelpers
+module \helpers::StringHelpers
 
 import String;
 

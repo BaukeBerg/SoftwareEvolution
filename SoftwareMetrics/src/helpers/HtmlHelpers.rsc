@@ -1,4 +1,4 @@
-module HtmlHelpers
+module \helpers::HtmlHelpers
 
 import List;
 import String;

@@ -1,7 +1,7 @@
 module \test::SlocModuleTester
 
 import SlocModule; // Required for testing functions
-import TestHelpers; // Some convenience printing functions
+import \helpers::TestHelpers; // Some convenience printing functions
 import IO; // Used to print on screen
 
 test bool ScanColumnJava()

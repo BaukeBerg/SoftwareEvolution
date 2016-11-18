@@ -1,6 +1,6 @@
 module \test::MathHelpersTest
 
-import MathHelpers;
+import \helpers::MathHelpers;
 
 test bool BelowLower() = 5 == Limit(5, -10, 20);
 test bool AboveUpper() = 25 == Limit(10, 50, 25);
