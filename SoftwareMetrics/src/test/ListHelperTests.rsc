@@ -12,6 +12,7 @@ test bool CheckTopBound() = false == Contains(SampleCollection, 7);
 test bool CheckCenterItem() = false == Contains(SampleCollection, 5);
 
 test bool CheckListPrint() = ExpectEqual("[1,2,3,4,6]", EncodeListContents(SampleCollection));
+test bool CheckEmptyListPrint() = ExpectEqual("[]", EncodeListContents([]));
 
 list[tuple[int, list[int]]] SampleClones = [
                                               < 1, [1,2,3] >,
