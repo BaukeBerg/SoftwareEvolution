@@ -4,11 +4,12 @@ import IO;
 import String;
 import List;
 import DateTime;
+import FileHandler;
 
 import \helpers::ListHelpers;
 
 list [tuple[int, list[int]]] DetectClones()  = DetectClones(-1);
-list [tuple[int, list[int]]] DetectClones(int MaxLineAmount)  = DetectClones(|project://SoftwareMetrics/sampleFiles/bulk/monsterFile.java|, MaxLineAmount);
+list [tuple[int, list[int]]] DetectClones(int MaxLineAmount)  = DetectClones(MonsterFile(|project://SoftwareMetrics/output/sanitizedsql|), MaxLineAmount);
 list [tuple[int, list[int]]] DetectClones(loc FileLoc, int MaxLineAmount) = DetectClones(readFileLines(FileLoc), MaxLineAmount); 
 list [tuple[int, list[int]]] DetectClones(list[str] FileLines) = DetectClones(FileLines, -1); 
 list [tuple[int, list[int]]] DetectClones(list[str] FileLines, int MaxLineAmount)
@@ -22,16 +23,15 @@ list [tuple[int, list[int]]] DetectClones(list[str] FileLines, int MaxLineAmount
 	}
 	for(i <- [0 .. MaxLineAmount]) 
 	{
-		list [value] Clones = [];
-		for(subCompareLine <- [i+1 .. TotalLines], FileLines[i] == FileLines[subCompareLine])
+		list [int] Clones = [];
+		for(SubCompareLine <- [i+1 .. TotalLines], FileLines[i] == FileLines[SubCompareLine])
 		{
-			Clones += subCompareLine;
+			Clones += SubCompareLine;
 		}
-		//ListOfDuplications += <i, Clones>;
-		writeFile(|project://SoftwareMetrics/output/clones/<"<i>">.txt|,Clones);
-		println(i);
+		ListOfDuplications += <i,Clones>;
+		println("<i>|<TotalLines>");
 	}
 	println("DuplicationsDuration : <createDuration(StartTime, now())>");
-	writeFile("|project://SoftwareMetrics/output/ClonesList.txt|", StoreClones(ListOfDuplications));
-	return [];	
+	writeFile(|project://SoftwareMetrics/output/ClonesList.txt|, StoreClones(ListOfDuplications));
+	return ListOfDuplications;
 }

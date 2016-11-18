@@ -139,19 +139,7 @@ public TStaticMetrics ScanJavaFile(loc FileToCheck)
             DebugPrint(CurrentLine);
             Metrics.LLOC += 1;
           }
-          if( ((false == IsCurly)
-            || (true == IsCurly) && (true == IncludeCurlies)))
-                        
-          {
-            // skip import statements
-            if((false == startsWith(CurrentLine, "import "))
-              && (false == startsWith(CurrentLine, "package ")))
-            {
-              SanitizedText += EncodeString(replaceAll(CurrentLine," ", "")) + "\n";
-            }
-          }
-          
-          DebugPrint(CurrentLine);
+          SanitizedText += Sanitize(CurrentLine);
           Metrics.CodeLines += 1;          
         }
       }
@@ -160,6 +148,17 @@ public TStaticMetrics ScanJavaFile(loc FileToCheck)
   Metrics.MaxIndent = MaxIndent;
   writeFile(|project://SoftwareMetrics/output/sanitizedsql/<toLowerCase(GetClassName(Metrics.FileName))>|, SanitizedText);
   return Metrics;
+}
+
+str Sanitize(str StringToSanitize)
+{
+  // skip imports and packages
+  if((startsWith(StringToSanitize, "import "))
+   || (startsWith(StringToSanitize, "package ")))
+  {
+    return "";
+  }
+  return StringToSanitize + "\n";
 }
 
 // Generates pivots for the graph
