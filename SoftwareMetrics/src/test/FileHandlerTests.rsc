@@ -1,10 +1,6 @@
 module \test::FileHandlerTests
 
 import FileHandler;
+import \helpers::TestHelpers;
 
-test bool FindFilesInDirectory()
-{
-  int s = size(EnumerateDirFiles("smallsql"));
-  println(s);
-  return 186 == s;    
-}
+test bool FindFilesInDirectory() = ExpectEqual(186, size(EnumerateDirFiles("smallsql")));
