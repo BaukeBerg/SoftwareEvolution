@@ -1,7 +1,9 @@
 module \helpers::JavaHelpers
 
-import String;
 import IO;
+import String;
+
+import \helpers::StringHelpers;
 
 /// Extracts classname from file location
 str GetFullClassPath(loc FileToCheck)
@@ -29,3 +31,7 @@ str ExtractMethodDeclaration(loc FunctionBody)
   }
   return substring(readFile(FunctionBody), 0, AccolPos);
 }
+
+int MethodSize(loc MethodToCheck) = MethodSize(readFile(MethodToCheck));
+int MethodSize(str MethodToCount) = LineCount(MethodBody(MethodToCount));
+str MethodBody(str InputData) = trim(StringToken(InputData, "{", "}"));
