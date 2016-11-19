@@ -39,38 +39,51 @@ list [tuple[int, list[int]]] DetectClones(list[str] FileLines, int MaxLineAmount
 void t1()
 {
 	list [tuple[int, list[int]]] ListOfDuplications = DetectClones(|project://SoftwareMetrics/sampleFiles/clonedetection/Clone2.java|, 20);
-	int minCloneLength = 6 - 1; //Value is minimum clone size -1
-	for(int i <- [0 .. size(ListOfDuplications)])
+	int minCloneLength = 5;
+	int startPoint = 0;
+	int cloneStartPoint = 0;
+	int cloneEndPoint = 0;
+	
+	list[int] tmpItems = ListOfDuplications[startPoint][1];
+	bool found = false;
+	while(!isEmpty(tmpItems) && !found)
 	{
-		if(!isEmpty(ListOfDuplications[i][1]))
+		if(Contains(ListOfDuplications[startPoint + minCloneLength][1], tmpItems[0] + (minCloneLength)))
 		{
-			list[int] items = ListOfDuplications[i][1];
-			bool found = false;
-			while(!isEmpty(items) && !found)
+			found = true;
+		}
+		tmpItems = drop(1, tmpItems);
+	}
+	
+	if(found)
+	{
+		cloneStartPoint = ListOfDuplications[startPoint][0];
+		bool minReqCloneLines = true;
+		for(decrease <- [minCloneLength-1 .. 0], 
+				item <- ListOfDuplications[startPoint][1],
+				minReqCloneLines)
+		{
+			if(!Contains(ListOfDuplications[startPoint + decrease][1], (item + decrease)))
 			{
-				if(Contains(ListOfDuplications[i + (minCloneLength)][1], items[0] + minCloneLength))
-				{
-					int min = minCloneLength - 1;
-					bool match = true;
-					while(min > 0 && match)
-					{
-						if(Contains(ListOfDuplications[i + min][1], (items[0] + min)))
-						{
-							println("Minimal clone length found");
-							//println(ListOfDuplications[i + min]);
-						}
-						else
-						{
-							println("No clone found");
-							match = false;
-						}
-						min -= 1;
-					}
-					found = true; 
-				}
-				items = drop(1, items);
+				minReqCloneLines = false;
 			}
 		}
-		break;
+		
+		if(minReqCloneLines)
+		{
+			cloneEndPoint = ListOfDuplications[startPoint + minCloneLength][0];
+			bool match = true;
+			for(increase <- [minCloneLength+1 .. size(ListOfDuplications) - (minCloneLength+1)],
+					item <- ListOfDuplications[startPoint][1],
+					match)
+			{
+				cloneEndPoint = ListOfDuplications[startPoint + increase][0];
+				if(!Contains(ListOfDuplications[startPoint + increase][1], (item + increase)))
+				{
+					match = false;
+				}
+			}
+		}
 	}
+	println("Clone starts at line <cloneStartPoint> and ends at line <cloneEndPoint>");
 }
