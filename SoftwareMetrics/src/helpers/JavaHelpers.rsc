@@ -29,6 +29,3 @@ str ExtractMethodDeclaration(loc FunctionBody)
   }
   return substring(readFile(FunctionBody), 0, AccolPos);
 }
-
-test bool TestFullClassPath() = "smallsql/database/Columns" == GetFullClassPath(|project://SoftwareMetrics/sampleFiles/smallsql/database/Columns.java|);
-test bool TestClassName() = "Columns" == GetClassName(|project://SoftwareMetrics/sampleFiles/smallsql/database/Columns.java|);
