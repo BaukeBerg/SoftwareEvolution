@@ -19,6 +19,7 @@
 #include "StopWatch.h"
 
 void DetectDuplicates(const wxString &InputFile, const wxString &OutputFile);
+TCVector<wxString> ReadLines(const wxString &InputFile);
 
 int main(void)
 {
@@ -60,26 +61,12 @@ public:
     {
       Result.RemoveLast();
     }
-    return Result + "]\n";
+    return Result + "]\r\n";
   }
 private:
   wxUint32 LineNumber;
   TCVector<wxUint32> Clones;
 };
-
-TCVector<wxString> ReadLines(const wxString &FileToScan)
-{
-  TCVector<wxString> Lines;
-  PrintStatus("Reading in input file");
-  wxTextFile Input(FileToScan);
-  Input.Open();
-  for (wxString Line = Input.GetFirstLine(); false == Input.Eof(); Line = Input.GetNextLine())
-  {
-    Lines.push_back(Line);
-  }
-  Input.Close();
-  return Lines;
-}
 
 void DetectDuplicates(const wxString &FileToScan, const wxString &FileForOutput)
 {
@@ -101,4 +88,18 @@ void DetectDuplicates(const wxString &FileToScan, const wxString &FileForOutput)
     Results.Write(TClonedItem(IterLine, Clones).Print());
   }
   PrintStatus("Done: " + DoubleToString(Duration.Seconds()) + "s.");
+}
+
+TCVector<wxString> ReadLines(const wxString &InputFile)
+{
+  TCVector<wxString> Lines;
+  PrintStatus("Reading in input file");
+  wxTextFile Input(InputFile);
+  Input.Open();
+  for (wxString Line = Input.GetFirstLine(); false == Input.Eof(); Line = Input.GetNextLine())
+  {
+    Lines.push_back(Line);
+  }
+  Input.Close();
+  return Lines;
 }
