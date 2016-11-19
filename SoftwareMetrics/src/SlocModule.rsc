@@ -146,7 +146,7 @@ public TStaticMetrics ScanJavaFile(loc FileToCheck)
     }    
   } 
   Metrics.MaxIndent = MaxIndent;
-  writeFile(|project://SoftwareMetrics/output/sanitizedsql/<toLowerCase(GetClassName(Metrics.FileName))>|, SanitizedText);
+  writeFile(|project://SoftwareMetrics/output/sanitizedsql/<toLowerCase(GetClassName(Metrics.FileName))>|, SanitizedText+"\n");
   return Metrics;
 }
 
@@ -158,7 +158,11 @@ str Sanitize(str StringToSanitize)
   {
     return "";
   }
-  return StringToSanitize + "\n";
+  if("}" == StringToSanitize)
+  {
+    return "ȸ}"; 
+  }
+  return "\n" + StringToSanitize;
 }
 
 // Generates pivots for the graph
