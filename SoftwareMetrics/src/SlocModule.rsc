@@ -146,7 +146,8 @@ public TStaticMetrics ScanJavaFile(loc FileToCheck)
     }    
   } 
   Metrics.MaxIndent = MaxIndent;
-  writeFile(|project://SoftwareMetrics/output/sanitizedsql/<EscapePath(Metrics.FileName)>|, SanitizedText+"\n");
+  
+  writeFile(|project://SoftwareMetrics/output/sanitizedsql/<EscapePath(Metrics.FileName)>|, replaceFirst(SanitizedText, "\n", "") +"\n");
   return Metrics;
 }
 
@@ -156,13 +157,10 @@ str Sanitize(str StringToSanitize)
 {
   // skip imports and packages
   if((startsWith(StringToSanitize, "import "))
-   || (startsWith(StringToSanitize, "package ")))
+   || (startsWith(StringToSanitize, "package "))
+   || ("}" == StringToSanitize))
   {
     return "";
-  }
-  if("}" == StringToSanitize)
-  {
-    return "ȸ}"; 
   }
   return "\n" + StringToSanitize;
 }
