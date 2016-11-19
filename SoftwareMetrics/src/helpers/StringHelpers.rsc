@@ -23,8 +23,8 @@ int Indent(str StringToCheck)
 // Amount of lines in a string
 int LineCount(str StringToCheck)
 {
-  Lines = 1;
-  for(n <- [0 .. size(StringToCheck)], StringToCheck[n] == "\r\n")
+  Lines = 1; 
+  for(n <- [0 .. size(trim(StringToCheck))], StringToCheck[n] == "\n")
   {
     Lines +=1;
   }
@@ -59,7 +59,7 @@ public str EncodeString(str StringToEncode)
 
 public str DecodeString(str StringToDecode)
 {
-  for(Pair <- reverse(Dictionary))
+  for(Pair <- Dictionary)
   {
     StringToDecode = replaceAll(StringToDecode, Pair.Replace, Pair.Find);
   }
