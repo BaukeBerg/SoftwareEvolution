@@ -146,19 +146,23 @@ public TStaticMetrics ScanJavaFile(loc FileToCheck)
     }    
   } 
   Metrics.MaxIndent = MaxIndent;
-  writeFile(|project://SoftwareMetrics/output/sanitizedsql/<toLowerCase(GetClassName(Metrics.FileName))>|, SanitizedText);
+  
+  writeFile(|project://SoftwareMetrics/output/sanitizedsql/<EscapePath(Metrics.FileName)>|, replaceFirst(SanitizedText, "\r\n", "") +"\r\n");
   return Metrics;
 }
+
+str EscapePath(str InputPath) = replaceAll(InputPath, "/sampleFiles" ,"");
 
 str Sanitize(str StringToSanitize)
 {
   // skip imports and packages
   if((startsWith(StringToSanitize, "import "))
    || (startsWith(StringToSanitize, "package ")))
+   //|| ("}" == StringToSanitize))
   {
     return "";
   }
-  return StringToSanitize + "\n";
+  return "\r\n" + StringToSanitize;
 }
 
 // Generates pivots for the graph
@@ -190,4 +194,5 @@ str GenerateDetailedTable(loc FileName)
   TotalHtml += CloseTable();
   return TotalHtml;
 }
+
 

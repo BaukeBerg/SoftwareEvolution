@@ -2,6 +2,10 @@ module \helpers::StringHelpers
 
 import String;
 
+// Amount of typed code in a string
+int TypedChars(str StringToCheck) = size(StringToCheck) - Indent(StringToCheck);
+
+// Amount of blanks before the first character
 int Indent(str StringToCheck)
 {
   StringToCheck = replaceAll(StringToCheck, "\t", "  ");
@@ -16,10 +20,11 @@ int Indent(str StringToCheck)
   return TotalLength;
 }
 
+// Amount of lines in a string
 int LineCount(str StringToCheck)
 {
-  Lines = 1;
-  for(n <- [0 .. size(StringToCheck)], StringToCheck[n] == "\n")
+  Lines = 1; 
+  for(n <- [0 .. size(trim(StringToCheck))], StringToCheck[n] == "\n")
   {
     Lines +=1;
   }
@@ -54,9 +59,12 @@ public str EncodeString(str StringToEncode)
 
 public str DecodeString(str StringToDecode)
 {
-  for(Pair <- reverse(Dictionary))
+  for(Pair <- Dictionary)
   {
     StringToDecode = replaceAll(StringToDecode, Pair.Replace, Pair.Find);
   }
   return StringToDecode;
 }
+
+// Return string snippet between specified bounds. Used First / last strategy
+public str StringToken(str StringToCheck, str FirstOccurrence, str LastOccurrence) = substring(StringToCheck, findFirst(StringToCheck, FirstOccurrence)+1, findLast(StringToCheck, LastOccurrence));

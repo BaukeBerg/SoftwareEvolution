@@ -1,15 +1,9 @@
 module helpers::ListHelpers
 
 import String;
+import List;
 
-bool Contains(list[&T] Items, &T Item)
-{
-  for(ListItem <- Items, Item == ListItem)
-  {
-    return true;
-  }
-  return false; 
-}
+bool Contains(list[&T] Items, &T Item) = -1 != indexOf(Items, Item);
 
 /// Stores list of clones in readable format (as you would expect from println)
 str StoreClones(list[tuple[int SourceLine, list[int] Clones]] ListToStore)
@@ -17,7 +11,7 @@ str StoreClones(list[tuple[int SourceLine, list[int] Clones]] ListToStore)
   str TotalText = "";
   for(Tuple <- ListToStore)
   {
-    TotalText += "<Tuple.SourceLine>$<EncodeListContents(Tuple.Clones)>\n";
+    TotalText += "<Tuple.SourceLine>$<EncodeListContents(Tuple.Clones)>\r\n";
   }
   return TotalText;
 }
@@ -37,7 +31,7 @@ str EncodeListContents(list[int] Items)
 list[tuple[int, list[int]]] LoadClones(str Input)
 {
   list[tuple[int Source, list[int] Clones]] Results = [];
-  list[str] Tokens = split("\n", Input);
+  list[str] Tokens = split("\r\n", Input);
   for(Token <- Tokens)
   {
     list[str] SplittedToken = split("$", Token);
@@ -57,4 +51,14 @@ list[int] DecodeListContents(str ListToEncode)
     Result += toInt(Number);
   }
   return Result; 
+}
+
+list[str] TrimList(list[str] LinesToTrim)
+{
+  list[str] Results = [];
+  for(Line <- LinesToTrim, "" != trim(Line))
+  {
+    Results += trim(Line);
+  }
+  return Results;
 }

@@ -21,5 +21,8 @@ list[tuple[int, list[int]]] SampleClones = [
                                               < 3, [4,6,5] >
                                            ];
                                            
-test bool CheckClonesPrint() = ExpectEqual("1$[1,2,3]\n3$[4,6,5]\n", StoreClones(SampleClones));
+test bool CheckClonesPrint() = ExpectEqual("1$[1,2,3]\r\n3$[4,6,5]\r\n", StoreClones(SampleClones));
 test bool CheckClonesBackAndForth() = ExpectEqual(SampleClones, LoadClones(StoreClones(SampleClones)));
+
+test bool CheckListTrimming() = ExpectEqual(["Hello", "Goodbye"], TrimList(["    \r\n   \t Hello", "Goodbye \n\r\t   "]));
+test bool CheckListTrimmingRemoveEmptyLines() = ExpectEqual(["Hello", "Goodbye"], TrimList(["    \r\n   \t Hello", "              ", "Goodbye \n\r\t   "]));

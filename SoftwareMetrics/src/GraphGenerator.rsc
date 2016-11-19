@@ -31,9 +31,6 @@ public Color DetermineColour(num RelativeHeight)
   else
   {
     Red = 255 - Distance;
-  }
-  // Completely Red = FF0000 => 256 steps red
-  // Completely Green = 00FF00 => 256 steps green
-  // Completely Yellow = FFFF00 => 256 steps green + 256 steps yellow 512 steps in total
+  }  
   return rgb(Red, Green, 0);
 }
