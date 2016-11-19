@@ -11,7 +11,7 @@ str StoreClones(list[tuple[int SourceLine, list[int] Clones]] ListToStore)
   str TotalText = "";
   for(Tuple <- ListToStore)
   {
-    TotalText += "<Tuple.SourceLine>$<EncodeListContents(Tuple.Clones)>\n";
+    TotalText += "<Tuple.SourceLine>$<EncodeListContents(Tuple.Clones)>\r\n";
   }
   return TotalText;
 }
@@ -31,7 +31,7 @@ str EncodeListContents(list[int] Items)
 list[tuple[int, list[int]]] LoadClones(str Input)
 {
   list[tuple[int Source, list[int] Clones]] Results = [];
-  list[str] Tokens = split("\n", Input);
+  list[str] Tokens = split("\r\n", Input);
   for(Token <- Tokens)
   {
     list[str] SplittedToken = split("$", Token);

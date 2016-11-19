@@ -12,11 +12,11 @@ public str CloseTable() = "\</Table\>";
 public str OpenRow() = "\<tr\>";
 public str OpenColumn() = "\<td\>";
 public str CloseColumn() = "\</td\>";
-public str CloseRow() = "\</tr\>\n"; // Newline added for Html reading convenience
+public str CloseRow() = "\</tr\>\r\n"; // Newline added for Html reading convenience
 
 
 
-public str HtmlPrint(str Input) = replaceAll(Input, "\n", "\<br\>");
+public str HtmlPrint(str Input) = replaceAll(Input, "\r\n", "\<br\>");
 
 // Composed functions
 public str RowWithValue(str Name, str Value) = RowWithValues([Name, Value]);

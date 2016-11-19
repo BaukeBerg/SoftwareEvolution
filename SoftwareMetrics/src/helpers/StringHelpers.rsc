@@ -2,6 +2,10 @@ module \helpers::StringHelpers
 
 import String;
 
+// Amount of typed code in a string
+int TypedChars(str StringToCheck) = size(StringToCheck) - Indent(StringToCheck);
+
+// Amount of blanks before the first character
 int Indent(str StringToCheck)
 {
   StringToCheck = replaceAll(StringToCheck, "\t", "  ");
@@ -16,10 +20,11 @@ int Indent(str StringToCheck)
   return TotalLength;
 }
 
+// Amount of lines in a string
 int LineCount(str StringToCheck)
 {
   Lines = 1;
-  for(n <- [0 .. size(StringToCheck)], StringToCheck[n] == "\n")
+  for(n <- [0 .. size(StringToCheck)], StringToCheck[n] == "\r\n")
   {
     Lines +=1;
   }
