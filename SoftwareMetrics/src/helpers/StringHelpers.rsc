@@ -65,3 +65,6 @@ public str DecodeString(str StringToDecode)
   }
   return StringToDecode;
 }
+
+// Return string snippet between specified bounds. Used First / last strategy
+public str StringToken(str StringToCheck, str FirstOccurrence, str LastOccurrence) = substring(StringToCheck, findFirst(StringToCheck, FirstOccurrence)+1, findLast(StringToCheck, LastOccurrence));

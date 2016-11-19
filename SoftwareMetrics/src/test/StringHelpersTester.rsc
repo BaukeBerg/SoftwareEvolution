@@ -16,3 +16,5 @@ test bool TestEncoding() = ExpectEqual("БЖД", EncodeString("publicstaticStrin
 test bool TestDecoding() = ExpectEqual("publicstaticString", DecodeString("БЖД"));
 
 test bool TestTrimAssumption() = ExpectEqual("Hallo", trim("\n\r\t   Hallo\n\r\t"));
+
+test bool TestStringPart() = ExpectEqual("Substring", StringToken("{Substring}", "{", "}"));
