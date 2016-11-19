@@ -33,5 +33,15 @@ str ExtractMethodDeclaration(loc FunctionBody)
 }
 
 int MethodSize(loc MethodToCheck) = MethodSize(readFile(MethodToCheck));
-int MethodSize(str MethodToCount) = LineCount(MethodBody(MethodToCount));
+int MethodSize(str MethodToCount)
+{
+  list[str] Lines = split("\r\n", MethodBody(MethodToCount));
+  int LineCount = 0;
+  for(Line <- Lines, (trim(Line) != "") && (false == startsWith(trim(Line), "//")))
+  {
+    LineCount += 1;
+  }
+  return LineCount; 
+}
 str MethodBody(str InputData) = trim(StringToken(InputData, "{", "}"));
+

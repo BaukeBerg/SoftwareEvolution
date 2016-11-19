@@ -3,6 +3,8 @@ module \test::JavaHelpersTests
 import \helpers::JavaHelpers;
 import \helpers::TestHelpers;
 
+import CalculateCC;
+
 test bool TestFullClassPath() = ExpectEqual("smallsql/database/Columns", GetFullClassPath(|project://SoftwareMetrics/sampleFiles/smallsql/database/Columns.java|));
 test bool TestClassName() = ExpectEqual("Columns", GetClassName(|project://SoftwareMetrics/sampleFiles/smallsql/database/Columns.java|));
 
@@ -27,3 +29,10 @@ str SampleBody = "this.con = con;\r\n"
                     
 test bool TestMethodSize() = ExpectEqual(7, MethodSize(SampleMethod));
 test bool TestMethodBody() = ExpectEqual(SampleBody, MethodBody(SampleMethod));
+
+test bool TestLineCountForFile()
+{
+  lrel[loc MethodLocation, int CyclomaticComplexity] FileComplexity = CyclomaticComplexity(|project://SoftwareMetrics/sampleFiles/clonedetection/SigSamples.java|);
+  return ExpectEqual(7, MethodSize(FileComplexity[0].MethodLocation));
+}
+
