@@ -4,6 +4,7 @@ import IO;
 import String;
 
 import \helpers::StringHelpers;
+import \helpers::ListHelpers;
 
 /// Extracts classname from file location
 str GetFullClassPath(loc FileToCheck)
@@ -35,13 +36,16 @@ str ExtractMethodDeclaration(loc FunctionBody)
 int MethodSize(loc MethodToCheck) = MethodSize(readFile(MethodToCheck));
 int MethodSize(str MethodToCount)
 {
-  list[str] Lines = split("\r\n", MethodBody(MethodToCount));
+  list[str] Lines = TrimList(split("\r\n", MethodBody(MethodToCount)));
   int LineCount = 0;
-  for(Line <- Lines, (trim(Line) != "") && (false == startsWith(trim(Line), "//")))
+  for(Line <- Lines, false == SingleLineComment(Line))
   {
     LineCount += 1;
   }
   return LineCount; 
 }
+
 str MethodBody(str InputData) = trim(StringToken(InputData, "{", "}"));
 
+bool SingleLineComment(str LineToCheck) = ((true == startsWith(LineToCheck, "//"))
+                           || (true == startsWith(LineToCheck, "/*") && (true == endsWith(LineToCheck, "*/"))));

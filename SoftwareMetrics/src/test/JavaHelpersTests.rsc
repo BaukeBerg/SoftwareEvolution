@@ -36,3 +36,5 @@ test bool TestLineCountForFile()
   return ExpectEqual(7, MethodSize(FileComplexity[0].MethodLocation));
 }
 
+test bool ExpectSingleLineComment() = SingleLineComment("// Hello");
+test bool ExpectSingleLineStreamComment() = SingleLineComment("/* Goodbye */");
