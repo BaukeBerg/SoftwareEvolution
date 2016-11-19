@@ -1,15 +1,9 @@
 module helpers::ListHelpers
 
 import String;
+import List;
 
-bool Contains(list[&T] Items, &T Item)
-{
-  for(ListItem <- Items, Item == ListItem)
-  {
-    return true;
-  }
-  return false; 
-}
+bool Contains(list[&T] Items, &T Item) = -1 != indexOf(Items, Item);
 
 /// Stores list of clones in readable format (as you would expect from println)
 str StoreClones(list[tuple[int SourceLine, list[int] Clones]] ListToStore)
