@@ -52,3 +52,13 @@ list[int] DecodeListContents(str ListToEncode)
   }
   return Result; 
 }
+
+list[str] TrimList(list[str] LinesToTrim)
+{
+  list[str] Results = [];
+  for(Line <- LinesToTrim)
+  {
+    Results += trim(Line);
+  }
+  return Results;
+}
