@@ -17,4 +17,8 @@ test bool TestDecoding() = ExpectEqual("publicstaticString", DecodeString("БЖ�
 
 test bool TestTrimAssumption() = ExpectEqual("Hallo", trim("\n\r\t   Hallo\n\r\t"));
 
-test bool TestStringPart() = ExpectEqual("Substring", StringToken("{Substring}", "{", "}"));
+test bool TestStringToken() = ExpectEqual("Substring", StringToken("{Substring}", "{", "}"));
+
+str InlineCommentString = "Hello/*InlineComment*/GoodBye";
+
+test bool TestClipString() = ExpectEqual("HelloGoodBye", ClipString(InlineCommentString, "/*", "*/"));
