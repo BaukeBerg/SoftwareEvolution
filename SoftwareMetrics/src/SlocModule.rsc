@@ -146,9 +146,11 @@ public TStaticMetrics ScanJavaFile(loc FileToCheck)
     }    
   } 
   Metrics.MaxIndent = MaxIndent;
-  writeFile(|project://SoftwareMetrics/output/sanitizedsql/<toLowerCase(GetClassName(Metrics.FileName))>|, SanitizedText+"\n");
+  writeFile(|project://SoftwareMetrics/output/sanitizedsql/<EscapePath(Metrics.FileName)>|, SanitizedText+"\n");
   return Metrics;
 }
+
+str EscapePath(str InputPath) = replaceAll(InputPath, "/sampleFiles" ,"");
 
 str Sanitize(str StringToSanitize)
 {

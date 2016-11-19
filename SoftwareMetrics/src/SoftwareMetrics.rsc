@@ -30,7 +30,8 @@ void DetermineSoftwareMetrics()
     {
       UnitSizes[UnitSizeIndex(JavaMethod.Length)] +=1;
       UnitComplexity[UnitComplexityIndex(JavaMethod.Complexity)] += 1;
-    }      
+    }
+    println(File.path);      
   }
   println("Volume size: <TotalSize> Rating: <VolumeScore(TotalSize)>");
   println("Unit size distribution: <UnitSizes>, Rating: <UnitSizeScore(UnitSizes)>");
