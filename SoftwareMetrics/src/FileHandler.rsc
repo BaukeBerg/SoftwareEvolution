@@ -36,3 +36,12 @@ list[str] MonsterFile(loc FileFolder)
 	writeFile(|project://SoftwareMetrics/output/bulk/monsterFile.java|, lines);
 	return readFileLines(|project://SoftwareMetrics/output/bulk/monsterFile.java|);
 }
+
+void ResetFile(loc File)
+{
+  if(true == exists(File))
+  {
+    writeFile(File, "");
+  }
+}
+void AppendToFile(loc File, str Text) = exists(File) ? appendToFile(File, Text) : writeFile(File, Text);
