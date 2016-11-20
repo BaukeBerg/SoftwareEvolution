@@ -10,14 +10,14 @@ import \helpers::HtmlHelpers; // Used for Html creation
 
 import SigScores;
 import DateTime;
-//str ProjectName = "smallsql";
-str ProjectName = "hsqldb";
+
+str ProjectName = "smallsql";
+//str ProjectName = "hsqldb";
 
 loc RootLocation() = toLocation("project://SoftwareMetrics/output/<ProjectName>");
 
 void DetermineSoftwareMetrics()
 {
-
   StartTime = now();
   list[loc] FilesToParse = EnumerateDirFiles(ProjectName);
   list[int] UnitSizes = [0,0,0,0];
@@ -33,9 +33,9 @@ void DetermineSoftwareMetrics()
     }
     println(File.path);      
   }
-  println("Volume size: <TotalSize> Rating: <VolumeScore(TotalSize)>");
-  println("Unit size distribution: <UnitSizes>, Rating: <UnitSizeScore(UnitSizes)>");
-  println("Unit complexity distribution <UnitComplexity>, Rating: <UnitComplexityScore(UnitComplexity)>");
+  println("Volume size: <TotalSize> Rating: <StarRating(VolumeScore(TotalSize))>");
+  println("Unit size distribution: <UnitSizes>, Rating: <StarRating(UnitSizeScore(UnitSizes))>");
+  println("Unit complexity distribution <UnitComplexity>, Rating: <StarRating(UnitComplexityScore(UnitComplexity))>");
   println("Duration: <createDuration(StartTime, now())>");
 }
 
