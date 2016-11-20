@@ -1,6 +1,8 @@
 module SigScores
 
 import List;
+import String;
+
 import \helpers::MathHelpers;
 
 public int VolumeScore(int SLOC) = ReturnScore(SLOC, [66000,246000,655000,1310000]);
@@ -19,11 +21,11 @@ int EvaluateDistribution(list[int] Distribution)
   int MediumRisk = Distribution[1]; 
   if((5 <= VeryHighRisk) || (15 <= HighRisk) || (50 <= MediumRisk))
   {
-    return 0;
+    return 4;
   }  
   else if((0 != VeryHighRisk) || (10 <= HighRisk) || (40 <= MediumRisk))
   {
-    return 1;
+    return 3;
   }  
   else if((5 <= HighRisk) || (30 <= MediumRisk)) 
   {
@@ -31,9 +33,9 @@ int EvaluateDistribution(list[int] Distribution)
   }
   else if((0 != HighRisk) || (25 <= MediumRisk))
   {
-    return 3;
+    return 1;
   }
-  return 4;    
+  return 0;    
 }
 
 int ReturnScore(int Actual, list[int] Bounds)
@@ -41,7 +43,20 @@ int ReturnScore(int Actual, list[int] Bounds)
   int Amount = size(Bounds);
   for(n <- [0 .. Amount], Actual <= Bounds[n])
   {
-    return Amount-n;    
+    return n;    
   }
-  return 0;
+  return Amount;
 }
+
+str StarRating(int Score)
+{
+  str Rating = "★★★★★";
+  Score = Limit(0, Score, 4);
+  for(n <- [0 .. Score])
+  {
+    Rating = replaceLast(Rating, "★", "☆");
+  }
+  return Rating;
+}  
+      
+
