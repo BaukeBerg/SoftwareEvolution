@@ -38,52 +38,66 @@ list [tuple[int, list[int]]] DetectClones(list[str] FileLines, int MaxLineAmount
 
 void t1()
 {
+	list [tuple[list[int], list[list[int]]]] CloneStorage = [];
 	list [tuple[int, list[int]]] ListOfDuplications = DetectClones(|project://SoftwareMetrics/sampleFiles/clonedetection/Clone2.java|, 20);
 	int minCloneLength = 5;
 	int startPoint = 0;
-	int cloneStartPoint = 0;
-	int cloneEndPoint = 0;
+	int cloneStartPoint = -1;
+	int cloneEndPoint = -1;
+	bool initCloneFound = false;
+	bool minCloneLinesFound = false;
+	bool maxCloneLinesFound = false;
 	
-	list[int] tmpItems = ListOfDuplications[startPoint][1];
-	bool found = false;
-	while(!isEmpty(tmpItems) && !found)
+	for(item <- ListOfDuplications[startPoint][1])
 	{
-		if(Contains(ListOfDuplications[startPoint + minCloneLength][1], tmpItems[0] + (minCloneLength)))
+		item += minCloneLength;
+		if(Contains(ListOfDuplications[startPoint + minCloneLength][1], item))
 		{
-			found = true;
+			initCloneFound = true;
+			break;
 		}
-		tmpItems = drop(1, tmpItems);
 	}
 	
-	if(found)
+	if(initCloneFound)
 	{
 		cloneStartPoint = ListOfDuplications[startPoint][0];
-		bool minReqCloneLines = true;
-		for(decrease <- [minCloneLength-1 .. 0], 
-				item <- ListOfDuplications[startPoint][1],
-				minReqCloneLines)
+		minCloneLinesFound = true;
+		for(decrease <- [minCloneLength-1 .. 0])
 		{
-			if(!Contains(ListOfDuplications[startPoint + decrease][1], (item + decrease)))
+			for(item <- ListOfDuplications[startPoint][1])
 			{
-				minReqCloneLines = false;
-			}
-		}
-		
-		if(minReqCloneLines)
-		{
-			cloneEndPoint = ListOfDuplications[startPoint + minCloneLength][0];
-			bool match = true;
-			for(increase <- [minCloneLength+1 .. size(ListOfDuplications) - (minCloneLength+1)],
-					item <- ListOfDuplications[startPoint][1],
-					match)
-			{
-				cloneEndPoint = ListOfDuplications[startPoint + increase][0];
-				if(!Contains(ListOfDuplications[startPoint + increase][1], (item + increase)))
+				item += decrease;
+				if(!Contains(ListOfDuplications[startPoint + decrease][1], item))
 				{
-					match = false;
+					minCloneLinesFound = false;
+					break;
 				}
-			}
+			}			
+			if(!minCloneLinesFound) break;
 		}
 	}
-	println("Clone starts at line <cloneStartPoint> and ends at line <cloneEndPoint>");
+
+	if(initCloneFound && minCloneLinesFound)
+	{
+		cloneEndPoint = ListOfDuplications[startPoint + minCloneLength][0];
+		maxCloneLinesFound = true;
+
+		for(increase <- [minCloneLength+1 .. size(ListOfDuplications) - (minCloneLength+1)])
+		{
+			for(item <- ListOfDuplications[startPoint][1])
+			{
+				item += increase;
+				if(!Contains(ListOfDuplications[startPoint + increase][1], item))
+				{
+					maxCloneLinesFound = false;
+					break;
+				}
+			}
+			if(!maxCloneLinesFound) break;
+			cloneEndPoint = ListOfDuplications[startPoint + increase][0];
+		}
+	}
+	
+	CloneStorage += <[cloneStartPoint,cloneEndPoint],[[]]>;
+	println(CloneStorage);
 }
