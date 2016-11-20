@@ -40,9 +40,9 @@ str ExtractMethodDeclaration(loc FunctionBody)
 int MethodSize(loc MethodToCheck) = MethodSize(readFile(MethodToCheck));
 int MethodSize(str MethodToCount)
 {
-  if(-1 == findFirst(MethodToCount, "\r\n"))
+  if(-1 == findFirst(MethodToCount, "{") || -1 == findFirst(MethodToCount, "}"))
   {
-    return 1;
+    return LineCount(MethodToCount);
   }
   list[str] Lines = TrimList(split("\r\n", MethodBody(MethodToCount)));
   Lines = RemoveSingleLineComments(Lines);
@@ -94,7 +94,6 @@ list[str] RemoveBlockComments(list[str] Lines)
     }
     else
     {
-      println("Half a comment found (<Open>,<Close>)!");
       StartOpen = max(Open, Close)+1; // If one was found, move start to maximum of both, to skip half a comment
     }
         
