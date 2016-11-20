@@ -11,8 +11,8 @@ import \helpers::HtmlHelpers; // Used for Html creation
 import SigScores;
 import DateTime;
 
-str ProjectName = "smallsql";
-//str ProjectName = "hsqldb";
+//str ProjectName = "smallsql";
+str ProjectName = "hsqldb";
 
 loc RootLocation() = toLocation("project://SoftwareMetrics/output/<ProjectName>");
 
@@ -23,6 +23,8 @@ void DetermineSoftwareMetrics()
   list[int] UnitSizes = [0,0,0,0];
   list[int] UnitComplexity = [0,0,0,0];
   int TotalSize = 0;
+  ResetFile(|project://SoftwareMetrics/output/MethodLines.java|);
+  ResetFile(|project://SoftwareMetrics/output/failedMethods/MethodList.java|);
   for(File <- FilesToParse)
   {
     TotalSize += ScanJavaFileSloc(File);

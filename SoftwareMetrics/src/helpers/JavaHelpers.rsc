@@ -8,6 +8,7 @@ import \util::Math;
 
 import \helpers::StringHelpers;
 import \helpers::ListHelpers;
+import FileHandler;
 
 /// Extracts classname from file location
 str GetFullClassPath(loc FileToCheck)
@@ -45,7 +46,8 @@ int MethodSize(str MethodToCount)
   }
   list[str] Lines = TrimList(split("\r\n", MethodBody(MethodToCount)));
   Lines = RemoveSingleLineComments(Lines);
-  Lines = RemoveBlockComments(Lines);    
+  Lines = RemoveBlockComments(Lines);
+  //AppendToFile(|project://SoftwareMetrics/output/bulk/MethodLines.java|, JoinList(Lines));    
   return size(Lines);  
 }
 
@@ -76,16 +78,26 @@ str StripComment(str InputLine)
 
 list[str] RemoveBlockComments(list[str] Lines)
 {
-  str TotalData = JoinList(Lines);  
+  str TotalData = JoinList(Lines);
+  int StartOpen = 0;  
   while(true)
   {
-    int Open = CommentOpen(TotalData, 0);
-    int Close = CommentClose(TotalData, Open);    
+    int Open = CommentOpen(TotalData, StartOpen);
+    int Close = CommentClose(TotalData, max(StartOpen,Open));    
     if((-1 == Open) && (-1 == Close))
     {
       break;
-    }    
-    TotalData = ClipString(TotalData, Open, Close+2, GetSplit(substring(TotalData, Open, Close)));    
+    }
+    else if((-1 != Open) && (-1 != Close))
+    {   
+      TotalData = ClipString(TotalData, Open, Close+2, GetSplit(substring(TotalData, Open, Close)));
+    }
+    else
+    {
+      println("Half a comment found (<Open>,<Close>)!");
+      StartOpen = max(Open, Close)+1; // If one was found, move start to maximum of both, to skip half a comment
+    }
+        
   }
   return TrimList(split("\r\n", TotalData));
 } 
@@ -95,7 +107,6 @@ int CommentClose(str Line, int StartPos) = HandleFind(Line, "*/", StartPos);
 
 int HandleFind(str Line, str Find, int StartPos)
 {
-  StartPos = max(0,StartPos);
   Line = substring(Line, StartPos);
   int FoundPos = findFirst(Line, Find);
   if(-1 != FoundPos)
