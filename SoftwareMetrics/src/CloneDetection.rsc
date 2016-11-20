@@ -44,6 +44,8 @@ void t1()
 	int startPoint = 0;
 	int cloneStartPoint = -1;
 	int cloneEndPoint = -1;
+	int copyCloneStartPoint = -1;
+	int copyCloneEndPoint = -1;
 	bool initCloneFound = false;
 	bool minCloneLinesFound = false;
 	bool maxCloneLinesFound = false;
@@ -53,6 +55,8 @@ void t1()
 		item += minCloneLength;
 		if(Contains(ListOfDuplications[startPoint + minCloneLength][1], item))
 		{
+			cloneStartPoint = ListOfDuplications[startPoint][0];
+			copyCloneStartPoint = item - minCloneLength;
 			initCloneFound = true;
 			break;
 		}
@@ -60,12 +64,12 @@ void t1()
 	
 	if(initCloneFound)
 	{
-		cloneStartPoint = ListOfDuplications[startPoint][0];
 		minCloneLinesFound = true;
 		for(decrease <- [minCloneLength-1 .. 0])
 		{
 			for(item <- ListOfDuplications[startPoint][1])
 			{
+				copyCloneEndPoint = item;
 				item += decrease;
 				if(!Contains(ListOfDuplications[startPoint + decrease][1], item))
 				{
@@ -73,13 +77,14 @@ void t1()
 					break;
 				}
 			}			
-			if(!minCloneLinesFound) break;
+			if(!minCloneLinesFound) copyCloneEndPoint = -1; break;
 		}
 	}
 
 	if(initCloneFound && minCloneLinesFound)
 	{
 		cloneEndPoint = ListOfDuplications[startPoint + minCloneLength][0];
+		copyCloneEndPoint += minCloneLength;
 		maxCloneLinesFound = true;
 
 		for(increase <- [minCloneLength+1 .. size(ListOfDuplications) - (minCloneLength+1)])
@@ -95,9 +100,13 @@ void t1()
 			}
 			if(!maxCloneLinesFound) break;
 			cloneEndPoint = ListOfDuplications[startPoint + increase][0];
+			copyCloneEndPoint += 1;
 		}
 	}
 	
-	CloneStorage += <[cloneStartPoint,cloneEndPoint],[[]]>;
-	println(CloneStorage);
+	if(cloneStartPoint != -1 && cloneEndPoint != -1)
+	{
+		CloneStorage += <[cloneStartPoint,cloneEndPoint],[[copyCloneStartPoint, copyCloneEndPoint]]>;
+		println(CloneStorage);
+	}
 }
