@@ -1,7 +1,10 @@
 module \helpers::JavaHelpers
 
 import IO;
+import List;
 import String;
+
+import \util::Math;
 
 import \helpers::StringHelpers;
 import \helpers::ListHelpers;
@@ -36,16 +39,74 @@ str ExtractMethodDeclaration(loc FunctionBody)
 int MethodSize(loc MethodToCheck) = MethodSize(readFile(MethodToCheck));
 int MethodSize(str MethodToCount)
 {
-  list[str] Lines = TrimList(split("\r\n", MethodBody(MethodToCount)));
-  int LineCount = 0;
-  for(Line <- Lines, false == SingleLineComment(Line))
+  if(-1 == findFirst(MethodToCount, "\r\n"))
   {
-    LineCount += 1;
+    return 1;
   }
-  return LineCount; 
+  list[str] Lines = TrimList(split("\r\n", MethodBody(MethodToCount)));
+  Lines = RemoveSingleLineComments(Lines);
+  Lines = RemoveBlockComments(Lines);    
+  return size(Lines);  
 }
 
 str MethodBody(str InputData) = trim(StringToken(InputData, "{", "}"));
 
+list[str] RemoveSingleLineComments(list[str] Lines)
+{
+  list[str] Results = [];
+  for(Line <- Lines, (false == SingleLineComment(Line)))
+  {    
+    Results += StripComment(Line);
+  }
+  return Results; 
+}
+
 bool SingleLineComment(str LineToCheck) = ((true == startsWith(LineToCheck, "//"))
                            || (true == startsWith(LineToCheck, "/*") && (true == endsWith(LineToCheck, "*/"))));
+                           
+str StripComment(str InputLine)
+{
+  int CommentPos = findFirst(InputLine, "//");
+  if(-1 == CommentPos)
+  {
+    return InputLine;
+  }
+  return substring(InputLine, 0, CommentPos);
+}
+
+list[str] RemoveBlockComments(list[str] Lines)
+{
+  str TotalData = JoinList(Lines);  
+  while(true)
+  {
+    int Open = CommentOpen(TotalData, 0);
+    int Close = CommentClose(TotalData, Open);    
+    if((-1 == Open) && (-1 == Close))
+    {
+      break;
+    }    
+    TotalData = ClipString(TotalData, Open, Close+2, GetSplit(substring(TotalData, Open, Close)));    
+  }
+  return TrimList(split("\r\n", TotalData));
+} 
+
+int CommentOpen(str Line, int StartPos) = HandleFind(Line, "/*", StartPos);
+int CommentClose(str Line, int StartPos) = HandleFind(Line, "*/", StartPos);
+
+int HandleFind(str Line, str Find, int StartPos)
+{
+  StartPos = max(0,StartPos);
+  Line = substring(Line, StartPos);
+  int FoundPos = findFirst(Line, Find);
+  if(-1 != FoundPos)
+  {
+    FoundPos += StartPos;
+  }
+  return FoundPos;
+}
+
+str GetSplit(str StringToken)  = HasMultipleLines(StringToken) ? "\r\n" : "" ;
+bool HasMultipleLines(str StringToken) = (-1 != findFirst(StringToken, "\r\n"));
+
+
+                           
