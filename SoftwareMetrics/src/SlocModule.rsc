@@ -10,6 +10,7 @@ import util::Math; // Calc functions
 import \helpers::HtmlHelpers;
 import \helpers::JavaHelpers;
 import \helpers::StringHelpers; // Utility functions for string
+import FileHandler;
 
 
 
@@ -44,12 +45,21 @@ int ScanJavaFileSloc(loc FileToCheck) = ScanJavaFile(FileToCheck).LLOC;
 
 list[tuple[int,int]] ScanJavaFileMethodLengthAndComplexity(loc FileToCheck)
 {
+  loc FailuresFile = |project://SoftwareMetrics/output/failedMethods/MethodList.java|;
   lrel[loc Location, int Complexity] Declarations = CyclomaticComplexity(FileToCheck);
   list[tuple[int,int]] Results = [];
   for(tuple[loc Location, int Complexity] Declaration <- Declarations)
   {
     str MethodDefinition = readFile(Declaration.Location);
-    Results += <LineCount(MethodDefinition), Declaration.Complexity>;
+    try
+    { 
+      Results += <MethodSize(MethodDefinition), Declaration.Complexity>;
+    }
+    catch: 
+    {
+      println("Failed to Calculate\r\n <MethodDefinition>");
+      AppendToFile(FailuresFile, "\r\n----- Failed method ------\r\n<MethodDefinition>");
+    }    
   }
   return Results;  
 }
