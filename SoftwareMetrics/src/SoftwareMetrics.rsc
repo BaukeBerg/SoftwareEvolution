@@ -10,11 +10,14 @@ import \helpers::HtmlHelpers; // Used for Html creation
 
 import SigScores;
 import DateTime;
+import Quotes;
 
 //str ProjectName = "smallsql";
 str ProjectName = "hsqldb";
 
 loc RootLocation() = toLocation("project://SoftwareMetrics/output/<ProjectName>");
+
+int QuoteInterval = 50;
 
 void DetermineSoftwareMetrics()
 {
@@ -25,20 +28,29 @@ void DetermineSoftwareMetrics()
   int TotalSize = 0;
   ResetFile(|project://SoftwareMetrics/output/MethodLines.java|);
   ResetFile(|project://SoftwareMetrics/output/failedMethods/MethodList.java|);
+  int Files = 0;
   for(File <- FilesToParse)
   {
+    Files += 1;
+    if(0 ==  Files % QuoteInterval)
+    {
+      PrintQuote();
+    }
     TotalSize += ScanJavaFileSloc(File);
     for(tuple[int Length, int Complexity] JavaMethod <- ScanJavaFileMethodLengthAndComplexity(File))
     {
       UnitSizes[UnitSizeIndex(JavaMethod.Length)] +=1;
       UnitComplexity[UnitComplexityIndex(JavaMethod.Complexity)] += 1;
-    }
-    println(File.path);      
+    }      
   }
-  println("Volume size: <TotalSize> Rating: <StarRating(VolumeScore(TotalSize))>");
-  println("Unit size distribution: <UnitSizes>, Rating: <StarRating(UnitSizeScore(UnitSizes))>");
-  println("Unit complexity distribution <UnitComplexity>, Rating: <StarRating(UnitComplexityScore(UnitComplexity))>");
+  list[int] TotalResults = [VolumeScore(TotalSize), UnitSizeScore(UnitSizes), 0, UnitComplexityScore(UnitComplexity)];
+  println("Volume size: <TotalSize> Rating: <StarRating(TotalResults[0])>");
+  println("Unit size distribution: <UnitSizes>, Rating: <StarRating(TotalResults[1])>");
+  println("Unit duplication amount ... , Rating: <StarRating(TotalResults[2])>");
+  println("Unit complexity distribution: <UnitComplexity>, Rating: <StarRating(TotalResults[3])>");  
+  println("Total SIG Maintainability score: <TotalResults>, Rating: <StarRating(TotalSigScore(TotalResults))>"); 
   println("Duration: <createDuration(StartTime, now())>");
+  
 }
 
 void GenerateHtmlReporting()

@@ -2,6 +2,7 @@ module \test::SigScoresTester
 
 import SigScores;
 import \helpers::TestHelpers;
+import analysis::statistics::Descriptive;
 
 // Check star rating for VolumeScore
 test bool TestVolumePlusPlus() = ExpectEqual(0, VolumeScore(66000));
@@ -37,3 +38,7 @@ test bool TestSigRatingPlus() = ExpectEqual("★★★★☆", StarRating(1));
 test bool TestSigRatingNeutral() = ExpectEqual("★★★☆☆", StarRating(2));
 test bool TestSigRatingMinus() = ExpectEqual("★★☆☆☆", StarRating(3));
 test bool TestSigRatingMinusMinus() = ExpectEqual("★☆☆☆☆", StarRating(4));
+
+test bool TestAverage() = 2.5 == mean([2, 3]);
+
+

@@ -4,6 +4,8 @@ import List;
 import String;
 
 import \helpers::MathHelpers;
+import \util::Math;
+import analysis::statistics::Descriptive;
 
 public int VolumeScore(int SLOC) = ReturnScore(SLOC, [66000,246000,655000,1310000]);
 public int UnitComplexityIndex(int Complexity) = ReturnScore(Complexity, [10,20,50]);
@@ -12,6 +14,18 @@ public int Duplications(int Dupes) = ReturnScore(Dupes, [3,5,10,20]);
 public int UnitSizeIndex(int Size) = ReturnScore(Size, [10,50,100]);
 public int UnitSizeScore(list[int] Distribution) = EvaluateDistribution(Distribution);
 public int UnitComplexityScore(list[int] Distribution) = EvaluateDistribution(Distribution);
+public int TotalSigScore(list[int] Scores)
+{
+  int Volume = Scores[0];
+  int Complexity = Scores[1];
+  int Duplication = Scores[2];
+  int UnitSize = Scores[3];
+  int Analyzeability = round(mean([Volume, Duplication, UnitSize]));
+  int Changeability = round(mean([Complexity, Duplication]));
+  int Testability = round(mean([Complexity, UnitSize]));
+  return round(mean([Analyzeability, Changeability, Testability]));
+}
+
 
 int EvaluateDistribution(list[int] Distribution)
 {
