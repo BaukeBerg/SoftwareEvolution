@@ -13,10 +13,14 @@ final class SQLParser {
         SQLToken token = nextToken();
         if(token != null){
           // Comment
-          
+        	
         	throw createSyntaxError(token, Language.STXADD_ADDITIONAL_TOK);
         }
         return cmd;
+        /** Multi
+         * 	line
+         *  Comment
+         */
     }	
 	
 }
