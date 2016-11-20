@@ -69,5 +69,7 @@ public str DecodeString(str StringToDecode)
 // Return string snippet between specified bounds. Used First / last strategy
 public str StringToken(str StringToCheck, str FirstOccurrence, str LastOccurrence) = substring(StringToCheck, findFirst(StringToCheck, FirstOccurrence)+1, findLast(StringToCheck, LastOccurrence));
 
-public str ClipString(str StringToClip, str Start, str End) = ClipString(StringToClip, findFirst(StringToClip, Start), findFirst(StringToClip, End) + size(End));
-public str ClipString(str StringToClip, int StartPos, int EndPos) = substring(StringToClip, 0, StartPos) + substring(StringToClip, EndPos);
+public str ClipString(str StringToClip, str Start, str End) = ClipString(StringToClip, findFirst(StringToClip, Start), findFirst(StringToClip, End) + size(End), "");
+public str ClipString(str StringToClip, str Start, str End, str Split) = ClipString(StringToClip, findFirst(StringToClip, Start), findFirst(StringToClip, End) + size(End), Split);
+public str ClipString(str StringToClip, int StartPos, int EndPos) = ClipString(StringToClip, StartPos, EndPos, ""); 
+public str ClipString(str StringToClip, int StartPos, int EndPos, str Split) = substring(StringToClip, 0, StartPos) + Split + substring(StringToClip, EndPos); 

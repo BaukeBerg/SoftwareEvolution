@@ -22,3 +22,4 @@ test bool TestStringToken() = ExpectEqual("Substring", StringToken("{Substring}"
 str InlineCommentString = "Hello/*InlineComment*/GoodBye";
 
 test bool TestClipString() = ExpectEqual("HelloGoodBye", ClipString(InlineCommentString, "/*", "*/"));
+test bool TestClipStringWithSplit() = ExpectEqual("Hello\r\nGoodBye", ClipString(InlineCommentString, "/*", "*/", "\r\n")); 
