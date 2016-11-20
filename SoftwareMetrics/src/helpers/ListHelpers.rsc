@@ -53,6 +53,7 @@ list[int] DecodeListContents(str ListToEncode)
   return Result; 
 }
 
+// Trim away whitespaces and remove empty lines from list
 list[str] TrimList(list[str] LinesToTrim)
 {
   list[str] Results = [];
@@ -61,4 +62,16 @@ list[str] TrimList(list[str] LinesToTrim)
     Results += trim(Line);
   }
   return Results;
+}
+
+// Join list to plain string
+str JoinList(list[str] Lines)
+{
+  str Token = "\r\n";
+  str Result = "";
+  for(Line <- Lines)
+  {
+    Result += Line + Token; 
+  }
+  return replaceLast(Result, Token, "");
 }
