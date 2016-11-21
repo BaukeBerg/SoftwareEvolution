@@ -1,0 +1,31 @@
+// Using lookahead, 
+// This is the case for this sample file. It has 14 cloned lines.
+// Should return 14 cloned lines
+Line One
+Line Two
+Line Three
+Line Four
+Line Five
+Line Six
+Line One
+Line Two
+Line Three
+Line Four
+Line Five
+Line Six
+Line Seven
+Line Eight
+Line One
+Line Two
+Line Three
+Line Four
+Line Five
+Line Six
+Line One
+Line Two
+Line Three
+Line Four
+Line Five
+Line Six
+Line Seven
+Line Eight
