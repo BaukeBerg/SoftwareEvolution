@@ -16,3 +16,12 @@ list[int] CreateDistribution(list[int] Numbers)
   }
   return Distribution;
 }
+
+num Fraction(int Numerator, int Denominator)
+{
+  num NumNumerator = Numerator;
+  num NumDenominator = Denominator;
+  return NumNumerator / NumDenominator;
+}
+
+int Percentage(int Amount, int Total) = toInt(100.0 * Fraction(Amount, Total));
