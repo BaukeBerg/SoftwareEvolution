@@ -5,7 +5,7 @@ import List;
 
 import \helpers::MathHelpers;
 
-list[int] GetClones(loc FileToCheck)
+list[tuple[int Start, int Size]] GetClones(loc FileToCheck)
 {
   int MinimumLineNumber = 0;
   list[str] Lines = readFileLines(FileToCheck);  
