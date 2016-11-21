@@ -26,9 +26,9 @@ str GetClones(loc FileToCheck)
   }
   int PercentOfClones = ClonesPercentage(Clones,FileSize);
   iprintln("List of clones: <Clones>");
-  iprintln("Percentage Clones: <ClonesPercentage>%, Rating: <StarRating(PercentOfClones)>");
-  return "Done!";
+  iprintln("Percentage Clones: <PercentOfClones>%, Rating: <StarRating(PercentOfClones)>");
   println("Duration: <createDuration(StartTime, now())>");
+  return "Done!"; 
 }
 
 // If a line is already included in a clone, skip dupe checking
