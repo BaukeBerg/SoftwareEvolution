@@ -3,14 +3,16 @@ module CloneAlgorithm
 import IO;
 import List;
 
+import \helpers::MathHelpers;
+
 list[int] GetClones(loc FileToCheck)
 {
   int MinimumLineNumber = 0;
   list[str] Lines = readFileLines(FileToCheck);  
   println("File size: <size(Lines)> lines");
   // Skip the curlies, since they're never assumed start of a clone!
-  list[int] Clones = [];
-  for(LineNumber <- [0 .. size(Lines)])
+  list[tuple[int Start, int Size]] Clones = [];
+  for(LineNumber <- [0 .. size(Lines)], RequiresInvestigation(Clones, LineNumber))
   {
     if(true == ValidCloneStart(Lines[LineNumber]))
     {
@@ -19,6 +21,17 @@ list[int] GetClones(loc FileToCheck)
     }
   }
   return Clones;
+}
+
+// If a line is already included in a clone, skip dupe checking
+bool RequiresInvestigation(Clones, LineNumber)
+{
+  for(Clone <- Clones, InLimits(Clone.Start, LineNumber, Clone.Start + Clone.Size))
+  {
+    println("Skipping line <LineNumber>, already part of a clone! (<Clone.Start>, <Clone.Size>)");
+    return false;
+  }
+  return true;
 }
 
 bool ValidCloneStart(str CurrentLine) = "}" != CurrentLine ;
@@ -36,14 +49,14 @@ list[int] GetDuplicates(list[str] Lines, int LineNumber)
 
 int CloneSize = 6;
 
-list[int] EvaluateClones(list[str] Lines, int LineNumber, list[int] Dupes)
+list[tuple[int LineNumber, int Size]] EvaluateClones(list[str] Lines, int LineNumber, list[int] Dupes)
 {
-  list[int] Clones = [];
+  list[tuple[int LineNumber, int Size]] Clones = [];
   for(Dupe <- Dupes)
   {
     if(true == MinimumCloneSizeReached(Lines, LineNumber, Dupe))
     {
-      Clones += CalcCloneSize(Lines, LineNumber, Dupe);
+      Clones += <Dupe, CalcCloneSize(Lines, LineNumber, Dupe)>;
     }
   }
   return Clones;
