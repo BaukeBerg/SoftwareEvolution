@@ -4,15 +4,18 @@ import IO;
 import List;
 
 import \helpers::MathHelpers;
+import SigScores;
 
-list[tuple[int Start, int Size]] GetClones(loc FileToCheck)
+str GetClones(loc FileToCheck)
 {
-  int MinimumLineNumber = 0;
+  StartTime = now();
   list[str] Lines = readFileLines(FileToCheck);  
-  println("File size: <size(Lines)> lines");
+  int FileSize = size(Lines);
+  println("File size: <FileSize> lines");
+  
   // Skip the curlies, since they're never assumed start of a clone!
   list[tuple[int Start, int Size]] Clones = [];
-  for(LineNumber <- [0 .. size(Lines)], RequiresInvestigation(Clones, LineNumber))
+  for(LineNumber <- [0 .. FileSize], RequiresInvestigation(Clones, LineNumber))
   {
     if(true == ValidCloneStart(Lines[LineNumber]))
     {
@@ -20,7 +23,11 @@ list[tuple[int Start, int Size]] GetClones(loc FileToCheck)
       Clones += EvaluateClones(Lines, LineNumber, Dupes);
     }
   }
-  return Clones;
+  int PercentOfClones = ClonesPercentage(Clones,FileSize);
+  iprintln("List of clones: <Clones>");
+  iprintln("Percentage Clones: <ClonesPercentage>%, Rating: <StarRating(PercentOfClones)>");
+  return "Done!";
+  println("Duration: <createDuration(StartTime, now())>");
 }
 
 // If a line is already included in a clone, skip dupe checking
@@ -69,7 +76,6 @@ bool MinimumCloneSizeReached(list[str] Lines, int LineNumber, int CloneLine)
   {
     return false;
   }
-  println("Minimum clone size reached!");
   return true;
 }
 
@@ -86,4 +92,13 @@ int CalcCloneSize(list[str] Lines, int LineNumber, int CloneLine)
 
 bool EndOfCloneReached(list[str] Lines, int LineNumber, int CloneLine) = (size(Lines) <= CloneLine) || (Lines[LineNumber] != Lines[CloneLine]);
 
+int ClonesPercentage(list[tuple[int Start, int Size]] Clones, num TotalLines)
+{
+  int ClonedLines = 0;
+  for(Clone <- Clones)
+  {
+    ClonedLines += Clone.Size;
+  }
+  return Percentage(ClonedLines, TotalLine);
+}
 
