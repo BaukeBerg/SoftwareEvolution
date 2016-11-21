@@ -1,5 +1,6 @@
 module CloneAlgorithm
 
+import DateTime;
 import IO;
 import List;
 
@@ -99,6 +100,6 @@ int ClonesPercentage(list[tuple[int Start, int Size]] Clones, num TotalLines)
   {
     ClonedLines += Clone.Size;
   }
-  return Percentage(ClonedLines, TotalLine);
+  return Percentage(ClonedLines, TotalLines);
 }
 
