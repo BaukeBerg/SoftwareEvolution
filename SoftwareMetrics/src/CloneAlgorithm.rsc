@@ -8,43 +8,35 @@ import SigScores;
 import \helpers::MathHelpers;
 import \util::Math;
 
-int GetClones(loc FileToCheck)
+alias TCloneList = list[TClone];
+alias TClone = tuple[int Start, int Size];
+
+int GetClones(loc FileToCheck) = GetClones(readFileLines(FileToCheck));
+
+int GetClones(list[str] Lines) 
 {
-  StartTime = now();
-  list[str] Lines = readFileLines(FileToCheck);  
+  StartTime = now();    
   int FileSize = size(Lines);
   println("File size: <FileSize> lines");
   
   // Skip the curlies, since they're never assumed start of a clone!
-  list[tuple[int Start, int Size]] Clones = [];
-  
+  TCloneList Clones = [];  
   int LineNumber = 0;
   while(LineNumber < FileSize)
   {
-    if((true == RequiresInvestigation(Clones, LineNumber))
-    && (true == ValidCloneStart(Lines[LineNumber])))    
+    if(true == ValidCloneStart(Lines[LineNumber]))    
     {
-      println("<LineNumber> Contains valid clone");
       list[int] Dupes = GetDuplicates(Lines, LineNumber);
       println("Found <size(Dupes)> duplicates");
-      Clones += EvaluateClones(Lines, LineNumber, Dupes);
-      LineNumber += LineIncrement(Clones);
+      TCloneList CurrentLineClones = EvaluateClones(Clones, Lines, LineNumber, Dupes);
+      LineNumber += LineIncrement(CurrentLineClones);
+      Clones += CurrentLineClones;
       println("LineNumber is now <LineNumber>");
       continue;      
     }
     LineNumber += 1;
   }
   return ClonedLines(Clones);
-}
-// If a line is already included in a clone, skip dupe checking
-bool RequiresInvestigation(Clones, LineNumber)
-{
-  for(Clone <- Clones, InLimits(Clone.Start, LineNumber, Clone.Start + Clone.Size))
-  {
-    println("Skipping line <LineNumber>, already part of a clone! (<Clone.Start>, <Clone.Size>)");
-    return false;
-  }
-  return true;
 }
 
 bool ValidCloneStart(str CurrentLine) = "}" != CurrentLine ;
@@ -62,17 +54,47 @@ list[int] GetDuplicates(list[str] Lines, int LineNumber)
 
 int CloneSize = 6;
 
-list[tuple[int LineNumber, int Size]] EvaluateClones(list[str] Lines, int LineNumber, list[int] Dupes)
+TCloneList EvaluateClones(TCloneList Clones, list[str] Lines, int LineNumber, list[int] Dupes)
 {
-  list[tuple[int LineNumber, int Size]] Clones = [];
+  // Make Some smart algorithm of cross referencing the lines!
+  if(true == AlreadyPartOfClone(Clones, LineNumber))
+  {
+    return [<0,0>];
+  }
+
+  TCloneList Clones = [];
   for(Dupe <- Dupes)
   {
     if(true == MinimumCloneSizeReached(Lines, LineNumber, Dupe))
     {
-      Clones += <Dupe, CalcCloneSize(Lines, LineNumber, Dupe)>;
+      TClone NewClone = <Dupe, CalcCloneSize(Lines, LineNumber, Dupe)>;
+      int SizeDifference = GetDiffWithPreviousClone(Clones, LineNumber);      
+      NewClone.Start += SizeDifference;
+      NewClone.Size -= SizeDifference;            
+      Clones += NewClone;
     }
   }
   return Clones;
+}
+
+bool AlreadyPartOfClone(TCloneList Clones, int LineNumber)
+{
+  for(Clone <- Clones, InLimits(Clone.Start, LineNumber, Clone.Start + Clone.Size))
+  {
+    return true;
+  }
+  return false;
+}
+
+int GetDiffWithPreviousClone(TCloneList Clones, int LineNumber)
+{
+  println("Checking previous clones for line number <LineNumber>");
+  for(Clone <- Clones, InLimits(Clone.Start, LineNumber, Clone.Start + Clone.Size))
+  {
+    println("Part of other clone, that one was <Clone.size> Lines Long!");
+    Clone.Size;
+  }
+  return 0;
 }
 
 bool MinimumCloneSizeReached(list[str] Lines, int LineNumber, int CloneLine)
@@ -97,7 +119,7 @@ int CalcCloneSize(list[str] Lines, int LineNumber, int CloneLine)
   return MaxLine;
 }
 
-int LineIncrement(list[tuple[int Start, int Size]] Clones)
+int LineIncrement(TCloneList Clones)
 {
   int TotalLineIncrement = 1;
   for(Clone <- Clones)
@@ -112,9 +134,9 @@ bool EndOfCloneReached(list[str] Lines, int LineNumber, int CloneLine) = (size(L
 bool CodeOverlapsClone(int Count, int Distance) = (Count >= Distance);
 
 
-int ClonesPercentage(list[tuple[int Start, int Size]] Clones, num TotalLines) = Percentage(ClonedLines(Clones), TotalLines);
+int ClonesPercentage(TCloneList Clones, num TotalLines) = Percentage(ClonedLines(Clones), TotalLines);
 
-int ClonedLines(list[tuple[int Start, int Size]] Clones)
+int ClonedLines(TCloneList Clones)
 {
   int TotalLines = 0;
   for(Clone <- Clones)
