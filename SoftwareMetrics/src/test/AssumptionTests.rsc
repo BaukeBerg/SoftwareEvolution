@@ -37,6 +37,17 @@ int Two = 2;
 
 test bool TestIntegerDivision() = ExpectEqual(2, Five / Two);
 
+test bool AssumeIteratorIncrementing()
+{
+  int Loops = 0;
+  for(n <- [0 .. 10])
+  {
+    Loops += 1; 
+    n += 10; // Manipulating Loop Counter does not work!
+  }
+  return ExpectEqual(10, Loops);
+}
+
 
 
 

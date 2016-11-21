@@ -3,11 +3,12 @@ module CloneAlgorithm
 import DateTime;
 import IO;
 import List;
-
-import \helpers::MathHelpers;
 import SigScores;
 
-str GetClones(loc FileToCheck)
+import \helpers::MathHelpers;
+import \util::Math;
+
+int GetClones(loc FileToCheck)
 {
   StartTime = now();
   list[str] Lines = readFileLines(FileToCheck);  
@@ -16,21 +17,25 @@ str GetClones(loc FileToCheck)
   
   // Skip the curlies, since they're never assumed start of a clone!
   list[tuple[int Start, int Size]] Clones = [];
-  for(LineNumber <- [0 .. FileSize], RequiresInvestigation(Clones, LineNumber))
+  
+  int LineNumber = 0;
+  while(LineNumber < FileSize)
   {
-    if(true == ValidCloneStart(Lines[LineNumber]))
+    if((true == RequiresInvestigation(Clones, LineNumber))
+    && (true == ValidCloneStart(Lines[LineNumber])))    
     {
+      println("<LineNumber> Contains valid clone");
       list[int] Dupes = GetDuplicates(Lines, LineNumber);
+      println("Found <size(Dupes)> duplicates");
       Clones += EvaluateClones(Lines, LineNumber, Dupes);
+      LineNumber += LineIncrement(Clones);
+      println("LineNumber is now <LineNumber>");
+      continue;      
     }
+    LineNumber += 1;
   }
-  int PercentOfClones = ClonesPercentage(Clones,FileSize);
-  iprintln("List of clones: <Clones>");
-  iprintln("Percentage Clones: <PercentOfClones>%, Rating: <StarRating(PercentOfClones)>");
-  println("Duration: <createDuration(StartTime, now())>");
-  return "Done!"; 
+  return ClonedLines(Clones);
 }
-
 // If a line is already included in a clone, skip dupe checking
 bool RequiresInvestigation(Clones, LineNumber)
 {
@@ -83,7 +88,8 @@ bool MinimumCloneSizeReached(list[str] Lines, int LineNumber, int CloneLine)
 int CalcCloneSize(list[str] Lines, int LineNumber, int CloneLine)
 {
   int MaxLine = size(Lines);
-  for(n <- [CloneSize .. size(Lines)], EndOfCloneReached(Lines, LineNumber+n, CloneLine+n))
+  int Distance = CloneLine - LineNumber; // Distance between dupes
+  for(n <- [CloneSize .. size(Lines)], CodeOverlapsClone(n, Distance) || (EndOfCloneReached(Lines, LineNumber+n, CloneLine+n)))
   {
     println("Clone of <n> Lines");
     return n;
@@ -91,15 +97,30 @@ int CalcCloneSize(list[str] Lines, int LineNumber, int CloneLine)
   return MaxLine;
 }
 
-bool EndOfCloneReached(list[str] Lines, int LineNumber, int CloneLine) = (size(Lines) <= CloneLine) || (Lines[LineNumber] != Lines[CloneLine]);
-
-int ClonesPercentage(list[tuple[int Start, int Size]] Clones, num TotalLines)
+int LineIncrement(list[tuple[int Start, int Size]] Clones)
 {
-  int ClonedLines = 0;
+  int TotalLineIncrement = 1;
   for(Clone <- Clones)
   {
-    ClonedLines += Clone.Size;
+    TotalLineIncrement = max(TotalLineIncrement, Clone.Size);
   }
-  return Percentage(ClonedLines, TotalLines);
+  println("Largest Clone: <TotalLineIncrement>");
+  return TotalLineIncrement;
+}
+
+bool EndOfCloneReached(list[str] Lines, int LineNumber, int CloneLine) = (size(Lines) <= CloneLine) || (Lines[LineNumber] != Lines[CloneLine]);
+bool CodeOverlapsClone(int Count, int Distance) = (Count >= Distance);
+
+
+int ClonesPercentage(list[tuple[int Start, int Size]] Clones, num TotalLines) = Percentage(ClonedLines(Clones), TotalLines);
+
+int ClonedLines(list[tuple[int Start, int Size]] Clones)
+{
+  int TotalLines = 0;
+  for(Clone <- Clones)
+  {
+    TotalLines += Clone.Size;
+  }
+  return TotalLines;    
 }
 
