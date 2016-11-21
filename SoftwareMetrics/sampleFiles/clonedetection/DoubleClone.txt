@@ -1,6 +1,7 @@
 // Double Clone, This is more difficult, since a faulty algorithm will hit the clones twice and count stuff as dupes!
 // Besides that, since there are no other lines in between, line one will match 7. However, since 15 also matches, it might
 // Just slice over the second part, counting the start of the clone as the tail of the original!
+// Should return 12 cloned lines
 Line One
 Line Two
 Line Three

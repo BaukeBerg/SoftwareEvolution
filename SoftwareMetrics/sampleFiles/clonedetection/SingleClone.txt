@@ -1,4 +1,5 @@
 // Single Clone, very easy, since it only has to iterate over the thing once.
+// Should return 6 cloned lines
 Line One
 Line Two
 Line Three
