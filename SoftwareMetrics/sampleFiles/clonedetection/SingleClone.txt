@@ -1,0 +1,13 @@
+// Single Clone, very easy, since it only has to iterate over the thing once.
+Line One
+Line Two
+Line Three
+Line Four
+Line Five
+Line Six
+Line One
+Line Two
+Line Three
+Line Four
+Line Five
+Line Six
