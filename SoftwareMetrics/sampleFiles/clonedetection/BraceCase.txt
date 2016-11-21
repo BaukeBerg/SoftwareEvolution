@@ -1,0 +1,39 @@
+// Simple file to test resistance Against curlies. One would agree this file has no duplication of Type 1
+if(a)
+{
+if(b)
+{
+if(c)
+{
+if(d)
+{
+if(e)
+{
+if(z)
+{
+return "booh";
+}
+}
+}
+}
+}
+}
+if(b)
+{
+if(a)
+{
+if(c)
+{
+if(e)
+{
+if(z)
+{
+if(f)
+{
+return "baah";
+}
+}
+}
+}
+}
+}
