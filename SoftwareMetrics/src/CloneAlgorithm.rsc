@@ -38,7 +38,18 @@ int GetClones(list[str] Lines)
     }
     LineNumber += 1;
   }
+  println("Duration <createDuration(StartTime, now())>");
   return ClonedLines(Clones);
+}
+
+int ClonedLines(TCloneList Clones)
+{
+  int TotalLines = 0;
+  for(Clone <- Clones)
+  {
+    TotalLines += Clone.Size;
+  }
+  return TotalLines;    
 }
 
 bool ValidCloneStart(str CurrentLine) = "}" != CurrentLine ;
@@ -113,17 +124,3 @@ int LineIncrement(TClone Clone) = max(1, Clone.Size);
 
 bool EndOfCloneReached(list[str] Lines, int LineNumber, int CloneLine) = (size(Lines) <= CloneLine) || (Lines[LineNumber] != Lines[CloneLine]);
 bool CodeOverlapsClone(int Count, int Distance) = (Count >= Distance);
-
-
-int ClonesPercentage(TCloneList Clones, num TotalLines) = Percentage(ClonedLines(Clones), TotalLines);
-
-int ClonedLines(TCloneList Clones)
-{
-  int TotalLines = 0;
-  for(Clone <- Clones)
-  {
-    TotalLines += Clone.Size;
-  }
-  return TotalLines;    
-}
-
