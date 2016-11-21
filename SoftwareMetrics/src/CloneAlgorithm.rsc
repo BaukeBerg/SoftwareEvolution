@@ -24,14 +24,16 @@ int GetClones(list[str] Lines)
   int LineNumber = 0;
   while(LineNumber < FileSize)
   {
-    if(true == ValidCloneStart(Lines[LineNumber]))    
-    {
-      list[int] Dupes = GetDuplicates(Lines, LineNumber);
-      println("Found <size(Dupes)> duplicates");
-      TCloneList CurrentLineClones = EvaluateClones(Clones, Lines, LineNumber, Dupes);
-      LineNumber += LineIncrement(CurrentLineClones);
-      Clones += CurrentLineClones;
+    if(true == ValidCloneStart(Lines[LineNumber]))               
+    { 
+      int Dupe = GetFirstDupe(Lines, LineNumber);      
+      TClone ThisClone = EvaluateClone(Lines, LineNumber, Dupe);
+      LineNumber += LineIncrement(ThisClone);
       println("LineNumber is now <LineNumber>");
+      if(ThisClone.Size > 0)
+      {
+        Clones += ThisClone;
+      }
       continue;      
     }
     LineNumber += 1;
@@ -41,40 +43,28 @@ int GetClones(list[str] Lines)
 
 bool ValidCloneStart(str CurrentLine) = "}" != CurrentLine ;
 
-list[int] GetDuplicates(list[str] Lines, int LineNumber)
+int GetFirstDupe(list[str] Lines, int LineNumber)
 {
   str Find = Lines[LineNumber];
-  list[int] Results = [];
   for(n <- [LineNumber+1 .. size(Lines)], Find == Lines[n])
   {
-    Results += n;
+    return n;
   }
-  return Results;
+  return size(Lines);
 }
 
 int CloneSize = 6;
 
-TCloneList EvaluateClones(TCloneList Clones, list[str] Lines, int LineNumber, list[int] Dupes)
+TClone EvaluateClone(list[str] Lines, int LineNumber, int Dupe)
 {
-  // Make Some smart algorithm of cross referencing the lines!
-  if(true == AlreadyPartOfClone(Clones, LineNumber))
-  {
-    return [<0,0>];
-  }
-
-  TCloneList Clones = [];
-  for(Dupe <- Dupes)
+  if(-1 != Dupe)
   {
     if(true == MinimumCloneSizeReached(Lines, LineNumber, Dupe))
     {
-      TClone NewClone = <Dupe, CalcCloneSize(Lines, LineNumber, Dupe)>;
-      int SizeDifference = GetDiffWithPreviousClone(Clones, LineNumber);      
-      NewClone.Start += SizeDifference;
-      NewClone.Size -= SizeDifference;            
-      Clones += NewClone;
+      return <Dupe, CalcCloneSize(Lines, LineNumber, Dupe)>;
     }
   }
-  return Clones;
+  return <0,0>;
 }
 
 bool AlreadyPartOfClone(TCloneList Clones, int LineNumber)
@@ -119,16 +109,7 @@ int CalcCloneSize(list[str] Lines, int LineNumber, int CloneLine)
   return MaxLine;
 }
 
-int LineIncrement(TCloneList Clones)
-{
-  int TotalLineIncrement = 1;
-  for(Clone <- Clones)
-  {
-    TotalLineIncrement = max(TotalLineIncrement, Clone.Size);
-  }
-  println("Largest Clone: <TotalLineIncrement>");
-  return TotalLineIncrement;
-}
+int LineIncrement(TClone Clone) = max(1, Clone.Size);
 
 bool EndOfCloneReached(list[str] Lines, int LineNumber, int CloneLine) = (size(Lines) <= CloneLine) || (Lines[LineNumber] != Lines[CloneLine]);
 bool CodeOverlapsClone(int Count, int Distance) = (Count >= Distance);

@@ -1,6 +1,6 @@
 // Using lookahead, 
 // This is the case for this sample file. It has 14 cloned lines.
-// Should return 14 cloned lines
+// Should return 20 cloned lines
 Line One
 Line Two
 Line Three
