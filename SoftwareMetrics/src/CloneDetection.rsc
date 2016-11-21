@@ -38,75 +38,87 @@ list [tuple[int, list[int]]] DetectClones(list[str] FileLines, int MaxLineAmount
 
 void t1()
 {
-	list [tuple[list[int], list[list[int]]]] CloneStorage = [];
-	list [tuple[int, list[int]]] ListOfDuplications = DetectClones(|project://SoftwareMetrics/sampleFiles/clonedetection/Clone2.java|, 20);
-	int minCloneLength = 5;
-	int startPoint = 0;
-	int cloneStartPoint = -1;
-	int cloneEndPoint = -1;
-	int copyCloneStartPoint = -1;
-	int copyCloneEndPoint = -1;
-	bool initCloneFound = false;
-	bool minCloneLinesFound = false;
-	bool maxCloneLinesFound = false;
+	list [tuple[list[int], list[int]]] CloneStorage = [];
+	list [tuple[int, list[int]]] ListOfDuplications = DetectClones(|project://SoftwareMetrics/sampleFiles/clonedetection/Clone2.java|, 29);
+	int lineCounter = 0;
 	
-	for(item <- ListOfDuplications[startPoint][1])
+	while(lineCounter <= size(ListOfDuplications)-1)
 	{
-		item += minCloneLength;
-		if(Contains(ListOfDuplications[startPoint + minCloneLength][1], item))
+		int minCloneLength = 5;
+		int startPoint = lineCounter;
+		int cloneStartPoint = -1;
+		int cloneEndPoint = -1;
+		int copyCloneStartPoint = -1;
+		int copyCloneEndPoint = -1;
+		bool initCloneFound = false;
+		bool minCloneLinesFound = false;
+		bool maxCloneLinesFound = false;
+		
+		for(item <- ListOfDuplications[startPoint][1])
 		{
-			cloneStartPoint = ListOfDuplications[startPoint][0];
-			copyCloneStartPoint = item - minCloneLength;
-			initCloneFound = true;
-			break;
-		}
-	}
-	
-	if(initCloneFound)
-	{
-		minCloneLinesFound = true;
-		for(decrease <- [minCloneLength-1 .. 0])
-		{
-			for(item <- ListOfDuplications[startPoint][1])
+			item += minCloneLength;
+			if(startPoint + minCloneLength > size(ListOfDuplications) - 1) break;
+			if(Contains(ListOfDuplications[startPoint + minCloneLength][1], item))
 			{
-				copyCloneEndPoint = item;
-				item += decrease;
-				if(!Contains(ListOfDuplications[startPoint + decrease][1], item))
-				{
-					minCloneLinesFound = false;
-					break;
-				}
-			}			
-			if(!minCloneLinesFound) copyCloneEndPoint = -1; break;
-		}
-	}
-
-	if(initCloneFound && minCloneLinesFound)
-	{
-		cloneEndPoint = ListOfDuplications[startPoint + minCloneLength][0];
-		copyCloneEndPoint += minCloneLength;
-		maxCloneLinesFound = true;
-
-		for(increase <- [minCloneLength+1 .. size(ListOfDuplications) - (minCloneLength+1)])
-		{
-			for(item <- ListOfDuplications[startPoint][1])
-			{
-				item += increase;
-				if(!Contains(ListOfDuplications[startPoint + increase][1], item))
-				{
-					maxCloneLinesFound = false;
-					break;
-				}
+				cloneStartPoint = ListOfDuplications[startPoint][0];
+				copyCloneStartPoint = item - minCloneLength;
+				copyCloneEndPoint = copyCloneStartPoint;
+				initCloneFound = true;
+				break;
 			}
-			if(!maxCloneLinesFound) break;
-			cloneEndPoint = ListOfDuplications[startPoint + increase][0];
-			copyCloneEndPoint += 1;
+		}
+		
+		if(initCloneFound)
+		{
+			minCloneLinesFound = true;
+			for(decrease <- [minCloneLength-1 .. 0])
+			{
+				for(item <- ListOfDuplications[startPoint][1])
+				{
+					item += decrease;
+					if(!Contains(ListOfDuplications[startPoint + decrease][1], item))
+					{
+						minCloneLinesFound = false;
+						break;
+					}
+				}			
+				if(!minCloneLinesFound) copyCloneEndPoint = -1; break;
+			}
+		}
+	
+		if(initCloneFound && minCloneLinesFound)
+		{
+			cloneEndPoint = ListOfDuplications[startPoint + minCloneLength][0];
+			copyCloneEndPoint += minCloneLength;
+			maxCloneLinesFound = true;
+	
+			for(increase <- [minCloneLength+1 .. size(ListOfDuplications) - (minCloneLength+1)])
+			{
+				for(item <- ListOfDuplications[startPoint][1])
+				{
+					item += increase;
+					if(!Contains(ListOfDuplications[startPoint + increase][1], item))
+					{
+						maxCloneLinesFound = false;
+						break;
+					}
+				}
+				if(!maxCloneLinesFound) break;
+				cloneEndPoint = ListOfDuplications[startPoint + increase][0];
+				copyCloneEndPoint += 1;
+			}
+		}
+		
+		if(cloneStartPoint != -1 && cloneEndPoint != -1)
+		{
+			CloneStorage += <[cloneStartPoint,cloneEndPoint],[copyCloneStartPoint, copyCloneEndPoint]>;
+			lineCounter = cloneEndPoint;
+		}
+		else
+		{
+			lineCounter +=1;
 		}
 	}
-	
-	if(cloneStartPoint != -1 && cloneEndPoint != -1)
-	{
-		CloneStorage += <[cloneStartPoint,cloneEndPoint],[[copyCloneStartPoint, copyCloneEndPoint]]>;
-		println(CloneStorage);
-	}
+	println(CloneStorage);
+	println("<size(CloneStorage)> duplicates detected");
 }
