@@ -17,7 +17,7 @@ int GetClones(list[str] Lines)
 {
   StartTime = now();    
   int FileSize = size(Lines);
-  println("File size: <FileSize> lines");
+  //println("File size: <FileSize> lines");
   
   // Skip the curlies, since they're never assumed start of a clone!
   TCloneList Clones = [];  
@@ -29,7 +29,7 @@ int GetClones(list[str] Lines)
       int Dupe = GetFirstDupe(Lines, LineNumber);      
       TClone ThisClone = EvaluateClone(Lines, LineNumber, Dupe);
       LineNumber += LineIncrement(ThisClone);
-      println("LineNumber is now <LineNumber>");
+      //println("LineNumber is now <LineNumber>");
       if(ThisClone.Size > 0)
       {
         Clones += ThisClone;
@@ -78,10 +78,10 @@ bool AlreadyPartOfClone(TCloneList Clones, int LineNumber)
 
 int GetDiffWithPreviousClone(TCloneList Clones, int LineNumber)
 {
-  println("Checking previous clones for line number <LineNumber>");
+  //println("Checking previous clones for line number <LineNumber>");
   for(Clone <- Clones, InLimits(Clone.Start, LineNumber, Clone.Start + Clone.Size))
   {
-    println("Part of other clone, that one was <Clone.size> Lines Long!");
+    //println("Part of other clone, that one was <Clone.size> Lines Long!");
     Clone.Size;
   }
   return 0;
@@ -103,7 +103,7 @@ int CalcCloneSize(list[str] Lines, int LineNumber, int CloneLine)
   int Distance = CloneLine - LineNumber; // Distance between dupes
   for(n <- [CloneSize .. size(Lines)], CodeOverlapsClone(n, Distance) || (EndOfCloneReached(Lines, LineNumber+n, CloneLine+n)))
   {
-    println("Clone of <n> Lines");
+    //println("Clone of <n> Lines");
     return n;
   }
   return MaxLine;
