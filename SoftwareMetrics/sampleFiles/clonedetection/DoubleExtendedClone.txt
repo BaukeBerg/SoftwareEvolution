@@ -1,0 +1,26 @@
+// A second, more larger clone resides between 7 .. 16
+// Lines 7 .. 14 would normally be skipped, since they're already part of a Clone.
+// However, when they're part of a clone, they could argue to check if they might be a LARGER clone than the previous one.
+// This is the case for this sample file. It has 14 cloned lines.
+Line One
+Line Two
+Line Three
+Line Four
+Line Five
+Line Six
+Line One
+Line Two
+Line Three
+Line Four
+Line Five
+Line Six
+Line Seven
+Line Eight
+Line One
+Line Two
+Line Three
+Line Four
+Line Five
+Line Six
+Line Seven
+Line Eight
