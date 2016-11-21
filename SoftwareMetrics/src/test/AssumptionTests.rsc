@@ -32,5 +32,12 @@ str ForLoopList(list[str] List)
   return Result;    
 }
 
+int Five = 5;
+int Two = 2;
+
+test bool TestIntegerDivision() = ExpectEqual(2, Five / Two);
+
+
+
 
  
