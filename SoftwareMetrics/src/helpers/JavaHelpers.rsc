@@ -10,6 +10,10 @@ import \helpers::StringHelpers;
 import \helpers::ListHelpers;
 import FileHandler;
 
+import FileLocations;
+
+private bool WriteMethodStatementsToFile = true;
+
 /// Extracts classname from file location
 str GetFullClassPath(loc FileToCheck)
 {
@@ -47,7 +51,10 @@ int MethodSize(str MethodToCount)
   list[str] Lines = TrimList(split("\r\n", MethodBody(MethodToCount)));
   Lines = RemoveSingleLineComments(Lines);
   Lines = RemoveBlockComments(Lines);
-  //AppendToFile(|project://SoftwareMetrics/output/bulk/MethodLines.java|, JoinList(Lines));    
+  if(true == WriteMethodStatementsToFile)
+  {
+    AppendToFile(MethodLinesFile, JoinList(Lines));
+  }    
   return size(Lines);  
 }
 
