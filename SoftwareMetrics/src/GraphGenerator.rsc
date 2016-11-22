@@ -6,19 +6,35 @@ import vis::Render;
 import List;
 import util::Math;
 
+
+alias TBox = tuple[int Height, str Caption];
+alias TBoxPlot = list[TBox];
+
+
 public void PlotGraph(list[int] BoxPlots) = PlotGraph("GraphPlot", BoxPlots);
 
 public void PlotGraph(str Name, list[int] BoxPlots)
 {
-  list[Figure] Boxes = [];
-  num Divider = max(BoxPlots);
-  for(int n <- [0 .. size(BoxPlots)])
-  {  
-   num Height = BoxPlots[n] / Divider;
-   Boxes += box(vshrink(Height), fillColor(DetermineColour(Height)));
+  TBoxPlot Items = [];
+  for(BoxPlot <- BoxPlots)
+  {
+    Items += <BoxPlot, "">;
   }
-  render(Name, hcat(Boxes,std(bottom())));
+  PlotGraph(Name, Items, max(Plots.Height));
 }
+
+public void PlotGraph(str Caption, TBoxPlot Plots, num Divider)
+{
+  list[Figure] Boxes = [];  
+  for(Plot <- Plots)
+  {  
+   num Height = Plot.Height / Divider;
+   Boxes += box(text(Plot.Caption, fontSize(20), fontColor("black")), vshrink(Height), fillColor(DetermineColour(Height)));
+  }
+  render(Caption, hcat(Boxes,std(bottom())));
+}
+
+public Color InvertedColour(num RelativeHeight) = DetermineColour(1.0 - RelativeHeigt);
 
 public Color DetermineColour(num RelativeHeight)
 {
@@ -34,3 +50,4 @@ public Color DetermineColour(num RelativeHeight)
   }  
   return rgb(Red, Green, 0);
 }
+
