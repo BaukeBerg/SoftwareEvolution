@@ -41,7 +41,7 @@ void DetermineSoftwareMetrics()
       UnitComplexity[UnitComplexityIndex(JavaMethod.Complexity)] += 1;
     }      
   }
-  int DupedPercentage = Percentage(GetClones(MonsterFile));
+  int DupedPercentage = Percentage(GetClones(MethodLinesFile)); // Duplication in units
   list[int] TotalResults = [VolumeScore(TotalSize), UnitSizeScore(UnitSizes), DuplicationScore(DupedPercentage), UnitComplexityScore(UnitComplexity)];  
   println("Volume size: <TotalSize> Rating: <StarRating(TotalResults[0])>");
   println("Unit size distribution: <UnitSizes>, Rating: <StarRating(TotalResults[1])>");
