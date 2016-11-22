@@ -24,12 +24,9 @@ int GetClones(list[str] Lines)
   int LineNumber = 0;
   while(LineNumber < FileSize)
   {
-    if(true == ValidCloneStart(Lines[LineNumber]))
+    if((true == ValidCloneStart(Lines[LineNumber]))
+     && (false == AlreadyPartOfClone(Clones, LineNumber)))
     {
-      if(true == AlreadyPartOfClone(Clones, LineNumber))              
-      {
-        println("Line <LineNumber> is already part of a clone");        
-      }
       list[int] Dupes = GetDupes(Lines, LineNumber);      
       TCloneList CurrentClones = EvaluateClones(Lines, LineNumber, Dupes);
       LineNumber += LineIncrement(CurrentClones);
@@ -121,15 +118,8 @@ int CalcCloneSize(list[str] Lines, int LineNumber, int CloneLine)
   return MaxLine;
 }
 
-int LineIncrement(TCloneList Clones)
-{
-  int Increment = 1;
-  for(Clone <- Clones)
-  {
-    Increment = max(Increment, Clone.Size);
-  }
-  return Increment;
-}
+int LineIncrement([]) = 1;
+int LineIncrement(TCloneList Clones) = max(Clones.Size);
 
 bool EndOfCloneReached(list[str] Lines, int LineNumber, int CloneLine) = (size(Lines) <= CloneLine) || (Lines[LineNumber] != Lines[CloneLine]);
 bool CodeOverlapsClone(int Count, int Distance) = (Count >= Distance);
