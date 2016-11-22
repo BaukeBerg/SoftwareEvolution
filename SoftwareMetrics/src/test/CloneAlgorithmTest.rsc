@@ -16,5 +16,11 @@ test bool TestExtendedClone() = ExpectEqual(14, SampleFile("DoubleExtendedClone.
 test bool TestDualDifferentClone() = ExpectEqual(20, SampleFile("DoubleDifferentClones.txt"));
 test bool TestBraceCase() = ExpectEqual(0, SampleFile("BraceCase.txt"));
 
+TCloneList SomeClones = [ <34,6>,
+                          <45,8>,
+                          <60,9>,
+                          <50,1>
+                        ];  
 
+test bool TestMaxOfList() = ExpectEqual(9, LineIncrement(SomeClones));
  
