@@ -12,10 +12,7 @@ import \helpers::JavaHelpers;
 import \helpers::StringHelpers; // Utility functions for string
 import FileHandler;
 
-
-
-bool IncludeCurlies = false;
-
+import FileLocations;
 /// Simple data structures 
 public data TStaticMetrics = Init(str FileName = "NoFileNameSpecified",
                                int TotalLines = 0,     
@@ -45,7 +42,6 @@ int ScanJavaFileSloc(loc FileToCheck) = ScanJavaFile(FileToCheck).LLOC;
 
 list[tuple[int,int]] ScanJavaFileMethodLengthAndComplexity(loc FileToCheck)
 {
-  loc FailuresFile = |project://SoftwareMetrics/output/failedMethods/MethodList.java|;
   lrel[loc Location, int Complexity] Declarations = CyclomaticComplexity(FileToCheck);
   list[tuple[int,int]] Results = [];
   for(tuple[loc Location, int Complexity] Declaration <- Declarations)
@@ -53,12 +49,12 @@ list[tuple[int,int]] ScanJavaFileMethodLengthAndComplexity(loc FileToCheck)
     str MethodDefinition = readFile(Declaration.Location);
     try
     { 
-      Results += <MethodSize(MethodDefinition), Declaration.Complexity>;
+      Results += <MethodSize(MethodDefinition), Declaration.Complexity>;      
     }
     catch: 
     {
       println("Failed to Calculate\r\n <MethodDefinition>");
-      AppendToFile(FailuresFile, "\r\n----- Failed method ------\r\n<MethodDefinition>");
+      AppendToFile(FailedMethodLinesFile, "\r\n----- Failed method ------\r\n<MethodDefinition>");
     }    
   }
   return Results;  
@@ -80,6 +76,7 @@ str ScanJavaFileToHtml(loc FileToCheck)
 
 
 // Fill in and return, can be used to get some graphs
+// Obsolete HTML scanner => if it weren't for the demo, this would simply be refactored away...
 public TStaticMetrics ScanJavaFile(loc FileToCheck)
 {
   TStaticMetrics Metrics = Init();
@@ -157,7 +154,7 @@ public TStaticMetrics ScanJavaFile(loc FileToCheck)
   } 
   Metrics.MaxIndent = MaxIndent;
   
-  writeFile(|project://SoftwareMetrics/output/sanitizedsql/<EscapePath(Metrics.FileName)>|, replaceFirst(SanitizedText, "\r\n", "") +"\r\n");
+  writeFile(SanitizedSqlFolder(EscapePath(Metrics.FileName)), replaceFirst(SanitizedText, "\r\n", "") +"\r\n");
   return Metrics;
 }
 
