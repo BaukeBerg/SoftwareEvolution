@@ -65,7 +65,7 @@ list[str] TrimList(list[str] LinesToTrim)
 }
 
 // Join list to plain string
-str JoinLIst(list[str] Lines) = JoinList(Lines, "\r\n");
+str JoinList(list[str] Lines) = JoinList(Lines, "\r\n");
 str JoinList(list[str] Lines, str Token)
 {
   str Result = "";
