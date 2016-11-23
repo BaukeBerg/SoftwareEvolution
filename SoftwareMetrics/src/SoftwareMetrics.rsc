@@ -7,6 +7,7 @@ import FileLocations;
 import IO;
 import List;
 import Quotes;
+import RiskProfile;
 import SigScores;
 import SlocModule;
 import String;
