@@ -16,6 +16,14 @@ public loc HSqlDbMethodLinesFile = toLocation("<BulkDir>HSqlDbMethodLines.java")
 public loc FailedMethodLinesFile = toLocation("<BulkDir>FailedMethodLines.java");
 public loc SmallSqlFile = toLocation("<BulkDir>bigsmallsql.java");
 public loc HsqlDbFile = toLocation("<BulkDir>bighsqldb.java");
+public loc ClonesFile(str ProjectName)
+{
+  if("smallsql" == ProjectName)
+  {
+    return SmallSqlFile;
+  }
+  return HsqlDbFile;
+}
 
 // Locations generated based on input string
 public loc SanitizedSqlFolder(str ForFile) = toLocation("<OutputDir>sanitizedsql/<ForFile>");
