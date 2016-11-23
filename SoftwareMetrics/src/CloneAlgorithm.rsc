@@ -5,6 +5,7 @@ import IO;
 import List;
 import SigScores;
 
+import \helpers::ListHelpers;
 import \helpers::MathHelpers;
 import \util::Math;
 
@@ -30,13 +31,13 @@ int GetClones(list[str] Lines)
   int LineNumber = 0;
   while(LineNumber < FileSize)
   {
-    if((true == ValidCloneStart(Lines[LineNumber]))
-     && (false == AlreadyPartOfClone(Clones, LineNumber)))
+    if((true == ValidCloneStart(Lines[LineNumber])))
     {
       list[int] Dupes = GetDupes(Lines, LineNumber);      
-      TCloneList CurrentClones = EvaluateClones(Lines, LineNumber, Dupes);
+      TCloneList CurrentClones = GetClones(Lines, LineNumber, Dupes);
       LineNumber += LineIncrement(CurrentClones);
-      Clones += CurrentClones; 
+      Clones = InsertNewClones(Clones, CurrentClones);
+      Clones = MergeClones(Clones, CurrentClones); 
       println("Line number is now <LineNumber>");     
       continue;      
     }
@@ -71,7 +72,7 @@ list[int] GetDupes(list[str] Lines, int LineNumber)
 
 int CloneSize = 6;
 
-TCloneList EvaluateClones(list[str] Lines, int LineNumber, list[int] Dupes)
+TCloneList GetClones(list[str] Lines, int LineNumber, list[int] Dupes)
 {
   TCloneList Results = [];
   for(Dupe <- Dupes)
@@ -93,11 +94,30 @@ bool AlreadyPartOfClone(TCloneList Clones, int LineNumber)
   return false;
 }
 
-int GetDiffWithPreviousClone(TCloneList Clones, int LineNumber)
+TCloneList InsertNewClones(TCloneList TotalClones, TCloneList NewClones)
 {
-  for(Clone <- Clones, InLimits(Clone.Start, LineNumber, Clone.Start + Clone.Size))
+  for(Clone <- NewClones, false == Contains(TotalClones.Start, Clone.Start))
   {
-    Clone.Size;
+    TotalClones += Clone;
+  }
+  return TotalClones;
+}
+
+TCloneList MergeClones(TCloneList TotalClones, TCloneList NewClones)
+{
+  TCloneList MergedList = [];
+  for(Clone <- TotalClones)
+  {    
+    MergedList += <Clone.Start, max(Clone.Size, RetrieveCloneSize(NewClones, Clone.Start))>;
+  }  
+  return MergedList;
+}
+
+int RetrieveCloneSize(TCloneList Clones, int Start)
+{
+  for(Clone <- Clones, Clone.Start == Start)
+  {
+    return Clone.Size;
   }
   return 0;
 }
