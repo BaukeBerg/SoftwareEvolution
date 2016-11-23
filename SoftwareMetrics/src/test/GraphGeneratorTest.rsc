@@ -23,3 +23,5 @@ TBoxPlot BoxPlot = [  <10, "Ten">,
                        ];
                        
 void PlotGraphWithCaption() = PlotGraph("NamedBoxes", BoxPlot, 10);
+
+void PlotGraphWithCaptionInverted() = PlotGraphInvertedColours("NamedBoxes", BoxPlot, 10);

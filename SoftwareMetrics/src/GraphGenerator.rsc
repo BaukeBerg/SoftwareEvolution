@@ -12,7 +12,6 @@ alias TBoxPlot = list[TBox];
 
 
 public void PlotGraph(list[int] BoxPlots) = PlotGraph("GraphPlot", BoxPlots);
-
 public void PlotGraph(str Name, list[int] BoxPlots)
 {
   TBoxPlot Items = [];
@@ -23,6 +22,17 @@ public void PlotGraph(str Name, list[int] BoxPlots)
   PlotGraph(Name, Items, max(Plots.Height));
 }
 
+public void PlotGraphInvertedColours(str Caption, TBoxPlot Plots, num Divider)
+{
+  list[Figure] Boxes = [];  
+  for(Plot <- Plots)
+  {  
+   num Height = Plot.Height / Divider;
+   Boxes += box(text(Plot.Caption, fontSize(20), fontColor("black")), vshrink(Height), fillColor(InvertedColour(Height)));
+  }
+  PlotGraph(Caption, Boxes);
+}
+
 public void PlotGraph(str Caption, TBoxPlot Plots, num Divider)
 {
   list[Figure] Boxes = [];  
@@ -31,10 +41,15 @@ public void PlotGraph(str Caption, TBoxPlot Plots, num Divider)
    num Height = Plot.Height / Divider;
    Boxes += box(text(Plot.Caption, fontSize(20), fontColor("black")), vshrink(Height), fillColor(DetermineColour(Height)));
   }
+  PlotGraph(Caption, Boxes);
+}
+
+public void PlotGraph(str Caption, list[Figure] Boxes)  
+{
   render(Caption, hcat(Boxes,std(bottom())));
 }
 
-public Color InvertedColour(num RelativeHeight) = DetermineColour(1.0 - RelativeHeigt);
+public Color InvertedColour(num RelativeHeight) = DetermineColour(1.0 - RelativeHeight);
 
 public Color DetermineColour(num RelativeHeight)
 {
