@@ -28,8 +28,17 @@ void GenerateSanitizedCode(str SampleFolder, loc OutputFile)
   }  
 }
   
-void CalculateSmallSql() = DetermineSoftwareMetrics("smallsql");
-void CalculateHSqlDb() = DetermineSoftwareMetrics("hsqldb");
+void CalculateSmallSql()
+{
+  GenerateHtmlReporting("smallsql");
+  DetermineSoftwareMetrics("smallsql");
+}
+
+void CalculateHSqlDb()
+{
+  GenerateHtmlReporting("hsqldb");
+  DetermineSoftwareMetrics("hsqldb");
+}
 
 void DetermineSoftwareMetrics(str ProjectName)
 {
@@ -63,8 +72,6 @@ void DetermineSoftwareMetrics(str ProjectName)
   println("Total SIG Maintainability score: <TotalResults>, Rating: <StarRating(TotalSigScore(TotalResults))>"); 
   println("Duration: <createDuration(StartTime, now())>");
 }
-
-void GenerateHtmlReporting() = GenerateHtmlReporting(ProjectName);
 
 void GenerateHtmlReporting(str SpecificName)
 {
