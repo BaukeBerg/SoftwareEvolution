@@ -71,6 +71,8 @@ void DetermineSoftwareMetrics(str ProjectName)
   println("Unit complexity distribution: <UnitComplexity>, Rating: <StarRating(TotalResults[3])>");  
   println("Total SIG Maintainability score: <TotalResults>, Rating: <StarRating(TotalSigScore(TotalResults))>"); 
   println("Duration: <createDuration(StartTime, now())>");
+  RenderRisk("Unit sizes risk profile", UnitSizes);
+  RenderRisk("Unit complexity risk profile", UnitComplexity);  
 }
 
 void GenerateHtmlReporting(str SpecificName)
