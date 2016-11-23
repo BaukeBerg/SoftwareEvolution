@@ -29,7 +29,7 @@ void GenerateSanitizedCode(str SampleFolder, loc OutputFile)
 }
   
 void CalculateSmallSql() = DetermineSoftwareMetrics("smallsql");
-void CalculateHsqlDb() = DetermineSoftwareMetrics("hsqldb");
+void CalculateHSqlDb() = DetermineSoftwareMetrics("hsqldb");
 
 void DetermineSoftwareMetrics(str ProjectName)
 {
@@ -65,7 +65,6 @@ void DetermineSoftwareMetrics(str ProjectName)
 }
 
 void GenerateHtmlReporting() = GenerateHtmlReporting(ProjectName);
-
 
 void GenerateHtmlReporting(str SpecificName)
 {
