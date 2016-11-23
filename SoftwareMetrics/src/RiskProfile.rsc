@@ -8,9 +8,9 @@ import \helpers::MathHelpers;
 void RenderRisk(str Caption, list[int] Distribution)
 {
   Distribution = CreateDistribution(Distribution);
-  b1 = box(vshrink(Distribution[0]/100.0), fillColor("Green"));
-  b2 = box(vshrink(Distribution[1]/100.0), fillColor("Yellow"));
-  b3 = box(vshrink(Distribution[2]/100.0), fillColor("Orange"));
-  b4 = box(vshrink(Distribution[3]/100.0), fillColor("Red"));    
+  b1 = box(text("<Distribution[0]>%", fontSize(20), fontColor("black")), vshrink(Distribution[0]/100.0), fillColor("Green"));
+  b2 = box(text("<Distribution[1]>%", fontSize(20), fontColor("black")), vshrink(Distribution[1]/100.0), fillColor("Yellow"));
+  b3 = box(text("<Distribution[2]>%", fontSize(20), fontColor("black")), vshrink(Distribution[2]/100.0), fillColor("Orange"));
+  b4 = box(text("<Distribution[3]>%", fontSize(20), fontColor("black")), vshrink(Distribution[3]/100.0), fillColor("Red"));    
   render(Caption,vcat([b4, b3,b2,b1]));
 }
