@@ -28,15 +28,18 @@ void GenerateSanitizedCode(str SampleFolder, loc OutputFile)
   }  
 }
   
+void CalculateSmallSql() = DetermineSoftwareMetrics("smallsql");
+void CalculateHsqlDb() = DetermineSoftwareMetrics("hsqldb");
 
-void DetermineSoftwareMetrics()
+void DetermineSoftwareMetrics(str ProjectName)
 {
   StartTime = now();
   list[loc] FilesToParse = EnumerateDirFiles(ProjectName);
   list[int] UnitSizes = [0,0,0,0];
   list[int] UnitComplexity = [0,0,0,0];
   int TotalSize = 0;
-  ResetFile(MethodLinesFile);
+  ResetFile(MethodLinesFile(""));
+  ResetFile(MethodLinesFile(ProjectName));
   ResetFile(FailedMethodLinesFile);
   int Files = 0;
   for(File <- FilesToParse)
@@ -59,7 +62,6 @@ void DetermineSoftwareMetrics()
   println("Unit complexity distribution: <UnitComplexity>, Rating: <StarRating(TotalResults[3])>");  
   println("Total SIG Maintainability score: <TotalResults>, Rating: <StarRating(TotalSigScore(TotalResults))>"); 
   println("Duration: <createDuration(StartTime, now())>");
-  
 }
 
 void GenerateHtmlReporting() = GenerateHtmlReporting(ProjectName);

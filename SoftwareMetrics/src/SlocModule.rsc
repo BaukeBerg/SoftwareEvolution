@@ -49,7 +49,7 @@ list[tuple[int,int]] ScanJavaFileMethodLengthAndComplexity(loc FileToCheck)
     str MethodDefinition = readFile(Declaration.Location);
     try
     { 
-      Results += <MethodSize(MethodDefinition), Declaration.Complexity>;      
+      Results += <MethodSize(MethodDefinition, ""), Declaration.Complexity>;      
     }
     catch: 
     {
