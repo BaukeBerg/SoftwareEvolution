@@ -3,10 +3,13 @@ module CloneAlgorithm
 import DateTime;
 import IO;
 import List;
+import Map;
+import Set;
 import SigScores;
 
 import \helpers::ListHelpers;
 import \helpers::MathHelpers;
+import \helpers::StringHelpers;
 import \util::Math;
 
 alias TCloneList = list[TClone];
@@ -18,48 +21,46 @@ int GetClonesPercentage(loc FileToCheck)
   return Percentage(GetClones(Lines), size(Lines));
 }
 
-int GetClones(loc FileToCheck) = GetClones(readFileLines(FileToCheck));
-
-int GetClones(list[str] Lines) 
+int GetClonesForFile(loc FileToCheck)
 {
   StartTime = now();    
+  int Result = GetClonesForFile(HashFile(FileToCheck));
+  println("Duration <createDuration(StartTime, now())>");
+  return Result;
+}
+
+int GetClonesForFile(THashInfo Information) 
+{
+  TStringMap Dictionary = Information.StringMap;
+  THashMap Lines = Information.HashMap;
   int FileSize = size(Lines);
   println("File size: <FileSize> lines");
   TCloneList Clones = [];  
   int LineNumber = 0;
+  int ValidCloneStart = Dictionary["}"]; // Skip the "}"
   while(LineNumber < FileSize)
   {
-    if((true == ValidCloneStart(Lines[LineNumber])))
+    if((Lines[LineNumber] == ValidCloneStart))
     {
       list[int] Dupes = GetDupes(Lines, LineNumber);      
       TCloneList CurrentClones = GetClones(Lines, LineNumber, Dupes);
       LineNumber += LineIncrement(CurrentClones);
       Clones = InsertNewClones(Clones, CurrentClones);
       Clones = MergeClones(Clones, CurrentClones); 
-      println("Line number is now <LineNumber>");     
       continue;      
     }
     LineNumber += 1;
   }
-  println("Duration <createDuration(StartTime, now())>");
   return ClonedLines(Clones);
 }
 
-int ClonedLines(TCloneList Clones)
-{
-  int TotalLines = 0;
-  for(Clone <- Clones)
-  {
-    TotalLines += Clone.Size;
-  }
-  return TotalLines;    
-}
+int ClonedLines(TCloneList Clones) = sum(Clones.Size);
 
 bool ValidCloneStart(str CurrentLine) = "}" != CurrentLine ;
 
-list[int] GetDupes(list[str] Lines, int LineNumber)
+list[int] GetDupes(THashMap Lines, int LineNumber)
 {
-  str Find = Lines[LineNumber];
+  int Find = Lines[LineNumber];
   list[int] Dupes = [];
   for(n <- [LineNumber+1 .. size(Lines)], Find == Lines[n])
   {
@@ -70,7 +71,7 @@ list[int] GetDupes(list[str] Lines, int LineNumber)
 
 int CloneSize = 6;
 
-TCloneList GetClones(list[str] Lines, int LineNumber, list[int] Dupes)
+TCloneList GetClones(THashMap Lines, int LineNumber, list[int] Dupes)
 {
   TCloneList Results = [];
   for(Dupe <- Dupes)
@@ -120,7 +121,7 @@ int RetrieveCloneSize(TCloneList Clones, int Start)
   return 0;
 }
 
-bool MinimumCloneSizeReached(list[str] Lines, int LineNumber, int CloneLine)
+bool MinimumCloneSizeReached(THashMap Lines, int LineNumber, int CloneLine)
 {
   int CloneDistance = CloneSize - 1;
   for(n <- [CloneDistance .. 0], EndOfCloneReached(Lines, LineNumber+n, CloneLine+n))
@@ -130,20 +131,31 @@ bool MinimumCloneSizeReached(list[str] Lines, int LineNumber, int CloneLine)
   return true;
 }
 
-int CalcCloneSize(list[str] Lines, int LineNumber, int CloneLine)
+int CalcCloneSize(THashMap Lines, int LineNumber, int CloneLine)
 {
-  int MaxLine = size(Lines);
   int Distance = CloneLine - LineNumber; // Distance between dupes
   for(n <- [CloneSize .. size(Lines)], CodeOverlapsClone(n, Distance) || (EndOfCloneReached(Lines, LineNumber+n, CloneLine+n)))
   {
     println("Clone of <n> Lines");
     return n;
   }
-  return MaxLine;
+  return size(Lines);
 }
 
 int LineIncrement([]) = 1;
 int LineIncrement(TCloneList Clones) = max(Clones.Size);
 
-bool EndOfCloneReached(list[str] Lines, int LineNumber, int CloneLine) = (size(Lines) <= CloneLine) || (Lines[LineNumber] != Lines[CloneLine]);
+bool EndOfCloneReached(THashMap Lines, int LineNumber, int CloneLine)
+{
+  try
+  {
+    return Lines[LineNumber] != Lines[CloneLine];
+  }
+  catch:
+  {
+    ;
+  }
+  return true;
+}
+
 bool CodeOverlapsClone(int Count, int Distance) = (Count >= Distance);

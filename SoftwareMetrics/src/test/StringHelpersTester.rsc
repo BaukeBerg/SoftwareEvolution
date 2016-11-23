@@ -1,5 +1,6 @@
 module \test::StringHelpersTester
 
+import Map;
 import String;
 
 import \helpers::StringHelpers;
@@ -23,3 +24,5 @@ str InlineCommentString = "Hello/*InlineComment*/GoodBye";
 
 test bool TestClipString() = ExpectEqual("HelloGoodBye", ClipString(InlineCommentString, "/*", "*/"));
 test bool TestClipStringWithSplit() = ExpectEqual("Hello\r\nGoodBye", ClipString(InlineCommentString, "/*", "*/", "\r\n")); 
+
+test bool TestAssumeSizeOfHashMap() = ExpectEqual(3, size(HashFile(SmallSqlFile)));

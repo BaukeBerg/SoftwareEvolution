@@ -78,10 +78,11 @@ public str ClipString(str StringToClip, str Start, str End, str Split) = ClipStr
 public str ClipString(str StringToClip, int StartPos, int EndPos) = ClipString(StringToClip, StartPos, EndPos, ""); 
 public str ClipString(str StringToClip, int StartPos, int EndPos, str Split) = substring(StringToClip, 0, StartPos) + Split + substring(StringToClip, EndPos); 
 
+alias THashInfo = tuple[THashMap HashMap, TStringMap StringMap];
 alias THashMap = map[int,int];
 alias TStringMap = map[str Source, int Encoding];
 
-THashMap HashFile(loc FileToHash)
+THashInfo HashFile(loc FileToHash)
 {
   list[str] Lines = readFileLines(FileToHash);
   set[str] FileLines = toSet(Lines);
@@ -91,6 +92,6 @@ THashMap HashFile(loc FileToHash)
   {
     FilesMap[n] = StringMap[Lines[n]];
   }
-  return FilesMap; 
+  return <FilesMap, StringMap>; 
 }
 
