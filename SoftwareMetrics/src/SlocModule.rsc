@@ -165,7 +165,6 @@ str Sanitize(str StringToSanitize)
   // skip imports and packages
   if((startsWith(StringToSanitize, "import "))
    || (startsWith(StringToSanitize, "package ")))
-   //|| ("}" == StringToSanitize))
   {
     return "";
   }
@@ -192,7 +191,6 @@ str GenerateDetailedTable(loc FileName)
   lrel[loc Location, int Complexity] Declarations = CyclomaticComplexity(FileName);
   TotalHtml += Caption(ClassName +" (<size(Declarations)> Methods)");
   TotalHtml += RowWithValues(["Method declaration", "Complexity", "Definition"]);
-  println("Parsing file <ClassName>");
   for(int n <- [0 .. size(Declarations)])
   {
     str MethodName = ExtractMethodDeclaration(Declarations[n].Location);
