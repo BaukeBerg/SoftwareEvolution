@@ -82,9 +82,9 @@ alias THashInfo = tuple[THashMap HashMap, TStringMap StringMap];
 alias THashMap = map[int,int];
 alias TStringMap = map[str Source, int Encoding];
 
-THashInfo HashFile(loc FileToHash)
+THashInfo HashFile(loc FileToHash) = HasFile(readFileLines(FileToHash));
+THashInfo HashFile(list[str] Lines)
 {
-  list[str] Lines = readFileLines(FileToHash);
   set[str] FileLines = toSet(Lines);
   TStringMap StringMap = index(FileLines);
   THashMap FilesMap = ();

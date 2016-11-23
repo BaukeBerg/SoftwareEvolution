@@ -37,10 +37,10 @@ int GetClonesForFile(THashInfo Information)
   println("File size: <FileSize> lines");
   TCloneList Clones = [];  
   int LineNumber = 0;
-  int ValidCloneStart = Dictionary["}"]; // Skip the "}"
+  int InValidCloneStart = GetKey(Dictionary, "}");
   while(LineNumber < FileSize)
   {
-    if((Lines[LineNumber] == ValidCloneStart))
+    if((Lines[LineNumber] != InValidCloneStart))
     {
       list[int] Dupes = GetDupes(Lines, LineNumber);      
       TCloneList CurrentClones = GetClones(Lines, LineNumber, Dupes);
@@ -54,6 +54,20 @@ int GetClonesForFile(THashInfo Information)
   return ClonedLines(Clones);
 }
 
+int GetKey(TStringMap Dictionary, str Key)
+{
+  try
+  {
+    return Dictionary[Key];
+  }
+  catch:
+  {
+    ;
+  }
+  return -1;
+}
+
+int ClonedLines([]) = 0;
 int ClonedLines(TCloneList Clones) = sum(Clones.Size);
 
 bool ValidCloneStart(str CurrentLine) = "}" != CurrentLine ;

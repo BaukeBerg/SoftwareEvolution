@@ -4,11 +4,12 @@ import CloneAlgorithm;
 import IO;
 import String;
 
-import \helpers::TestHelpers;
 import \helpers::JavaHelpers;
+import \helpers::TestHelpers;
+import \helpers::StringHelpers;
 
 str SamplePath = "project://SoftwareMetrics/sampleFiles/clonedetection/";
-int SampleFile(str FileName) = GetClones(RemoveSingleLineComments(readFileLines(toLocation(SamplePath + FileName))));
+int SampleFile(str FileName) = GetClonesForFile(HashFile(RemoveSingleLineComments(readFileLines(toLocation(SamplePath + FileName)))));
 
 test bool TestSingleClone() = ExpectEqual(6, SampleFile("SingleClone.txt"));
 test bool TestDoubleClone() = ExpectEqual(12, SampleFile("DoubleClone.txt"));
