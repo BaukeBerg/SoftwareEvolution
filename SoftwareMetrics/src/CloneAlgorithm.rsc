@@ -18,7 +18,7 @@ alias TClone = tuple[int Start, int Size];
 int GetClonesPercentage(loc FileToCheck)
 {
   list[str] Lines = readFileLines(FileToCheck);
-  return Percentage(GetClones(Lines), size(Lines));
+  return Percentage(GetClonesForFile(FileToCheck), size(Lines));
 }
 
 int GetClonesForFile(loc FileToCheck)
