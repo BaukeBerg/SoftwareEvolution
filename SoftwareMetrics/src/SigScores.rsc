@@ -6,8 +6,6 @@ import String;
 import \helpers::MathHelpers;
 import \util::Math;
 import analysis::statistics::Descriptive;
-
-import vis::Figure;
 import GraphGenerator;
 
 public int VolumeScore(int SLOC) = ReturnScore(SLOC, [66000,246000,655000,1310000]);
