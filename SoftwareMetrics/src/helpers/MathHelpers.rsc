@@ -8,11 +8,11 @@ bool InLimits(int Min, int Actual, int Max) = Actual == Limit(Min, Actual, Max);
 
 list[int] CreateDistribution(list[int] Numbers)
 {
-  int TotalAmount = sum(Numbers);
+  num TotalAmount = sum(Numbers);
   list[int] Distribution = [];
   for(Number <- Numbers)
   {
-    Distribution += (100 * Number) / TotalAmount;
+    Distribution += round((100 * Number) / TotalAmount);
   }
   return Distribution;
 }
