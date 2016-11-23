@@ -22,4 +22,4 @@ TBoxPlot BoxPlot = [  <10, "Ten">,
                         <5, "Five">
                        ];
                        
-void PlotGraphWithCaption() = PlotGraph("NamedBoxes", BoxPlot);
+void PlotGraphWithCaption() = PlotGraph("NamedBoxes", BoxPlot, 10);
