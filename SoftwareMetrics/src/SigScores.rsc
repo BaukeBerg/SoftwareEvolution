@@ -7,6 +7,9 @@ import \helpers::MathHelpers;
 import \util::Math;
 import analysis::statistics::Descriptive;
 
+import vis::Figure;
+import GraphGenerator;
+
 public int VolumeScore(int SLOC) = ReturnScore(SLOC, [66000,246000,655000,1310000]);
 public int UnitComplexityIndex(int Complexity) = ReturnScore(Complexity, [10,20,50]);
 public int CoverageScore(int Coverage) = ReturnScore(Coverage, [20,60,80,95]);
@@ -25,9 +28,15 @@ public int TotalSigScore(list[int] Scores)
   int Testability = round(mean([Complexity, UnitSize]));
   int TotalScore = round(mean([Analyzeability, Changeability, Testability]));
   // GeneratePlotWithTheseNiceMetrics
+  TBoxPlot BoxPlot = [  <5 - Scores[0], "Volume">,
+                        <5 - Scores[1], "Complexity">,
+                        <5 - Scores[2], "Duplication">,
+                        <5 - Scores[3], "UnitSize">
+                       ];
+  PlotGraphInvertedColours("SIG Score", BoxPlot, 5);
+  
   return TotalScore;
 }
-
 
 int EvaluateDistribution(list[int] Distribution)
 {
