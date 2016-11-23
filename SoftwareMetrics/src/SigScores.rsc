@@ -23,7 +23,9 @@ public int TotalSigScore(list[int] Scores)
   int Analyzeability = round(mean([Volume, Duplication, UnitSize]));
   int Changeability = round(mean([Complexity, Duplication]));
   int Testability = round(mean([Complexity, UnitSize]));
-  return round(mean([Analyzeability, Changeability, Testability]));
+  int TotalScore = round(mean([Analyzeability, Changeability, Testability]));
+  // GeneratePlotWithTheseNiceMetrics
+  return TotalScore;
 }
 
 
