@@ -311,4 +311,13 @@ public list[str] WaitingQuotes = [
                                 ]; 
                           
                           
-void PrintQuote() = println(WaitingQuotes[arbInt(size(WaitingQuotes))]);
+
+
+void PrintQuote(int Counter) = PrintQuote(Counter, 50);                          
+void PrintQuote(int Counter, int QuoteInterval)
+{
+  if(0 == Counter % QuoteInterval)
+  {
+    println(WaitingQuotes[arbInt(size(WaitingQuotes))]);
+  }
+}
