@@ -16,6 +16,19 @@ import \helpers::JavaHelpers; // Used for Getting some java specifics
 
 int QuoteInterval = 50;
 
+void GenerateSanitizedCode(str SampleFolder, loc OutputFile)
+{
+  list[loc] FilesToParse = EnumerateDirFiles(SampleFolder);
+  int Count = 0;
+  for(File <- FilesToParse)
+  {
+    Count +=1;
+    PrintQuote(Count, 25);
+    MethodSize(readFile(File), OutputFile);
+  }  
+}
+  
+
 void DetermineSoftwareMetrics()
 {
   StartTime = now();
@@ -29,10 +42,7 @@ void DetermineSoftwareMetrics()
   for(File <- FilesToParse)
   {
     Files += 1;
-    if(0 ==  Files % QuoteInterval)
-    {
-      PrintQuote();
-    }
+    PrintQuote(Files);    
     TotalSize += ScanJavaFileSloc(File);
     for(tuple[int Length, int Complexity] JavaMethod <- ScanJavaFileMethodLengthAndComplexity(File))
     {
@@ -45,26 +55,32 @@ void DetermineSoftwareMetrics()
   list[int] TotalResults = [VolumeScore(TotalSize), UnitSizeScore(UnitSizes), DuplicationScore(DupedPercentage), UnitComplexityScore(UnitComplexity)];  
   println("Volume size: <TotalSize> Rating: <StarRating(TotalResults[0])>");
   println("Unit size distribution: <UnitSizes>, Rating: <StarRating(TotalResults[1])>");
-  println("Unit duplication amount: <DupedPercentage>%% , Rating: <StarRating(TotalResults[2])>");
+  println("Unit duplication amount: <DupedPercentage>% , Rating: <StarRating(TotalResults[2])>");
   println("Unit complexity distribution: <UnitComplexity>, Rating: <StarRating(TotalResults[3])>");  
   println("Total SIG Maintainability score: <TotalResults>, Rating: <StarRating(TotalSigScore(TotalResults))>"); 
   println("Duration: <createDuration(StartTime, now())>");
   
 }
 
-void GenerateHtmlReporting()
+void GenerateHtmlReporting() = GenerateHtmlReporting(ProjectName);
+
+
+void GenerateHtmlReporting(str SpecificName)
 {
-  list[loc] FilesToParse = EnumerateDirFiles(ProjectName);
+  list[loc] FilesToParse = EnumerateDirFiles(SpecificName);
   str TotalHtml = OpenTable();
   TotalHtml += Caption("SoftwareMetrics");
   TotalHtml += TableColumns();
+  int Counter = 0;
   for(File <- FilesToParse)
   {
+    Counter += 1;
+    PrintQuote(Counter, 100);
     TotalHtml += ScanJavaFileToHtml(File);
     DetailedReport = GenerateDetailedTable(File);
-    writeFile(HtmlDetailsFile("<toLowerCase(GetClassName(File))>.html"), DetailedReport);     
+    writeFile(HtmlDetailsFile(SpecificName, "<toLowerCase(GetClassName(File))>.html"), DetailedReport);     
   }
   /// Close table and generate report
   TotalHtml += CloseTable();
-  writeFile(toLocation("<RootLocation>index.html"), TotalHtml);
+  writeFile(toLocation("<OutputDir><SpecificName>/index.html"), TotalHtml);
  }
