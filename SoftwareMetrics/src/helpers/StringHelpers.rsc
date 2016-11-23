@@ -1,5 +1,9 @@
 module \helpers::StringHelpers
 
+import IO;
+import List;
+import Map;
+import Set;
 import String;
 
 // Amount of typed code in a string
@@ -73,3 +77,20 @@ public str ClipString(str StringToClip, str Start, str End) = ClipString(StringT
 public str ClipString(str StringToClip, str Start, str End, str Split) = ClipString(StringToClip, findFirst(StringToClip, Start), findFirst(StringToClip, End) + size(End), Split);
 public str ClipString(str StringToClip, int StartPos, int EndPos) = ClipString(StringToClip, StartPos, EndPos, ""); 
 public str ClipString(str StringToClip, int StartPos, int EndPos, str Split) = substring(StringToClip, 0, StartPos) + Split + substring(StringToClip, EndPos); 
+
+alias THashMap = map[int,int];
+alias TStringMap = map[str Source, int Encoding];
+
+THashMap HashFile(loc FileToHash)
+{
+  list[str] Lines = readFileLines(FileToHash);
+  set[str] FileLines = toSet(Lines);
+  TStringMap StringMap = index(FileLines);
+  THashMap FilesMap = ();
+  for(n <- [0.. size(Lines)])
+  {
+    FilesMap[n] = StringMap[Lines[n]];
+  }
+  return FilesMap; 
+}
+

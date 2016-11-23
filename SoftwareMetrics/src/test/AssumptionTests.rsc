@@ -1,6 +1,7 @@
 module \test::AssumptionTests
 
 import List;
+import Set;
 
 import analysis::statistics::Descriptive;
 import \util::Math;
@@ -48,7 +49,10 @@ test bool AssumeIteratorIncrementing()
   return ExpectEqual(10, Loops);
 }
 
+// Some assumptions regarding hashing
+public set[str] SimpleSet = {"aap", "noot", "mies"};
+public map[str Key, int Value] StringHash = index(SimpleSet);
 
-
+ 
 
  

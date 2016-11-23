@@ -15,6 +15,7 @@ test bool TestDoubleClone() = ExpectEqual(12, SampleFile("DoubleClone.txt"));
 test bool TestExtendedClone() = ExpectEqual(14, SampleFile("DoubleExtendedClone.txt"));
 test bool TestDualDifferentClone() = ExpectEqual(20, SampleFile("DoubleDifferentClones.txt"));
 test bool TestBraceCase() = ExpectEqual(0, SampleFile("BraceCase.txt"));
+test bool TestNoClone() = ExpectEqual(0, SampleFile("NoClone.txt"));
 
 TCloneList SomeClones = [ <34,6>,
                           <45,8>,
