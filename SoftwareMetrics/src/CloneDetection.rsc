@@ -9,7 +9,7 @@ import FileHandler;
 import \helpers::ListHelpers;
 
 list [tuple[int, list[int]]] DetectClones()  = DetectClones(-1);
-list [tuple[int, list[int]]] DetectClones(int MaxLineAmount)  = DetectClones(MonsterFile(|project://SoftwareMetrics/output/sanitizedsql|), MaxLineAmount);
+list [tuple[int, list[int]]] DetectClones(int MaxLineAmount)  = DetectClones(CreateMonsterFile(|project://SoftwareMetrics/output/sanitizedsql|), MaxLineAmount);
 list [tuple[int, list[int]]] DetectClones(loc FileLoc, int MaxLineAmount) = DetectClones(readFileLines(FileLoc), MaxLineAmount); 
 list [tuple[int, list[int]]] DetectClones(list[str] FileLines) = DetectClones(FileLines, -1); 
 list [tuple[int, list[int]]] DetectClones(list[str] FileLines, int MaxLineAmount)

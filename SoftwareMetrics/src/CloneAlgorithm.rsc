@@ -25,8 +25,6 @@ int GetClones(list[str] Lines)
   StartTime = now();    
   int FileSize = size(Lines);
   println("File size: <FileSize> lines");
-  
-  // Skip the curlies, since they're never assumed start of a clone!
   TCloneList Clones = [];  
   int LineNumber = 0;
   while(LineNumber < FileSize)

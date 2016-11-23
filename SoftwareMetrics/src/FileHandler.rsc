@@ -27,8 +27,8 @@ list[loc] EnumerateDirFiles(loc FolderLoc)
 }
 
 // Generate a monster file and return its contents
-list[str] MonsterFile(loc FileFolder) = MonsterFile(FileFolder, |project://SoftwareMetrics/output/bulk/monsterFile.java|);
-list[str] MonsterFile(loc FileFolder, loc OutputFile)
+list[str] CreateMonsterFile(loc FileFolder) = CreateMonsterFile(FileFolder, |project://SoftwareMetrics/output/bulk/monsterFile.java|);
+list[str] CreateMonsterFile(loc FileFolder, loc OutputFile)
 {
 	str lines = "";
 	for(file <- EnumerateDirFiles(FileFolder)) {
