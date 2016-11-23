@@ -65,7 +65,7 @@ void DetermineSoftwareMetrics(str ProjectName)
     }      
   }
   
-  int DupedPercentage = GetClonesPercentage(ClonesFile(ProjectName));
+  int DupedPercentage = Percentage(GetClonesForFile(ClonesFile(ProjectName)), TotalSize);
   list[int] TotalResults = [VolumeScore(TotalSize), UnitSizeScore(UnitSizes), DuplicationScore(DupedPercentage), UnitComplexityScore(UnitComplexity)];  
   println("Volume size: <TotalSize> Rating: <StarRating(TotalResults[0])>");
   println("Unit size distribution: <CreateDistribution(UnitSizes)> (<UnitSizes>), Rating: <StarRating(TotalResults[1])>");
