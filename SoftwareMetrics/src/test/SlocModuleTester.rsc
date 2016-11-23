@@ -14,14 +14,14 @@ test bool ScanColumnJava()
 test bool ScanWhiteLineJavaFile()
 {
   TStaticMetrics ActualMetrics = ScanJavaFile(|project://SoftwareMetrics/sampleFiles/slocmodule/WhiteLines.java|);  
-  return ExpectEqualInt(14, ActualMetrics.WhiteSpaces);  
+  return ExpectEqual(14, ActualMetrics.WhiteSpaces);  
 }
 
 // Checks the CodeLines sample java file
 test bool ScanSourceCodeLines()
 {
   TStaticMetrics ActualMetrics = ScanJavaFile(|project://SoftwareMetrics/sampleFiles/slocmodule/CodeLines.java|);  
-  return ExpectEqualInt(48, ActualMetrics.CodeLines);  
+  return ExpectEqual(48, ActualMetrics.CodeLines);  
 }
 
 bool StaticMetricsCheck(TStaticMetrics Expected, TStaticMetrics Actual)

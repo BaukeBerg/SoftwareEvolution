@@ -200,4 +200,29 @@ str GenerateDetailedTable(loc FileName)
   return TotalHtml;
 }
 
+list[str] ExtractFields(loc FileToCheck)
+{
+  list[str] AllLines = readFileLines(FileToCheck);
+  list[str] Results = [];
+  for(Line <- AllLines)
+  {
+    if(-1 == findFirst(Line, ")"))
+    {
+      Line = replaceAll(Line, "public", "");
+      if(-1 != findFirst(Line, " "))
+      {
+        str Identifier = substring(Line, 0, findFirst(Line, " "));
+        switch(Identifier)
+        {
+        case /int/:
+          Results += Line;
+        case /String/:
+          Results += Line;
+        }
+      }
+    }
+  }
+  return Results;
+}
+
 
