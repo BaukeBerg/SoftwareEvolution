@@ -14,6 +14,7 @@ import String;
 
 import \helpers::HtmlHelpers; // Used for Html creation
 import \helpers::JavaHelpers; // Used for Getting some java specifics
+import \helpers::MathHelpers;
 
 int QuoteInterval = 50;
 
@@ -59,17 +60,17 @@ void DetermineSoftwareMetrics(str ProjectName)
     TotalSize += ScanJavaFileSloc(File);
     for(tuple[int Length, int Complexity] JavaMethod <- ScanJavaFileMethodLengthAndComplexity(File))
     {
-      UnitSizes[UnitSizeIndex(JavaMethod.Length)] +=1;
-      UnitComplexity[UnitComplexityIndex(JavaMethod.Complexity)] += 1;
+      UnitSizes[UnitSizeIndex(JavaMethod.Length)] += JavaMethod.Length;
+      UnitComplexity[UnitComplexityIndex(JavaMethod.Complexity)] += JavaMethod.Length;
     }      
   }
   
   int DupedPercentage = GetClonesPercentage(ClonesFile(ProjectName));
   list[int] TotalResults = [VolumeScore(TotalSize), UnitSizeScore(UnitSizes), DuplicationScore(DupedPercentage), UnitComplexityScore(UnitComplexity)];  
   println("Volume size: <TotalSize> Rating: <StarRating(TotalResults[0])>");
-  println("Unit size distribution: <UnitSizes>, Rating: <StarRating(TotalResults[1])>");
+  println("Unit size distribution: <CreateDistribution(UnitSizes)> (<UnitSizes>), Rating: <StarRating(TotalResults[1])>");
   println("Unit duplication amount: <DupedPercentage>% , Rating: <StarRating(TotalResults[2])>");
-  println("Unit complexity distribution: <UnitComplexity>, Rating: <StarRating(TotalResults[3])>");  
+  println("Unit complexity distribution: <CreateDistribution(UnitComplexity)> (<UnitComplexity>), Rating: <StarRating(TotalResults[3])>");  
   println("Total SIG Maintainability score: <TotalResults>, Rating: <StarRating(TotalSigScore(TotalResults))>"); 
   println("Duration: <createDuration(StartTime, now())>");
   RenderRisk("Unit sizes risk profile", UnitSizes);

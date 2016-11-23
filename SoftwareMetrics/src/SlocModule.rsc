@@ -38,7 +38,7 @@ public data TStaticMetrics = Init(str FileName = "NoFileNameSpecified",
 str TableColumns() = RowWithValues(["FileName","File lines","CodeLines","WhiteSpaces","LLOC","Curlies","Comments","MaxIndent","Details"]);
 
 str ScanJavaFileToHtml(str FileToCheck) = ScanJavaFileToHtml(toLocation(FileToCheck));
-int ScanJavaFileSloc(loc FileToCheck) = ScanJavaFile(FileToCheck).LLOC;
+int ScanJavaFileSloc(loc FileToCheck) = ScanJavaFile(FileToCheck).CodeLines;
 
 list[tuple[int,int]] ScanJavaFileMethodLengthAndComplexity(loc FileToCheck)
 {
