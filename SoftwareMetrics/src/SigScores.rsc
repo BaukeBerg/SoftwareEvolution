@@ -17,19 +17,23 @@ public int UnitSizeScore(list[int] Distribution) = EvaluateDistribution(Distribu
 public int UnitComplexityScore(list[int] Distribution) = EvaluateDistribution(Distribution);
 public int TotalSigScore(list[int] Scores)
 {
-  int Volume = Scores[0];
-  int Complexity = Scores[1];
-  int Duplication = Scores[2];
-  int UnitSize = Scores[3];
-  int Analyzeability = round(mean([Volume, Duplication, UnitSize]));
-  int Changeability = round(mean([Complexity, Duplication]));
-  int Testability = round(mean([Complexity, UnitSize]));
-  int TotalScore = round(mean([Analyzeability, Changeability, Testability]));
+  int Volume = 5-Scores[0];
+  int Complexity = 5-Scores[1];
+  int Duplication = 5-Scores[2];
+  int UnitSize = 5-Scores[3];
+  int Analyzeability = 5-round(mean([Volume, Duplication, UnitSize]));
+  int Changeability = 5-round(mean([Complexity, Duplication]));
+  int Testability = 5-round(mean([Complexity, UnitSize]));
+  int TotalScore = 5-round(mean([Analyzeability, Changeability, Testability]));
   // GeneratePlotWithTheseNiceMetrics
-  TBoxPlot BoxPlot = [  <5 - Scores[0], "Volume">,
-                        <5 - Scores[1], "Complexity">,
-                        <5 - Scores[2], "Duplication">,
-                        <5 - Scores[3], "UnitSize">
+  TBoxPlot BoxPlot = [  <Volume, "Volume">,
+                        <Complexity, "Complexity">,
+                        <Duplication, "Duplication">,
+                        <UnitSize, "UnitSize">,
+                        <Analyzeability, "Analyzeability">,
+                        <Changeability, "Changeability">,
+                        <Testability, "Testability">,
+                        <TotalScore, "Maintainability">
                        ];
   PlotGraphInvertedColours("SIG Score", BoxPlot, 5);
   
