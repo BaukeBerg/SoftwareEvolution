@@ -11,6 +11,12 @@ import \util::Math;
 alias TCloneList = list[TClone];
 alias TClone = tuple[int Start, int Size];
 
+int GetClonesPercentage(loc FileToCheck)
+{
+  list[str] Lines = readFileLines(FileToCheck);
+  return Percentage(GetClones(Lines), size(Lines));
+}
+
 int GetClones(loc FileToCheck) = GetClones(readFileLines(FileToCheck));
 
 int GetClones(list[str] Lines) 

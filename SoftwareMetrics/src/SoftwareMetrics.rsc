@@ -13,7 +13,6 @@ import String;
 
 import \helpers::HtmlHelpers; // Used for Html creation
 import \helpers::JavaHelpers; // Used for Getting some java specifics
-import \helpers::MathHelpers;
 
 int QuoteInterval = 50;
 
@@ -41,7 +40,8 @@ void DetermineSoftwareMetrics()
       UnitComplexity[UnitComplexityIndex(JavaMethod.Complexity)] += 1;
     }      
   }
-  int DupedPercentage = Percentage(GetClones(MethodLinesFile)); // Duplication in units
+  
+  int DupedPercentage = GetClonesPercentage(MethodLinesFile);
   list[int] TotalResults = [VolumeScore(TotalSize), UnitSizeScore(UnitSizes), DuplicationScore(DupedPercentage), UnitComplexityScore(UnitComplexity)];  
   println("Volume size: <TotalSize> Rating: <StarRating(TotalResults[0])>");
   println("Unit size distribution: <UnitSizes>, Rating: <StarRating(TotalResults[1])>");
@@ -66,5 +66,5 @@ void GenerateHtmlReporting()
   }
   /// Close table and generate report
   TotalHtml += CloseTable();
-  writeFile(RootLocation()+"index.html", TotalHtml);
+  writeFile(toLocation("<RootLocation>index.html"), TotalHtml);
  }
