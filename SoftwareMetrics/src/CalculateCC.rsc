@@ -28,6 +28,7 @@ int CalculateCyclomaticComplexity(MethodDec m)
   {
     case (Expr)`<Expr _> && <Expr _>` : result += 1;
     case (Expr)`<Expr _> || <Expr _>` : result += 1;
+    case (CondMid)`? <Expr _> :` : result += 1;
     case (Stm)`do <Stm _> while (<Expr _>);`: result += 1;
     case (Stm)`while (<Expr _>) <Stm _>`: result += 1;
     case (Stm)`if (<Expr _>) <Stm _>`: result +=1;
