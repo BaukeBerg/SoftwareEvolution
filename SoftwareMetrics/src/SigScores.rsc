@@ -15,7 +15,7 @@ public int DuplicationScore(int Dupes) = ReturnScore(Dupes, [3,5,10,20]);
 public int UnitSizeIndex(int Size) = ReturnScore(Size, [10,50,100]);
 public int UnitSizeScore(list[int] Distribution) = EvaluateDistribution(Distribution);
 public int UnitComplexityScore(list[int] Distribution) = EvaluateDistribution(Distribution);
-public int FieldLengthIndex(int Length) = ReturnScore(Length, [2, 4, 6]);
+public int FieldLengthIndex(int Length) = 4 - ReturnScore(Length, [2, 4, 6]);
 public int FieldLengthScore(list[int] Distribution) = EvaluateDistributionDistribution(Distribution);
 public int TotalSigScore(list[int] Scores)
 {

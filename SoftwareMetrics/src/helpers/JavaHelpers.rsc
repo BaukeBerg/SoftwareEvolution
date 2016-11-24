@@ -133,14 +133,20 @@ bool HasMultipleLines(str StringToken) = (-1 != findFirst(StringToken, "\r\n"));
 // Returns the rating on a per file basis
 list[int] GetFields(loc FileLoc)
 {
-	M3 Model = createM3FromEclipseFile(FileLoc);
-	list[list[loc] Items] FieldsLoc = toList(NumberOfFieldsPerClass(Model).fieldsLoc);
-	list[int] FieldLength = [0,0,0,0];   
-
-	for(f <- FieldsLoc[0])
+  M3 Model = createM3FromEclipseFile(FileLoc);
+  list[list[loc] Items] FieldsLoc = toList(NumberOfFieldsPerClass(Model).fieldsLoc);
+  list[int] FieldLength = [0,0,0,0];   
+  try
+  {
+    for(f <- FieldsLoc[0])
+	  {
+      str TotalPath = f.path;
+		  FieldLength[FieldLengthIndex(size(substring(TotalPath, findLast(TotalPath, "/")+1)))] += 1;
+	  }
+	}
+	catch:
 	{
-		str TotalPath = f.path;
-		FieldLength[FieldLengthIndex(size(substring(TotalPath, findLast(TotalPath, "/")+1)))] += 1;
+	   ;
 	}
 	return FieldLength;
 }

@@ -59,7 +59,11 @@ void DetermineSoftwareMetrics(str ProjectName)
     Files += 1;
     PrintQuote(Files);    
     TotalSize += ScanJavaFileSloc(File);
-    FieldLength += GetFields(File); 
+    list[int] FieldsPerFile = GetFields(File); 
+    FieldLength[0] += FieldsPerFile[0];
+    FieldLength[1] += FieldsPerFile[1];
+    FieldLength[2] += FieldsPerFile[2];
+    FieldLength[3] += FieldsPerFile[3];
     for(tuple[int Length, int Complexity] JavaMethod <- ScanJavaFileMethodLengthAndComplexity(File))
     {
       UnitSizes[UnitSizeIndex(JavaMethod.Length)] += JavaMethod.Length;
@@ -67,13 +71,14 @@ void DetermineSoftwareMetrics(str ProjectName)
     }      
   }
   
-  int DupedPercentage = Percentage(GetClonesForFile(ClonesFile(ProjectName)), TotalSize);
+  int DupedPercentage = 5; //Percentage(GetClonesForFile(ClonesFile(ProjectName)), TotalSize);
   list[int] TotalResults = [VolumeScore(TotalSize), UnitSizeScore(UnitSizes), DuplicationScore(DupedPercentage), UnitComplexityScore(UnitComplexity)];  
   println("Volume size: <TotalSize> Rating: <StarRating(TotalResults[0])>");
   println("Unit size distribution: <CreateDistribution(UnitSizes)> (<UnitSizes>), Rating: <StarRating(TotalResults[1])>");
   println("Unit duplication amount: <DupedPercentage>% , Rating: <StarRating(TotalResults[2])>");
   println("Unit complexity distribution: <CreateDistribution(UnitComplexity)> (<UnitComplexity>), Rating: <StarRating(TotalResults[3])>");  
   println("Total SIG Maintainability score: <TotalResults>, Rating: <StarRating(TotalSigScore(TotalResults))>"); 
+  println("Field length score <CreateDistribution(FieldLength)> (<FieldLength>), Rating: <StarRating(EvaluateDistribution(FieldLength))>");
   println("Duration: <createDuration(StartTime, now())>");
   RenderRisk("Unit sizes risk profile", UnitSizes);
   RenderRisk("Unit complexity risk profile", UnitComplexity);  
