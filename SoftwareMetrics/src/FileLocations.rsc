@@ -4,6 +4,7 @@ import String;
 
 private str ProjectRoot = "project://SoftwareMetrics/";
 public str OutputDir = "<ProjectRoot>output/";
+public str SampleDir = "<ProjectRoot>sampleFiles/";
 private str BulkDir = "<OutputDir>bulk/";
 
 // Simple static files with some import locations
