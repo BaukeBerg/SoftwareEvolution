@@ -8,6 +8,9 @@ import FileHandler;
 
 import \helpers::ListHelpers;
 
+import lang::java::m3::Core;
+import lang::java::jdt::m3::Core;
+
 list [tuple[int, list[int]]] DetectClones()  = DetectClones(-1);
 list [tuple[int, list[int]]] DetectClones(int MaxLineAmount)  = DetectClones(CreateMonsterFile(|project://SoftwareMetrics/output/sanitizedsql|), MaxLineAmount);
 list [tuple[int, list[int]]] DetectClones(loc FileLoc, int MaxLineAmount) = DetectClones(readFileLines(FileLoc), MaxLineAmount); 
@@ -121,4 +124,23 @@ void t1()
 	}
 	println(CloneStorage);
 	println("<size(CloneStorage)> duplicates detected");
+}
+
+void t2()
+{
+	M3 model = createM3FromEclipseFile(|project://SoftwareMetrics/sampleFiles/smallsql/database/Column.java|);
+	println(numberOfFieldsPerClass(model));
+}
+map[loc class, list[loc] fieldCount] numberOfFieldsPerClass(M3 myModel) = (cl:numberOfFields(cl, myModel) | <cl,_> <- myModel@containment, isClass(cl));
+list[loc] numberOfFields(loc cl, M3 model) = [ m | m <- model@containment[cl], isField(m)];
+
+
+//loc file = |project://SoftwareMetrics/sampleFiles/smallsql/database/Column.java|;
+int GetFields(loc file) = size([m | m <- createM3FromEclipseFile(file)@containment[|java+class:///<GetClassName(file)>|], isField(m)]);
+/// Extracts classname from file location
+str GetClassName(loc FileToCheck)
+{
+  str TotalPath = FileToCheck.path;
+  str subPath = substring(TotalPath, findFirst(TotalPath, "/")+1, findLast(TotalPath, "."));
+  return substring(subPath, findFirst(subPath, "/")+1);
 }
