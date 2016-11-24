@@ -12,8 +12,8 @@ import \util::Math;
 import \helpers::StringHelpers;
 import \helpers::ListHelpers;
 import FileHandler;
-
 import FileLocations;
+import SigScores;
 
 private bool WriteMethodStatementsToFile = true;
 
@@ -130,16 +130,17 @@ int HandleFind(str Line, str Find, int StartPos)
 str GetSplit(str StringToken)  = HasMultipleLines(StringToken) ? "\r\n" : "" ;
 bool HasMultipleLines(str StringToken) = (-1 != findFirst(StringToken, "\r\n"));
 
+// Returns the rating on a per file basis
 list[int] GetFields(loc FileLoc)
 {
 	M3 Model = createM3FromEclipseFile(FileLoc);
-	list[list[loc]] FieldsLoc = toList(NumberOfFieldsPerClass(Model).fieldsLoc);
-	list[int] FieldLength = [];
+	list[list[loc] Items] FieldsLoc = toList(NumberOfFieldsPerClass(Model).fieldsLoc);
+	list[int] FieldLength = [0,0,0,0];   
 
 	for(f <- FieldsLoc[0])
 	{
 		str TotalPath = f.path;
-		FieldLength += [size(substring(TotalPath, findLast(TotalPath, "/")+1))];
+		FieldLength[FieldLengthIndex(size(substring(TotalPath, findLast(TotalPath, "/")+1)))] += 1;
 	}
 	return FieldLength;
 }
