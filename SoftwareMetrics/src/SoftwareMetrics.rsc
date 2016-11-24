@@ -71,7 +71,7 @@ void DetermineSoftwareMetrics(str ProjectName)
     }      
   }
   
-  int DupedPercentage = 5; //Percentage(GetClonesForFile(ClonesFile(ProjectName)), TotalSize);
+  int DupedPercentage = Percentage(GetClonesForFile(ClonesFile(ProjectName)), TotalSize);
   list[int] TotalResults = [VolumeScore(TotalSize), UnitSizeScore(UnitSizes), DuplicationScore(DupedPercentage), UnitComplexityScore(UnitComplexity)];  
   println("Volume size: <TotalSize> Rating: <StarRating(TotalResults[0])>");
   println("Unit size distribution: <CreateDistribution(UnitSizes)> (<UnitSizes>), Rating: <StarRating(TotalResults[1])>");
@@ -82,6 +82,7 @@ void DetermineSoftwareMetrics(str ProjectName)
   println("Duration: <createDuration(StartTime, now())>");
   RenderRisk("Unit sizes risk profile", UnitSizes);
   RenderRisk("Unit complexity risk profile", UnitComplexity);  
+  RenderRisk("Field name length", FieldLength);
 }
 
 void GenerateHtmlReporting(str SpecificName)
