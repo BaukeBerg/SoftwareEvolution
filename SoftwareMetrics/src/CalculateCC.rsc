@@ -11,24 +11,18 @@ lrel[loc MethodLocation, int CyclomaticComplexity] CyclomaticComplexity(loc file
 
 set[MethodDec] AllMethods(loc file) = {m | /MethodDec m := parse(#start[CompilationUnit], file)};
 
-//syntax CondMid =
-//  bracket "?" Expr ":" 
-//  ;
-
-
-//syntax EnumConstArgs =
-//  bracket "(" {Expr ","}* ")" 
-//  ;
 // As taken from Jurgen Vinju, since all definitions are wrong, we assumed his was best? 
-// It calculates the number of independant paths
+// It calculates the number of independant paths => however, inline forks were not included, so we added them ourselves
 int CalculateCyclomaticComplexity(MethodDec m) 
 {
   result = 1;
   visit (m)
   {
+    // Extra part
     case (Expr)`<Expr _> && <Expr _>` : result += 1;
     case (Expr)`<Expr _> || <Expr _>` : result += 1;
     case (CondMid)`? <Expr _> :` : result += 1;
+    // Original part
     case (Stm)`do <Stm _> while (<Expr _>);`: result += 1;
     case (Stm)`while (<Expr _>) <Stm _>`: result += 1;
     case (Stm)`if (<Expr _>) <Stm _>`: result +=1;
