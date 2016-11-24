@@ -48,6 +48,7 @@ void DetermineSoftwareMetrics(str ProjectName)
   list[loc] FilesToParse = EnumerateDirFiles(ProjectName);
   list[int] UnitSizes = [0,0,0,0];
   list[int] UnitComplexity = [0,0,0,0];
+  list[int] FieldLength = [0,0,0,0];
   int TotalSize = 0;
   ResetFile(MethodLinesFile(""));
   ResetFile(MethodLinesFile(ProjectName));
@@ -58,6 +59,7 @@ void DetermineSoftwareMetrics(str ProjectName)
     Files += 1;
     PrintQuote(Files);    
     TotalSize += ScanJavaFileSloc(File);
+    FieldLength += GetFields(File); 
     for(tuple[int Length, int Complexity] JavaMethod <- ScanJavaFileMethodLengthAndComplexity(File))
     {
       UnitSizes[UnitSizeIndex(JavaMethod.Length)] += JavaMethod.Length;

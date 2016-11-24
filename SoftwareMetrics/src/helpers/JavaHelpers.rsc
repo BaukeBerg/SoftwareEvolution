@@ -3,6 +3,9 @@ module \helpers::JavaHelpers
 import IO;
 import List;
 import String;
+import Set;
+import lang::java::m3::Core;
+import lang::java::jdt::m3::Core;
 
 import \util::Math;
 
@@ -126,6 +129,23 @@ int HandleFind(str Line, str Find, int StartPos)
 
 str GetSplit(str StringToken)  = HasMultipleLines(StringToken) ? "\r\n" : "" ;
 bool HasMultipleLines(str StringToken) = (-1 != findFirst(StringToken, "\r\n"));
+
+list[int] GetFields(loc FileLoc)
+{
+	M3 Model = createM3FromEclipseFile(FileLoc);
+	list[list[loc]] FieldsLoc = toList(NumberOfFieldsPerClass(Model).fieldsLoc);
+	list[int] FieldLength = [];
+
+	for(f <- FieldsLoc[0])
+	{
+		str TotalPath = f.path;
+		FieldLength += [size(substring(TotalPath, findLast(TotalPath, "/")+1))];
+	}
+	return FieldLength;
+}
+map[loc class, list[loc] fieldsLoc] NumberOfFieldsPerClass(M3 myModel) = (cl:NumberOfFields(cl, myModel) | <cl,_> <- myModel@containment, isClass(cl));
+list[loc] NumberOfFields(loc cl, M3 model) = [ m | m <- model@containment[cl], isField(m)];
+
 
 
                            
