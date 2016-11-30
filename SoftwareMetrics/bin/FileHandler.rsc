@@ -48,7 +48,7 @@ list[str] IndexLines(list[str] InputLines, str FileName)
   list[str] Results = [];
   for(int Line <- [0 .. size(InputLines)])
   {
-    Results += "<FileName><FileSplitter><Line+1><LineSplitter><InputLines[Line]>";
+    Results += "<FileName><FileSplitter><Line+1><LineSplitter><trim(InputLines[Line])>";
   }
   return Results;
 }
