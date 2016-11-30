@@ -121,8 +121,7 @@ list[str] RemoveBlockComments(list[str] Lines)
     else
     {
       StartOpen = max(Open, Close)+1; // If one was found, move start to maximum of both, to skip half a comment
-    }
-        
+    }        
   }
   return TrimList(split("\r\n", TotalData));
 } 

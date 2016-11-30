@@ -6,6 +6,7 @@ import List;
 import String;
 
 import \helpers::JavaHelpers;
+import \helpers::ListHelpers;
 
 list[loc] EnumerateDirFiles(str SampleSubDir) = EnumerateDirFiles(toLocation("<SampleDir><SampleSubDir>"));
 list[loc] EnumerateDirFiles(loc FolderLoc)
@@ -37,7 +38,8 @@ list[str] StripAndIndexFile(loc FileToStrip)
   list[str] FileLines = readFileLines(FileToStrip);
   FileLines = IndexLines(FileLines, FileName(FileToStrip));
   FileLines = RemoveSingleLineComments(FileLines, LineSplitter);
-  //FileLines = RemoveBlockComments(FileLines, LineSplitter);
+  FileLines = RemoveBlockComments(FileLines);
+  FileLines = TrimList(FileLines, LineSplitter);
   return FileLines;
 }
 

@@ -28,3 +28,5 @@ test bool CheckListTrimming() = ExpectEqual(["Hello", "Goodbye"], TrimList(["   
 test bool CheckListTrimmingRemoveEmptyLines() = ExpectEqual(["Hello", "Goodbye"], TrimList(["    \r\n   \t Hello", "              ", "Goodbye \n\r\t   "]));
 
 test bool TestListJoin() = ExpectEqual("Hello\r\nGoodbye", JoinList(["Hello", "Goodbye"]));
+
+test bool TestTokenizedListTrimming() = ExpectEqual(["FilledLine$Hello", "FilledLineAsWell$GoodBye"], TrimList(["FilledLine$Hello", "EmptyLine$", "FilledLineAsWell$GoodBye"], "$"));

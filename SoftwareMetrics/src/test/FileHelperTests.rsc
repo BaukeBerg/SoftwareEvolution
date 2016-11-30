@@ -17,4 +17,7 @@ test bool CheckFindNameWithourDir() = ExpectEqual("Tests.java", FileName("Tests.
 test bool TestIndexLines() = EqualFiles(SampleFile("type1clones/SampleResult.txt"), IndexLines(SampleFile("type1clones/SampleInput.txt")));
 
 test bool TestStrippingIndexedInlineComments() = EqualFiles(SampleFile("type1clones/SampleResultInlineComments.txt"), StripAndIndexFile(SampleFile("type1clones/SampleInputInlineComments.txt")));
+
+test bool TestStrippingMultilineComments() = EqualFiles(SampleFile("type1clones/SampleResultMultilineComments.txt"), 
+                                                        StripAndIndexFile(SampleFile("type1clones/SampleInputMultilineComments.txt")));
   

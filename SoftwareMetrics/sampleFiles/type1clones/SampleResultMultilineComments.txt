@@ -1,0 +1,4 @@
+﻿SampleInputMultilineComments.txt۞1۩final class SQLParser {
+SampleInputMultilineComments.txt۞3۩SSConnection con;
+SampleInputMultilineComments.txt۞10۩Command parse(SSConnection con, String sqlString) throws SQLException{
+SampleInputMultilineComments.txt۞11۩this.con = con;
