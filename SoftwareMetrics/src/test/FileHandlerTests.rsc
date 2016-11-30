@@ -18,6 +18,5 @@ test bool TestIndexLines()
 {
   list[str] ExpectedResult = readFileLines(SampleFile("type1clones/SampleResult.txt"));
   list[str] GeneratedResult = IndexLines(readFileLines(SampleFile("type1clones/SampleInput.txt")), "SampleInput.txt");
-  writeFile(OutputFile("test/TestSample.txt"), JoinList(GeneratedResult));
   return ExpectEqual(ExpectedResult, GeneratedResult);
 }
