@@ -1,0 +1,7 @@
+SampleInputInlineComments.txt۞1۩final class SQLParser {
+SampleInputInlineComments.txt۞3۩SSConnection con;
+SampleInputInlineComments.txt۞4۩private char[] sql;
+SampleInputInlineComments.txt۞5۩private List tokens; 
+SampleInputInlineComments.txt۞6۩private int tokenIdx;
+SampleInputInlineComments.txt۞8۩Command parse(SSConnection con, String sqlString) throws SQLException{
+SampleInputInlineComments.txt۞9۩this.con = con;

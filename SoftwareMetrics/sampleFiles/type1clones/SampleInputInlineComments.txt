@@ -1,0 +1,9 @@
+final class SQLParser {
+  /* I should also be gone */
+  SSConnection con;
+  private char[] sql;
+  private List tokens; // This comment should be stripped
+  private int tokenIdx;
+  // This line is a comment
+  Command parse(SSConnection con, String sqlString) throws SQLException{
+  this.con = con;

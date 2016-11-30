@@ -11,7 +11,7 @@ import \util::Math;
 
 import \helpers::StringHelpers;
 import \helpers::ListHelpers;
-import FileHandler;
+import \helpers::FileHelpers;
 import FileLocations;
 import SigScores;
 
@@ -65,6 +65,20 @@ int MethodSize(str MethodToCount, loc OutputFile)
 
 str MethodBody(str InputData) = trim(StringToken(InputData, "{", "}"));
 
+list[str] RemoveSingleLineComments(list[str] Lines, str Split)
+{
+  list[str] Results = [];
+  for(int n <- [0 .. size(Lines)])
+  {
+    list[str] Tokens = split(Split, Lines[n]);
+    if(false == SingleLineComment(trim(Tokens[1])))
+    {
+      Results += StripComment(Lines[n]);
+    }
+  }
+  return Results;
+}
+
 list[str] RemoveSingleLineComments(list[str] Lines)
 {
   list[str] Results = [];
@@ -85,7 +99,7 @@ str StripComment(str InputLine)
   {
     return InputLine;
   }
-  return substring(InputLine, 0, CommentPos);
+  return trim(substring(InputLine, 0, CommentPos));
 }
 
 list[str] RemoveBlockComments(list[str] Lines)
