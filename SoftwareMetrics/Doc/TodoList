@@ -1,0 +1,29 @@
+Minimum:
+
+Type I Clone detection: Exact duplicates
+  - Clean up the code => remove unused overloads, logging etc. refactor into proper functions
+  
+  === Type 1 clone classes are incorrectly detected ===
+  - Starting point is the Series 1 Code.
+    + Divide into 'Clones / Clone Pairs and Clone Classes' => Slides page 5
+    + Log output of the tool somewhere to the visualization (tooltip / clickable?)
+  
+  === Testing harnass is unconvincing, is limited in scope or not thorough. ===
+  - All functions / methods should be based on tests with files / known input, all methods require validation
+  
+  === Cloning visualization does not give insight or does not work properly ===
+  - Visualization in Rascal => One-stop shop
+  - At least on a per-file basis
+    + Different colours per clone type
+    
+  === The clone detection report is incomplete or imcompenehsible ===
+  - Visualization / perhaps some textual output? ....
+  
+  === Not able to explain the core algorithm or answer questions about it ====
+  === Documentation describres unfounded, unsupported illogical or anecdotal motivation for visualization ===
+  === Non-interactive static visualization ===
+  === Does not work work on hsqldb ====
+  
+  Notes:
+  
+  
