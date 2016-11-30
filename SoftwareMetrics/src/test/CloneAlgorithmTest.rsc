@@ -8,7 +8,7 @@ import \helpers::JavaHelpers;
 import \helpers::TestHelpers;
 import \helpers::StringHelpers;
 
-str SamplePath = "project://SoftwareMetrics/sampleFiles/clonedetection/";
+str SamplePath = "project://SoftwareMetrics/sampleFiles/type1clones/";
 int SampleFile(str FileName) = GetClonesForFile(HashFile(RemoveSingleLineComments(readFileLines(toLocation(SamplePath + FileName)))));
 
 test bool TestSingleClone() = ExpectEqual(6, SampleFile("SingleClone.txt"));
