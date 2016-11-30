@@ -156,6 +156,19 @@ int CalcCloneSize(THashMap Lines, int LineNumber, int CloneLine)
   return size(Lines);
 }
 
+// Returns a collection of duplicates from a collection with possible duplicates
+list[str] RetrieveDuplicatesFromFile(loc FileToCheck)
+{
+  list[str] Lines = readFileLines(FileToCheck);
+  ScannedLines = {};
+  return
+    for(Line <- Lines, "}" != Line)
+      if(Line in ScannedLines)
+        append Line;
+      else
+        ScannedLines += Line;
+}
+
 int LineIncrement([]) = 1;
 int LineIncrement(TCloneList Clones) = max(Clones.Size);
 
