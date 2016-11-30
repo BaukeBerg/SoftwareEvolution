@@ -29,3 +29,6 @@ public loc ClonesFile(str ProjectName)
 // Locations generated based on input string
 public loc SanitizedSqlFolder(str ForFile) = toLocation("<OutputDir>sanitizedsql/<ForFile>");
 public loc HtmlDetailsFile(str ProjectName, str ForFile) = toLocation("<OutputDir><ProjectName>/details/<ForFile>");
+
+public loc SampleFile(str ForFile) = toLocation("<SampleDir><ForFile>");
+public loc OutputFile(str ForFile) = toLocation("<OutputDir><ForFile>");
