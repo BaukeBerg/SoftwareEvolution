@@ -14,8 +14,6 @@ public str OpenColumn() = "\<td\>";
 public str CloseColumn() = "\</td\>";
 public str CloseRow() = "\</tr\>\r\n"; // Newline added for Html reading convenience
 
-
-
 public str HtmlPrint(str Input) = replaceAll(Input, "\r\n", "\<br\>");
 
 // Composed functions
@@ -32,6 +30,11 @@ public str RowWithValues(list[str] Values)
 }
 
 public str TableCell(str Value) = OpenColumn() + Value + CloseColumn();
+public str TestRow(str TestName, bool TestResult) = OpenRow() + OpenColumn() + TestName + CloseColumn() + TestCell(TestResult) + CloseRow();
+
+public str TestCell(bool TestPassed) = TestPassed ? GreenCell() : RedCell();
+public str GreenCell() = "\<td width=25 bgcolor=\"#00FF00\"\><CloseColumn()>";
+public str RedCell() = "\<td width=25 bgcolor=\"#FF0000\"\><CloseColumn()>";
 
 // Make note, only works for files in the sampleFile directory
 public str FileLink(str FileName) = CreateLink("/../.." + FileName);

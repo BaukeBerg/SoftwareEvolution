@@ -1,7 +1,7 @@
 module \test::Type1ClonesTest
 
 import FileLocations;
-import Type1Clones;
+import \clones::Type1Clones;
 import String;
 
 

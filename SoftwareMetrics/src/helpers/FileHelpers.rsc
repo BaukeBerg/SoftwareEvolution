@@ -8,8 +8,6 @@ import String;
 import \helpers::JavaHelpers;
 import \helpers::ListHelpers;
 
-
-
 list[loc] EnumerateDirFiles(str SampleSubDir) = EnumerateDirFiles(toLocation("<SampleDir><SampleSubDir>"));
 list[loc] EnumerateDirFiles(loc FolderLoc)
 {

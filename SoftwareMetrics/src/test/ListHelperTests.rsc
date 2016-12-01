@@ -30,3 +30,7 @@ test bool CheckListTrimmingRemoveEmptyLines() = ExpectEqual(["Hello", "Goodbye"]
 test bool TestListJoin() = ExpectEqual("Hello\r\nGoodbye", JoinList(["Hello", "Goodbye"]));
 
 test bool TestTokenizedListTrimming() = ExpectEqual(["FilledLine$Hello", "FilledLineAsWell$GoodBye"], TrimList(["FilledLine$Hello", "EmptyLine$", "FilledLineAsWell$GoodBye"], "$"));
+
+list[str] ModuleNames = ["Package.rsc", "Package2.rsc"];
+
+test bool TestPadding() = ExpectEqual(["import Package.rsc;", "import Package2.rsc;"], PadList("import ", ModuleNames, ";"));

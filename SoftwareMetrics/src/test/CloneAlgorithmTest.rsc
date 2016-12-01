@@ -1,6 +1,6 @@
 module \test::CloneAlgorithmTest
 
-import CloneAlgorithm;
+import \clones::CloneAlgorithm;
 import IO;
 import String;
 

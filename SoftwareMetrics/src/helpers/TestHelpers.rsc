@@ -36,3 +36,6 @@ bool EqualFiles(loc FileToScan, list[str] ContentToCompare)
   }
   return true;
 }
+
+test bool ShowMeARedCell() = ExpectEqual(1, 0);
+test bool ShowMeAGreenCell() = ExpectEqual("Green", "Green");

@@ -5,7 +5,7 @@ import IO;
 import List;
 import Map;
 import Set;
-import SigScores;
+import \metrics::SigScores;
 
 import \helpers::ListHelpers;
 import \helpers::MathHelpers;

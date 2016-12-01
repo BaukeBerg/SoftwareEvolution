@@ -73,6 +73,10 @@ list[str] TrimList(list[str] LinesToTrim)
   return Results;
 }
 
+test bool TestSome() = ExpectEqual(1, 2);
+
+list[str] PadList(str Prefix, list[str] Lines, str Suffix) = ["<Prefix><Line><Suffix>" | Line <- Lines];
+
 // Join list to plain string
 str JoinList(list[str] Lines) = JoinList(Lines, "\r\n");
 str JoinList(list[str] Lines, str Token)
