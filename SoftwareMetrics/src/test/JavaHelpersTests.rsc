@@ -32,7 +32,7 @@ test bool TestMethodBody() = ExpectEqual(SampleBody, MethodBody(SampleMethod));
 
 test bool TestLineCountForFile()
 {
-  lrel[loc MethodLocation, int CyclomaticComplexity] FileComplexity = CyclomaticComplexity(|project://SoftwareMetrics/sampleFiles/clonedetection/SigSamples.java|);
+  lrel[loc MethodLocation, int CyclomaticComplexity] FileComplexity = CyclomaticComplexity(|project://SoftwareMetrics/sampleFiles/type1clones/SigSamples.java|);
   return ExpectEqual(7, MethodSize(FileComplexity[0].MethodLocation));
 }
 

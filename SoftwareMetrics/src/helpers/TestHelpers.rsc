@@ -3,8 +3,24 @@ module \helpers::TestHelpers
 import FileLocations;
 import IO;
 
+import vis::Figure;
+
 import \helpers::FileHelpers;
 import \helpers::ListHelpers;
+
+str ExtractColour(Color Actual)
+{
+  int StartPoint = Actual + 16777216;
+  int Blue = (StartPoint % 256);
+  StartPoint -= Blue;
+  int Green = (StartPoint % 65536) / 256;
+  StartPoint -= Green;
+  int Red = (StartPoint / 65536);  
+  return "rgb(<Red>,<Green>,<Blue>)";
+}
+
+// Cannot overload to ExpectEqual since colour == int
+bool ExpectEqualColors(Color Expected, Color Actual) = ExpectEqual(ExtractColour(Expected), ExtractColour(Actual));
 
 // Prints the resuls when they are not expected, faster debugging of tests
 bool ExpectEqual(&T Expected, &T Actual)
@@ -36,6 +52,3 @@ bool EqualFiles(loc FileToScan, list[str] ContentToCompare)
   }
   return true;
 }
-
-test bool ShowMeARedCell() = ExpectEqual(1, 0);
-test bool ShowMeAGreenCell() = ExpectEqual("Green", "Green");

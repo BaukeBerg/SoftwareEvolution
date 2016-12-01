@@ -12,9 +12,9 @@ void PlotGraphTest() = PlotGraphTest(10);
 
 void PlotGraphTest(int MaxInt) = PlotGraph([n | int n <- [0 .. MaxInt +1]]);
 
-test bool CheckRed() = ExpectEqual(rgb(0,255,0), DetermineColour(0.2));
-test bool CheckGreen() = ExpectEqual(rgb(255,0,0), DetermineColour(1.0));
-test bool CheckYellow() = ExpectEqual(rgb(255,255,0), DetermineColour(0.6));
+test bool CheckRed() = ExpectEqualColors(rgb(255,0,0), DetermineColour(0.2));
+test bool CheckGreen() = ExpectEqualColors(rgb(0,255,0), DetermineColour(1.0));
+test bool CheckYellow() = ExpectEqualColors(rgb(255,255,0), DetermineColour(0.6));
 
 TBoxPlot BoxPlot = [  <10, "Ten">,
                         <9, "Nine">,

@@ -44,8 +44,8 @@ str ExtractMethodDeclaration(loc FunctionBody)
   return substring(readFile(FunctionBody), 0, AccolPos);
 }
 
+int MethodSize(str MethodToCheck) = MethodSize(MethodToCheck, "");
 int MethodSize(loc MethodToCheck) = MethodSize(readFile(MethodToCheck), "");
-
 int MethodSize(str MethodToCount, str Prefix) = MethodSize(MethodToCount, MethodLinesFile(Prefix));
 int MethodSize(str MethodToCount, loc OutputFile)
 {

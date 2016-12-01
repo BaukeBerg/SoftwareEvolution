@@ -10,10 +10,10 @@ test bool ScanColumnJava() = StaticMetricsCheck
                                 ScanJavaFile(|project://SoftwareMetrics/sampleFiles/slocmodule/ColumnsSample.java|)
                              );
 
-test bool ScanWhiteLineJavaFile() = ExpectEqual(14, ScanJavaFile(|project://SoftwareMetrics/sampleFiles/slocmodule/WhiteLines.java|));
+test bool ScanWhiteLineJavaFile() = ExpectEqual(14, ScanJavaFile(|project://SoftwareMetrics/sampleFiles/slocmodule/WhiteLines.java|).WhiteSpaces);
 
 // Checks the CodeLines sample java file
-test bool ScanSourceCodeLines() = ExpectEqual(48, ScanJavaFile(|project://SoftwareMetrics/sampleFiles/slocmodule/CodeLines.java|));
+test bool ScanSourceCodeLines() = ExpectEqual(48, ScanJavaFile(|project://SoftwareMetrics/sampleFiles/slocmodule/CodeLines.java|).CodeLines);
 
 bool StaticMetricsCheck(TStaticMetrics Expected, TStaticMetrics Actual)
 {
