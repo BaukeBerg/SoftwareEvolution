@@ -9,8 +9,6 @@ import \helpers::HtmlHelpers;
 import \helpers::ListHelpers;
 import \helpers::StringHelpers;
 
-// @Todo => Create the test cases using the try {} catch: {} Mechanism, so the tests don't stop running when they throw exceptions
-
 // Generates a rascal module with all the unit tests
 public void GenerateTestModule()
 {
@@ -18,19 +16,23 @@ public void GenerateTestModule()
   list[str] FileNames = FileName(TestFiles);
   FileNames = StripFileExtension(FileNames);
   FileNames = PadList("import \\test::", FileNames, ";");
+  FileNames += "\r\n";
   list[str] TestCalls = [];
+  list[str] FunctionDefinitions = [];
   for(TestFile <- TestFiles)
   {
     for(Line <- readFileLines(TestFile))
     {
       if(startsWith(Line, "test bool "))
       {
-        TestCalls += CreateTestCall(TestMethodName(Line));        
+        TestCalls += CreateTestCall(TestMethodName(Line));      
+        FunctionDefinitions += CreateTryCatchHarness(TestMethodName(Line));  
       }
     }
   } 
   TestCalls = PadList("  if(false == ", TestCalls, "){ Result = false;}");
-  CreateTestModule(FileNames, TestCalls);
+  CreateTestModule(FileNames + FunctionDefinitions, TestCalls);
+  InitializeTestReport();
 }
 
 str TestMethodName(str MethodLine)
@@ -50,12 +52,13 @@ void CreateTestModule(list[str] Modules, list[str] TestCalls)
   loc TestModule = toLocation("<SourceDir>MainTestModule.rsc");
   ResetFile(TestModule);
   AppendToFile(TestModule, "module MainTestModule\r\n\r\n<JoinList(Modules)>\r\n\r\n");
-  AppendToFile(TestModule, "test bool RunAllTests()\r\n{\r\n  InitializeTestReport();\r\n  bool Result = true;\r\n");
-  AppendToFile(TestModule, "<JoinList(TestCalls)>\r\n");
-  AppendToFile(TestModule, "  FinalizeTestReport();\r\n  return Result;\r\n}");  
 }
 
+void PrintResult(bool Result) = Result ? print("true") : print("false");
+
+str CreateTryCatchHarness(str MethodName) = "test bool Try<MethodName>{ try{ return <CreateTestCall(MethodName)>;} catch: { <FailTestCall(MethodName)>; } return false; }";
 str CreateTestCall(str MethodName) = "CheckAndReport(\"<MethodName>\", <MethodName>)";
+str FailTestCall(str MethodName) = "CheckAndReport(\"Exception_<MethodName>\", false)";
 
 loc TestReport = OutputFile("TestReport.html");
 

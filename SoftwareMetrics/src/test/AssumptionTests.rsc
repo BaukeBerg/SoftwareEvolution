@@ -53,6 +53,27 @@ test bool AssumeIteratorIncrementing()
 public set[str] SimpleSet = {"aap", "noot", "mies"};
 public map[str Key, int Value] StringHash = index(SimpleSet);
 
+// Assume popping up of failures
+test bool DoWithTry()
+{
+  try
+  {
+    return SubGetError();
+  }
+  catch:
+  {
+    ;
+  }
+  return true;
+}
+
+bool SubGetError() = GetError(); // Will thow an error
+
+bool GetError()
+{
+  list[bool] Empty = [];
+  return Empty[100];
+}
 
  
 
