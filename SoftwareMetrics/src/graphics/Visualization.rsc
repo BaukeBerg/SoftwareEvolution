@@ -1,4 +1,4 @@
-module Visualization
+module \graphics::Visualization
 
 import IO;
 import String;
