@@ -4,11 +4,17 @@ import CloneAlgorithm;
 import ParseTree;
 import vis::ParseTree;
 
+import \helpers::FileHelpers;
+
 import lang::java::\syntax::Java15;
 
-alias TClones = tuple[list[str] Clones, list[str] ClonePairs, list[str] CloneClasses];
-
-start[CompilationUnit] ShowParseTree(loc FileToParse)
+void CreateIntermediateOutput()
 {
-  return parse(#start[CompilationUnit], FileToParse);
+  list[loc] SmallSqlFiles = EnumerateFiles(SampleFile("smallsql"));
+  list[str] MonsterOutput = [];
+  for(File <- SmallSqlFiles)
+  {
+    MonsterOutput += StripAndIndexFile(File);
+  }
+  writeFile(OutputFile("bulk/IndexedSmallSqlFile", MonsterOutput));
 }
