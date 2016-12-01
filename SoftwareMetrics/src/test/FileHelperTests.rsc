@@ -20,4 +20,6 @@ test bool TestStrippingIndexedInlineComments() = EqualFiles(SampleFile("type1clo
 
 test bool TestStrippingMultilineComments() = EqualFiles(SampleFile("type1clones/SampleResultMultilineComments.txt"), 
                                                         StripAndIndexFile(SampleFile("type1clones/SampleInputMultilineComments.txt")));
+                                                        
+test bool TestStrippingExtension() = ExpectEqual("Test", StripFileExtension("Test.txt"));
   

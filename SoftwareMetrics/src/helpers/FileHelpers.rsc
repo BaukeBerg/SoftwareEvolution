@@ -8,6 +8,8 @@ import String;
 import \helpers::JavaHelpers;
 import \helpers::ListHelpers;
 
+
+
 list[loc] EnumerateDirFiles(str SampleSubDir) = EnumerateDirFiles(toLocation("<SampleDir><SampleSubDir>"));
 list[loc] EnumerateDirFiles(loc FolderLoc)
 {
@@ -57,6 +59,11 @@ list[str] IndexLines(list[str] InputLines, str FileName)
   return Results;
 }
 
+list[str] StripFileExtension(list[str] Files) = [ StripFileExtension(File) | File <- Files];
+str StripFileExtension(str File) = substring(File, 0, findLast(File, "."));
+
+list[str] FileName(list[loc] Files) = [ FileName(File.path) | File <- Files];
+list[str] FileName(list[str] Files) = [ FileName(Name) | Name <- Files] ;
 str FileName(loc FileToCheck) = FileName(FileToCheck.path);
 str FileName(str TotalPath)
 {
