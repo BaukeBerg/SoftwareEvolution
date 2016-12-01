@@ -2,6 +2,7 @@ Minimum:
 
 Type I Clone detection: Exact duplicates
   - Clean up the code => remove unused overloads, logging etc. refactor into proper functions
+  - Implemented [BvdB] - Moved Metrics code to metrics folder, better structuring
   
   === Type 1 clone classes are incorrectly detected ===
   - Starting point is the Series 1 Code.
@@ -10,6 +11,7 @@ Type I Clone detection: Exact duplicates
   
   === Testing harnass is unconvincing, is limited in scope or not thorough. ===
   - All functions / methods should be based on tests with files / known input, all methods require validation
+  - Implemented [BvdB] - Test harnass with good coverage, all tests are automatically collected in one file
   
   === Cloning visualization does not give insight or does not work properly ===
   - Visualization in Rascal => One-stop shop
