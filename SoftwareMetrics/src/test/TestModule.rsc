@@ -9,9 +9,11 @@ import \helpers::HtmlHelpers;
 import \helpers::ListHelpers;
 import \helpers::StringHelpers;
 
+// @Todo => Create the test cases using the try {} catch: {} Mechanism, so the tests don't stop running when they throw exceptions
+
+// Generates a rascal module with all the unit tests
 public void GenerateTestModule()
 {
-  
   list[loc] TestFiles = EnumerateDirFiles(TestDir);
   list[str] FileNames = FileName(TestFiles);
   FileNames = StripFileExtension(FileNames);
