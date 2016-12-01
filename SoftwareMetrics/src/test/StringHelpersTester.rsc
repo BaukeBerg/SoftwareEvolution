@@ -1,6 +1,7 @@
 module \test::StringHelpersTester
 
 import Map;
+import FileLocations;
 import String;
 
 import \helpers::StringHelpers;
@@ -19,10 +20,9 @@ test bool TestDecoding() = ExpectEqual("publicstaticString", DecodeString("БЖ�
 test bool TestTrimAssumption() = ExpectEqual("Hallo", trim("\n\r\t   Hallo\n\r\t"));
 
 test bool TestStringToken() = ExpectEqual("Substring", StringToken("{Substring}", "{", "}"));
+test bool TestLargerStringToken() = ExpectEqual("SubString", StringToken("---\>SubString\<---", "---\>", "\<---"));
 
 str InlineCommentString = "Hello/*InlineComment*/GoodBye";
 
 test bool TestClipString() = ExpectEqual("HelloGoodBye", ClipString(InlineCommentString, "/*", "*/"));
 test bool TestClipStringWithSplit() = ExpectEqual("Hello\r\nGoodBye", ClipString(InlineCommentString, "/*", "*/", "\r\n")); 
-
-test bool TestAssumeSizeOfHashMap() = ExpectEqual(3, size(HashFile(SmallSqlFile)));
