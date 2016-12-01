@@ -25,13 +25,12 @@ public void GenerateTestModule()
     {
       if(startsWith(Line, "test bool "))
       {
-        TestCalls += CreateTestCall(TestMethodName(Line));      
-        FunctionDefinitions += CreateTryCatchHarness(TestMethodName(Line));  
+        FunctionDefinitions += CreateTryCatchHarness(StripFileExtension(FileName(TestFile)), TestMethodName(Line));  
       }
     }
   } 
   TestCalls = PadList("  if(false == ", TestCalls, "){ Result = false;}");
-  CreateTestModule(FileNames + FunctionDefinitions, TestCalls);
+  CreateTestModule(FileNames + FunctionDefinitions);
   InitializeTestReport();
 }
 
@@ -47,7 +46,7 @@ str TestMethodName(str MethodLine)
   }
   return "test bool FailedToConvert_<MethodLine>_() = false;";
 }
-void CreateTestModule(list[str] Modules, list[str] TestCalls)
+void CreateTestModule(list[str] Modules)
 {
   loc TestModule = toLocation("<SourceDir>MainTestModule.rsc");
   ResetFile(TestModule);
@@ -56,9 +55,9 @@ void CreateTestModule(list[str] Modules, list[str] TestCalls)
 
 void PrintResult(bool Result) = Result ? print("true") : print("false");
 
-str CreateTryCatchHarness(str MethodName) = "test bool Try<MethodName>{ try{ return <CreateTestCall(MethodName)>;} catch: { <FailTestCall(MethodName)>; } return false; }";
-str CreateTestCall(str MethodName) = "CheckAndReport(\"<MethodName>\", <MethodName>)";
-str FailTestCall(str MethodName) = "CheckAndReport(\"Exception_<MethodName>\", false)";
+str CreateTryCatchHarness(str ModuleName, str MethodName) = "test bool Try<MethodName>{ try{ return <CreateTestCall(ModuleName, MethodName)>;} catch: { <FailTestCall(ModuleName, MethodName)>; } return false; }";
+str CreateTestCall(str ModuleName, str MethodName) = "CheckAndReport(\"<ModuleName>\",\"<MethodName>\", <MethodName>)";
+str FailTestCall(str ModuleName, str MethodName) = "CheckAndReport(\"<ModuleName>\",\"!!! EXCEPTION IN <MethodName> !!!\", false)";
 
 loc TestReport = OutputFile("TestReport.html");
 
@@ -68,9 +67,9 @@ void InitializeTestReport()
   AppendToFile(TestReport, OpenTable() + Caption("Test results"));
 }
 
-bool CheckAndReport(str MethodName, bool TestResult)
+bool CheckAndReport(str ModuleName, str MethodName, bool TestResult)
 {
-  AppendToFile(TestReport, TestRow(MethodName, TestResult));
+  AppendToFile(TestReport, TestRow(ModuleName, MethodName, TestResult));
   return TestResult;
 }
 

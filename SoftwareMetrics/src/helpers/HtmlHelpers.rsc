@@ -30,7 +30,7 @@ public str RowWithValues(list[str] Values)
 }
 
 public str TableCell(str Value) = OpenColumn() + Value + CloseColumn();
-public str TestRow(str TestName, bool TestResult) = OpenRow() + OpenColumn() + TestName + CloseColumn() + TestCell(TestResult) + CloseRow();
+public str TestRow(str ModuleName, str TestName, bool TestResult) = OpenRow() + TestCell(TestResult) + TableCell(ModuleName) + TableCell(TestName) + CloseRow();
 
 public str TestCell(bool TestPassed) = TestPassed ? GreenCell() : RedCell();
 public str GreenCell() = "\<td width=25 bgcolor=\"#00FF00\"\><CloseColumn()>";
