@@ -6,18 +6,19 @@ import String;
 import vis::Figure;
 import vis::Render;
 
-import FileHandler;
+import \helpers::FileHelpers;
   
 void Visualize()
 {
-	list[Figure] lst = [];
+	list[Figure] lstRow0 = [];
+	list[Figure] lstRow1 = [];
 	for(fileLoc <- EnumerateDirFiles("smallsql/database"))
 	{
-		 //lst += outline([info(100, "a"), warning(125, "b"), highlight(190, "c")], 200, size(50, 200));		 
-		 lst += box(text(GetClassName(fileLoc), fontColor("blue"), fontSize(7), top()), size(50,50));
+		 lstRow0 += box(text(GetClassName(fileLoc), fontSize(7), fontColor("blue")), fillColor("gray"));	 
+		 lstRow1 += outline([info(100, "a"), warning(125, "b"), highlight(190, "c")], 200, size(300, 500));
 	}
 	
-	render("info", hcat(lst, gap(5)));
+	render("info", grid([lstRow0, lstRow1], gap(3)));
 }
 
 str GetClassName(loc FileToCheck)
