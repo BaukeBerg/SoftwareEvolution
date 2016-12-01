@@ -1,4 +1,4 @@
-module SigScores
+module \metrics::SigScores
 
 import List;
 import String;

@@ -1,6 +1,6 @@
 module \test::CalculateCCTest
 
-import CalculateCC;
+import \metrics::CalculateCC;
 import FileLocations;
 import String;
 

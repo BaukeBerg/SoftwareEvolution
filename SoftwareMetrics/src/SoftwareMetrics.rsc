@@ -1,20 +1,22 @@
 module SoftwareMetrics
 
-import CloneAlgorithm;
+import \clones::CloneAlgorithm;
 import DateTime;
-import FileHandler;
+import \helpers::FileHelpers;
 import FileLocations;
 import IO;
 import List;
 import Quotes;
-import RiskProfile;
 import SigScores;
-import SlocModule;
 import String;
 
 import \helpers::HtmlHelpers; // Used for Html creation
 import \helpers::JavaHelpers; // Used for Getting some java specifics
 import \helpers::MathHelpers;
+
+import \graphics::RiskProfile;
+import \metrics::SlocModule;
+
 
 int QuoteInterval = 50;
 

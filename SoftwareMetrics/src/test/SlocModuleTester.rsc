@@ -1,28 +1,19 @@
 module \test::SlocModuleTester
 
-import SlocModule; // Required for testing functions
+import \metrics::SlocModule; // Required for testing functions
 import \helpers::TestHelpers; // Some convenience printing functions
 import IO; // Used to print on screen
 
-test bool ScanColumnJava()
-{
-  TStaticMetrics ExpectedMetrics = Init("/sampleFiles/slocmodule/ColumnsSample.java", 161,48,14,35,13,7,16);  
-  TStaticMetrics ActualMetrics = ScanJavaFile(|project://SoftwareMetrics/sampleFiles/slocmodule/ColumnsSample.java|); 
-  return StaticMetricsCheck(ExpectedMetrics, ActualMetrics);      
-}
+test bool ScanColumnJava() = StaticMetricsCheck
+                             (
+                                Init("/sampleFiles/slocmodule/ColumnsSample.java", 161,48,14,35,13,7,16),
+                                ScanJavaFile(|project://SoftwareMetrics/sampleFiles/slocmodule/ColumnsSample.java|)
+                             );
 
-test bool ScanWhiteLineJavaFile()
-{
-  TStaticMetrics ActualMetrics = ScanJavaFile(|project://SoftwareMetrics/sampleFiles/slocmodule/WhiteLines.java|);  
-  return ExpectEqual(14, ActualMetrics.WhiteSpaces);  
-}
+test bool ScanWhiteLineJavaFile() = ExpectEqual(14, ScanJavaFile(|project://SoftwareMetrics/sampleFiles/slocmodule/WhiteLines.java|));
 
 // Checks the CodeLines sample java file
-test bool ScanSourceCodeLines()
-{
-  TStaticMetrics ActualMetrics = ScanJavaFile(|project://SoftwareMetrics/sampleFiles/slocmodule/CodeLines.java|);  
-  return ExpectEqual(48, ActualMetrics.CodeLines);  
-}
+test bool ScanSourceCodeLines() = ExpectEqual(48, ScanJavaFile(|project://SoftwareMetrics/sampleFiles/slocmodule/CodeLines.java|));
 
 bool StaticMetricsCheck(TStaticMetrics Expected, TStaticMetrics Actual)
 {

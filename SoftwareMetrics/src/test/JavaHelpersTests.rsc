@@ -3,7 +3,7 @@ module \test::JavaHelpersTests
 import \helpers::JavaHelpers;
 import \helpers::TestHelpers;
 
-import CalculateCC;
+import \metrics::CalculateCC;
 
 test bool TestFullClassPath() = ExpectEqual("smallsql/database/Columns", GetFullClassPath(|project://SoftwareMetrics/sampleFiles/smallsql/database/Columns.java|));
 test bool TestClassName() = ExpectEqual("Columns", GetClassName(|project://SoftwareMetrics/sampleFiles/smallsql/database/Columns.java|));

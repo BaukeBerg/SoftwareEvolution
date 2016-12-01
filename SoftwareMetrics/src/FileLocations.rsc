@@ -6,9 +6,11 @@ private str ProjectRoot = "project://SoftwareMetrics/";
 public str OutputDir = "<ProjectRoot>output/";
 public str SampleDir = "<ProjectRoot>sampleFiles/";
 private str BulkDir = "<OutputDir>bulk/";
+public str SourceDir = "<ProjectRoot>src/";
 
 // Simple static files with some import locations
 public loc MonsterFile = toLocation("<BulkDir>MonsterFile.java");
+public loc TestDir = toLocation("<ProjectRoot>src/test/");
 
 public loc MethodLinesFile(str FilePrefix) = toLocation("<BulkDir><FilePrefix>MethodLines.java");
 public loc SmallSqlMethodLinesFile = toLocation("<BulkDir>SmallSqlMethodLines.java");

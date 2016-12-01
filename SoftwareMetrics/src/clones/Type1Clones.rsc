@@ -1,6 +1,6 @@
-module Type1Clones
+module \clones::Type1Clones
 
-import CloneAlgorithm;
+import \clones::CloneAlgorithm;
 import ParseTree;
 import vis::ParseTree;
 

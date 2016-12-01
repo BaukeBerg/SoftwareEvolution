@@ -1,4 +1,4 @@
-module CloneAlgorithm
+module \clones::CloneAlgorithm
 
 import DateTime;
 import IO;

@@ -17,9 +17,7 @@ list[loc] EnumerateDirFiles(loc FolderLoc)
     list[loc] FilesFolders = FolderLoc.ls;
     for (int n <- [0 .. size(FilesFolders)])
     {
-      str localPath = FilesFolders[n].path;  
-  	  int javaPos = findLast(localPath, ".java");
-  	  if (javaPos == -1)
+  	  if (true == IsDirectory(FilesFolders[n]))
   	  {
   	    LocationList += EnumerateDirFiles(FilesFolders[n]);
   	  }
@@ -31,6 +29,8 @@ list[loc] EnumerateDirFiles(loc FolderLoc)
   }
   return LocationList;
 }
+
+bool IsDirectory(loc Path) = (-1 == findLast(Path.path, "."));
 
 // Strips comments and adds indexes
 list[str] StripAndIndexFile(loc FileToStrip)

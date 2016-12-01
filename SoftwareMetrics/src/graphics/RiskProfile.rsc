@@ -1,4 +1,4 @@
-module RiskProfile
+module \graphics::RiskProfile
 
 import vis::Figure;
 import vis::Render;

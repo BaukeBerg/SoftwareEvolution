@@ -1,6 +1,6 @@
 module \test::GraphGeneratorTest
 
-import GraphGenerator;
+import \graphics::GraphGenerator;
 import List;
 import util::Math;
 import vis::Figure;

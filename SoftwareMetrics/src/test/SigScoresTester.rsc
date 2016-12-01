@@ -1,6 +1,6 @@
 module \test::SigScoresTester
 
-import SigScores;
+import \metrics::SigScores;
 import \helpers::TestHelpers;
 
 // Check star rating for VolumeScore
