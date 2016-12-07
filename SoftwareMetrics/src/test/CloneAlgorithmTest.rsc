@@ -29,15 +29,11 @@ test bool TestMergingOverlappedClones() = ExpectEqual(ExpectedOverlap, MergeClon
 
 test bool TestOverlapFunction() = ExpectTrue(HasOverlap(<14,14>, <20,6>));
 test bool TestMergingClones() = ExpectEqual(<14,14>, MergeClones(<14,14>, <20,6>));
-test bool TestContainment() = ExpectTrue(Contains(<1,10>, <2,8>));
-test bool TestContainmentEqual() = ExpectTrue(Contains(<1,10>, <1,10>));
-test bool TestContainmentLowerBound() = ExpectTrue(Contains(<1,10>, <1,5>));
-test bool TestContainmentUpperBound() = ExpectTrue(Contains(<1,10>, <6,4>));
 
 test bool TestSingleClone() = ExpectEqual(6, SampleFile("SingleClone.txt"));
 test bool TestDoubleClone() = ExpectEqual(12, SampleFile("DoubleClone.txt"));
 test bool TestExtendedClone() = ExpectEqual(14, SampleFile("DoubleExtendedClone.txt"));
-test bool TestDualOffsetClone() = ExpectEqual(14, SampleFile("DoubleOffsetClone.txt"));
+test bool TestDualOffsetClone() = ExpectEqual(12, SampleFile("DoubleOffsetClone.txt"));
 test bool TestDualDifferentClone() = ExpectEqual(20, SampleFile("DoubleDifferentClones.txt"));
 test bool TestBraceCase() = ExpectEqual(0, SampleFile("BraceCase.txt"));
 test bool TestNoClone() = ExpectEqual(0, SampleFile("NoClone.txt"));
