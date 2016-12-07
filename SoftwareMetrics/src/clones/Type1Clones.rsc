@@ -37,3 +37,11 @@ TCloneList GetSmallSqlClones()
   Duration("Finished smallsql clones.", Start);
   return Clones;
 }
+
+TCloneClasses GetSmallSqlCloneClasses()
+{
+  Start = now();
+  TCloneClasses CloneClasses = GetClonesClasses(SmallSqlContent);
+  Duration("Finished retrieving clonepairs.", Start);
+  return CloneClasses;
+}
