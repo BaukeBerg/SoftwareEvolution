@@ -157,7 +157,7 @@ TCloneList MergeClonesWithOverlap(TCloneList TotalClones)
       if(true == HasOverlap(FirstClone, SecondClone))
       {
         println("<FirstClone> overlaps with <SecondClone>");
-        TClone MergedClone = Merge(FirstClone, SecondClone);
+        TClone MergedClone = MergeClones(FirstClone, SecondClone);
         println("Added this <MergedClone> to the list");
         MergedList += MergedClone;
         SkipIndexes += Second;
@@ -182,20 +182,6 @@ TCloneList MergeClonesWithOverlap(TCloneList TotalClones)
 
 bool HasOverlap(TClone First, TClone Second) = InLimits(First.Start, Second.Start, LastLine(First));
 
-TClone Merge(TClone First, TClone Second)
-{
-  if(Contains(First, Second))
-  {
-    return First;
-  }
-  else if(Contains(Second, First))
-  {
-    return Second;
-  }
-  return MergeClones(First, Second);
-}
-
-bool Contains(TClone First, TClone Second) = (First.Start <= Second.Start && LastLine(First) >= LastLine(Second));
 int LastLine(TClone Clone) = (Clone.Start + Clone.Size)-1;
 TClone MergeClones(TClone First, TClone Second)
 {
