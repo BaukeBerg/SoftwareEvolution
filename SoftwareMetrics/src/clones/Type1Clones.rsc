@@ -14,20 +14,30 @@ import \helpers::ListHelpers;
 
 import lang::java::\syntax::Java15;
 
-loc IntermediateFile = OutputFile("bulk/IndexedSmallSqlFile.java");
+loc SmallSqlIntermediate = OutputFile("bulk/IndexedSmallSqlFile.java");
 loc SmallSqlIndexes = OutputFile("bulk/SmallSqlIndexes.txt"); 
 loc SmallSqlContent = OutputFile("bulk/SmallSqlContent.txt");
 
-void CreateIntermediateOutput()
+loc HsqlDbIntermediate = OutputFile("bulk/IndexedHsqlDbFile.java");
+loc HsqlDbIndexes = OutputFile("bulk/HsqlDbIndexes.txt");
+loc HsqlDbContent = OutputFile("bulk/HsqlDbContent.txt");
+
+void CreateAllOutput()
 {
-  list[loc] SmallSqlFiles = EnumerateDirFiles(SampleFile("smallsql"));
+  CreateIntermediateOutput("smallsql", SmallSqlIntermediate, SmallSqlIndexes, SmallSqlContent);
+  CreateIntermediateOutput("hsqldb", HsqlDbIntermediate, HsqlDbIndexes, HsqlDbContent);
+}
+
+void CreateIntermediateOutput(str ProjectName, loc ProjectIntermediate, loc ProjectFilesIndexes, loc ProjectFilesContent)
+{
+  list[loc] ProjectFiles = EnumerateDirFiles(SampleFile(ProjectName));
   list[str] IndexedOutput = [];
-  for(File <- SmallSqlFiles)
+  for(File <- ProjectFiles)
   {
     IndexedOutput += StripAndIndexFile(File);
   }
-  writeFile(IntermediateFile, JoinList(IndexedOutput));
-  SplitIndexedFile(IntermediateFile, SmallSqlIndexes, SmallSqlContent);
+  writeFile(ProjectIntermediate, JoinList(IndexedOutput));
+  SplitIndexedFile(ProjectIntermediate, ProjectFilesIndexes, ProjectFilesContent);
 }
 
 TCloneList GetSmallSqlClones()
