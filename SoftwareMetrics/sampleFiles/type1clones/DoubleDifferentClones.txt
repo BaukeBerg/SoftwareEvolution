@@ -1,28 +1,33 @@
-// Using lookahead, 
-// This is the case for this sample file. It has 14 cloned lines.
-// Should return 20 cloned lines
-Line One
+// This is a sample of a NESTED clone. The Clone contains a Clone itself.
+// First 6 lines is the original code. Then that original code is pasted and two statements are added.
+// Then this new code is copied as a type 1 clone. So the file has 8 original lines, the rest is duplicated.
+// Should result in 20 clones lines.
+// This file was used to expose a bug in the CloneMerging Algorithm.
+// The algorithm uses equal starts and then returns the largest clone.
+// This sample file demonstrates that nested clones can cause duplicate counts.
+Line One    // Start of original      
+Line Two
+Line Three
+Line Four
+Line Five
+Line Six    // Stop of original
+Line One    // Copy of original
 Line Two
 Line Three
 Line Four
 Line Five
 Line Six
-Line One
+Line Seven // New statement 1
+Line Eight // New statement 2
+// Somebody just totally duplicated this stuff
+Line One  
 Line Two
 Line Three
 Line Four
 Line Five
-Line Six
-Line Seven
-Line Eight
-Line One
-Line Two
-Line Three
-Line Four
-Line Five
-Line Six
-Line One
-Line Two
+Line Six  
+Line One  // This was erroneously counted twice in the clones. Once in the big clone, and again as a small clone. 
+Line Two  // However, it is completely covered by the clone of Line 14, Size 14. 
 Line Three
 Line Four
 Line Five

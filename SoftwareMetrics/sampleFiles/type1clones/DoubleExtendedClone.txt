@@ -3,25 +3,30 @@
 // However, when they're part of a clone, they could argue to check if they might be a LARGER clone than the previous one.
 // This is the case for this sample file. It has 14 cloned lines.
 // Should return 14 cloned lines
+// Clone list:  <6,6> & <14,8>
 Line One
 Line Two
 Line Three
 Line Four
 Line Five
 Line Six
+// This is the start of the first clone
 Line One
 Line Two
 Line Three
 Line Four
 Line Five
 Line Six
+// This however, is not considered as a clone, since this is the first occurrence of these two lines
 Line Seven
 Line Eight
+// This is the start of the second clone. However, it is a copy of the other clone previously found (6 lines)
 Line One
 Line Two
 Line Three
 Line Four
 Line Five
 Line Six
+// Now, these lines shóuld be included, since they're a clone of 8 lines of the previous one.
 Line Seven
 Line Eight
