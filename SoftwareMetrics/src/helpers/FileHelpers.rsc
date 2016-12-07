@@ -48,6 +48,25 @@ private str ColorSplitter = "Ѭ";
 private str FileSplitter = "۞";
 private str LineSplitter = "۩";
 
+alias TIndexedLine = tuple[str Index, str Content];
+
+void SplitIndexedFile(loc FileToSplit, loc IndexFile, loc ContentFile)
+{
+  list[str] AllLines = readFileLines(FileToSplit);
+  list[str] Indexes = [];
+  list[str] Contents = [];
+  for(Line <- AllLines)
+  {
+    TIndexedLine Split = SplitIndexedLine(Line);
+    Indexes += Split.Index;
+    Contents += Split.Content;      
+  }
+  writeFile(IndexFile, JoinList(Indexes));
+  writeFile(ContentFile, JoinList(Contents));
+}
+
+TIndexedLine SplitIndexedLine(str Input) = < StringToken(Input, "", LineSplitter), StringToken(Input, LineSplitter, "") >;
+
 list[str] IndexLines(loc FileToCheck) = IndexLines(readFileLines(FileToCheck), FileName(FileToCheck));
 list[str] IndexLines(list[str] InputLines, str FileName)
 {
@@ -60,9 +79,12 @@ list[str] IndexLines(list[str] InputLines, str FileName)
 }
 
 str GetColor(str indexLine) = contains(indexLine, ColorSplitter) ? StringToken(indexLine, "", ColorSplitter) : "White";
-// Add color ....
-//
-// Color( ) 
+
+list[str] NormalizeIndexedFile(loc FileToNormalize)
+{
+  list[str] Results = [];
+  
+}
 
 list[str] StripFileExtension(list[str] Files) = [ StripFileExtension(File) | File <- Files];
 str StripFileExtension(str File) = substring(File, 0, findLast(File, "."));
