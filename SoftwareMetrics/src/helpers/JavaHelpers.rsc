@@ -71,9 +71,7 @@ list[str] RemoveSingleLineComments(list[str] Lines, str Split)
   list[str] Results = [];
   for(int n <- [0 .. size(Lines)])
   {
-    println(Lines[n]);
     list[str] Tokens = split(Split, Lines[n]);
-    
     if((1 < size(Tokens)) 
       && (false == SingleLineComment(trim(Tokens[1]))))
     {
