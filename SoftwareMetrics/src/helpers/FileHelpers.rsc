@@ -76,7 +76,7 @@ void SplitIndexedFile(loc FileToSplit, loc IndexFile, loc ContentFile)
   writeFile(ContentFile, JoinList(Contents));
 }
 
-TIndexedLine SplitIndexedLine(str Input) = < StringToken(Input, "", "۩"), StringToken(Input, "۩", "") >;
+TIndexedLine SplitIndexedLine(str Input) = < StringToken(Input, "", LineSplitter), StringToken(Input, LineSplitter, "") >;
 
 // Add color ....
 //
