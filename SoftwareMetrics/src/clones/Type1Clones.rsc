@@ -1,20 +1,39 @@
 module \clones::Type1Clones
 
-import \clones::CloneAlgorithm;
+import DateTime;
+import FileLocations;
+import IO;
 import ParseTree;
 import vis::ParseTree;
 
+import \clones::CloneAlgorithm;
+
+import \helpers::Debugging;
 import \helpers::FileHelpers;
+import \helpers::ListHelpers;
 
 import lang::java::\syntax::Java15;
 
+loc IntermediateFile = OutputFile("bulk/IndexedSmallSqlFile.java");
+loc SmallSqlIndexes = OutputFile("bulk/SmallSqlIndexes.txt"); 
+loc SmallSqlContent = OutputFile("bulk/SmallSqlContent.txt");
+
 void CreateIntermediateOutput()
 {
-  list[loc] SmallSqlFiles = EnumerateFiles(SampleFile("smallsql"));
-  list[str] MonsterOutput = [];
+  list[loc] SmallSqlFiles = EnumerateDirFiles(SampleFile("smallsql"));
+  list[str] IndexedOutput = [];
   for(File <- SmallSqlFiles)
   {
-    MonsterOutput += StripAndIndexFile(File);
+    IndexedOutput += StripAndIndexFile(File);
   }
-  writeFile(OutputFile("bulk/IndexedSmallSqlFile", MonsterOutput));
+  writeFile(IntermediateFile, JoinList(IndexedOutput));
+  SplitIndexedFile(IntermediateFile, SmallSqlIndexes, SmallSqlContent);
+}
+
+TCloneList GetSmallSqlClones()
+{
+  Start = now();
+  TCloneList Clones = GetClonesList(SmallSqlContent);
+  Duration("Finished smallsql clones.", Start);
+  return Clones;
 }
