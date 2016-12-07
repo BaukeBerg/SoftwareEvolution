@@ -34,6 +34,8 @@ int GetClonesForFile(THashInfo Information) = ClonedLines(GetClonesList(Informat
 int ClonedLines([]) = 0;
 int ClonedLines(TCloneList Clones) = sum(Clones.Size);
 
+TCloneList GetClonesList(loc FileToCheck) = GetClonesList(HashFile(FileToCheck));
+
 TCloneList GetClonesList(THashInfo Information)
 {
   TStringMap Dictionary = Information.StringMap;
