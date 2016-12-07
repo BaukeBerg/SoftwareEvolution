@@ -22,7 +22,7 @@ str ExtractColour(Color Actual)
 // Cannot overload to ExpectEqual since colour == int
 bool ExpectEqualColors(Color Expected, Color Actual) = ExpectEqual(ExtractColour(Expected), ExtractColour(Actual));
 
-bool ExpectFalse(bool Testme) = ExpectEqual(false, TestMe);
+bool ExpectFalse(bool TestMe) = ExpectEqual(false, TestMe);
 bool ExpectTrue(bool TestMe) = ExpectEqual(true, TestMe);
 
 
