@@ -19,6 +19,11 @@ test bool TestDecoding() = ExpectEqual("publicstaticString", DecodeString("БЖ�
 
 test bool TestTrimAssumption() = ExpectEqual("Hallo", trim("\n\r\t   Hallo\n\r\t"));
 
+str ColorString = "RedѬBlue";
+
+test bool TestStringTokenFirst() = ExpectEqual("Red", StringToken(ColorString, "", "Ѭ"));
+test bool TestStringTokenLast() = ExpectEqual("Blue", StringToken(ColorString, "Ѭ", ""));
+
 test bool TestStringToken() = ExpectEqual("Substring", StringToken("{Substring}", "{", "}"));
 test bool TestLargerStringToken() = ExpectEqual("SubString", StringToken("---\>SubString\<---", "---\>", "\<---"));
 
