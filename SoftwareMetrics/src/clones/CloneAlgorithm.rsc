@@ -142,8 +142,6 @@ TCloneList MergeClonesWithOverlap(TCloneList TotalClones)
       TClone SecondClone = TotalClones[Second];
       if(true == HasOverlap(FirstClone, SecondClone))
       {
-        // Try to trick this algorithm by sending small clones with big secondaries
-        // This can be conned by calling MergeClonesWithOverlap until NO more overlap is found
         println("<FirstClone> overlaps with <SecondClone>");
         TClone MergedClone = Merge(FirstClone, SecondClone);
         println("Added this <MergedClone> to the list");
@@ -162,7 +160,7 @@ TCloneList MergeClonesWithOverlap(TCloneList TotalClones)
   }
   if(TotalClones != MergedList)
   {
-    println("still some supes, go another iteration!");
+    println("Made some changes, go another iteration!");
     MergedList = MergeClonesWithOverlap(MergedList);
   }  
   return MergedList;
