@@ -1,0 +1,24 @@
+Line One
+Line Two
+Line Three
+Line Four
+Line Five
+Line Six
+Line Seven
+Line Eight
+Line Three
+Line Four
+Line Five
+Line Six
+Line Seven
+Line Eight
+Line One
+Line Two
+Line Three
+Line Four
+Line Five
+Line Six
+// The initial algorithm skips some lines. This can cause some issues, since the clone of Three to Eight might be wrong.
+// So This has clone pairs <1,6> <15,6)
+// And clone pairs <3,6>, <9,6>
+// 8 original lines, so, 12 lines clones
