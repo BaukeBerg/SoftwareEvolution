@@ -7,6 +7,7 @@ import String;
 
 import \helpers::JavaHelpers;
 import \helpers::ListHelpers;
+import \helpers::StringHelpers;
 
 list[loc] EnumerateDirFiles(str SampleSubDir) = EnumerateDirFiles(toLocation("<SampleDir><SampleSubDir>"));
 list[loc] EnumerateDirFiles(loc FolderLoc)
@@ -58,6 +59,7 @@ list[str] IndexLines(list[str] InputLines, str FileName)
   return Results;
 }
 
+str GetColor(str indexLine) = contains(indexLine, ColorSplitter) ? StringToken(indexLine, "", ColorSplitter) : "White";
 // Add color ....
 //
 // Color( ) 

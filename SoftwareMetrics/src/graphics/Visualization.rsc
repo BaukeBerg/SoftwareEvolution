@@ -9,6 +9,8 @@ import vis::Render;
 import vis::KeySym;
 
 import \helpers::FileHelpers;
+import \helpers::StringHelpers;
+import FileLocations;
 
 void Visualize()
 {
@@ -80,15 +82,69 @@ str GetClassName(loc FileToCheck)
 
 void Comparer()
 {
-	loc l = |project://SoftwareMetrics/sampleFiles/smallsql/database/Column.java|;
+	loc l1 = |project://SoftwareMetrics/sampleFiles/filehelpers/SampleIndexes.txt|;
+	
+	loc l2 = |project://SoftwareMetrics/sampleFiles/filehelpers/SampleIndexes.txt|;
+	
+	list[str] file1 = readFileLines(l1);
+	list[str] file2 = readFileLines(l2);
 	list[Figure] b1 = [];
 	list[Figure] b2 = [];
+	int len = 0;
 	
-	for(line <- readFileLines(l))
+	if(size(file1) >= size(file2))
 	{
-		b1 += box(text(line, left()));
-		b2 += box(text(line, left()));
+		len = size(file1);
+	}
+	else
+	{
+		len = size(file2);
+	}
+	
+	for(i <- [0 .. len])
+	{
+		if(file1[i] == file2[i])
+		{
+			b1 += box(text(file1[i], left()), fillColor("Red"));
+			b2 += box(text(file2[i], left()), fillColor("Red"));
+		}
+		else
+		{
+			b1 += box(text(file1[i], left()));
+			b2 += box(text(file2[i], left()));
+		}
 	}
 	
 	render("Comparer", hcat([box(vcat(b1)), box(vcat(b2))], hgap(3)));
+}
+
+//FProperty GetColor(int index, loc indexedLoc)
+//{
+//	list[str] indexedFile = readFileLines(indexedLoc);
+//	bool found = false;
+//	int i = 0;
+//	
+//	while(i < size(indexedFile), !found)
+//	{
+//		StringToken(indexedFile[i], "", "۩");
+//		i += 1;
+//	}
+//	return fillColor("white");
+//}
+
+void Comparer2()
+{
+	loc indexedLoc = |project://SoftwareMetrics/sampleFiles/filehelpers/SampleIndexes.txt|;
+	
+	list[str] indexedFile = readFileLines(indexedLoc);
+	list[str] inputLines = readFileLines(SampleFile("type1clones/SampleInput.txt"));
+	list[Figure] b1 = [];
+	int len = size(indexedFile);
+	
+	for(i <- [0 .. len])
+	{
+		b1 += box(text(inputLines[i], left()), fillColor(GetColor(indexedFile[i])));
+	}
+	
+	render("Comparer", hcat([box(vcat(b1))], hgap(3)));
 }
