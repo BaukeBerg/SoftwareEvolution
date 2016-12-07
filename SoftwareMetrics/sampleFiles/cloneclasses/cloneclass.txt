@@ -1,0 +1,27 @@
+Line One
+Line Two
+Line Three
+Line Four
+Line Five
+Line Six
+Line Seven
+Line Eight
+Line One // Start of a short clone
+Line Two
+Line Three
+Line Four
+Line Five
+Line Six
+Line One // Start of the long clone
+Line Two
+Line Three
+Line Four
+Line Five
+Line Six
+Line Seven
+Line Eight
+// Clone classes: <1,6> : <9,6> : <15,6> 
+// Subsumption example: Clone classes: <1,7> : <15,7> fits in the larger one
+// Clone classes: <1,8> : <15,8>
+// HOW to visualize this?? when comparing these clones
+// Subsumption

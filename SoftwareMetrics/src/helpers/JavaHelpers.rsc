@@ -1,9 +1,11 @@
 module \helpers::JavaHelpers
 
+import FileLocations;
 import IO;
 import List;
 import String;
 import Set;
+
 import lang::java::m3::Core;
 import lang::java::jdt::m3::Core;
 
@@ -12,8 +14,7 @@ import \util::Math;
 import \helpers::StringHelpers;
 import \helpers::ListHelpers;
 import \helpers::FileHelpers;
-import FileLocations;
-import SigScores;
+import \metrics::SigScores;
 
 private bool WriteMethodStatementsToFile = true;
 
@@ -70,8 +71,11 @@ list[str] RemoveSingleLineComments(list[str] Lines, str Split)
   list[str] Results = [];
   for(int n <- [0 .. size(Lines)])
   {
+    println(Lines[n]);
     list[str] Tokens = split(Split, Lines[n]);
-    if(false == SingleLineComment(trim(Tokens[1])))
+    
+    if((1 < size(Tokens)) 
+      && (false == SingleLineComment(trim(Tokens[1]))))
     {
       Results += StripComment(Lines[n]);
     }

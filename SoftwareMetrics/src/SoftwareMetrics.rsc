@@ -7,7 +7,7 @@ import FileLocations;
 import IO;
 import List;
 import Quotes;
-import SigScores;
+import \metrics::SigScores;
 import String;
 
 import \helpers::HtmlHelpers; // Used for Html creation

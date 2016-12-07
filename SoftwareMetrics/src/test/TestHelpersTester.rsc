@@ -1,5 +1,8 @@
 module \test::TestHelpersTester
 
+import FileLocations;
+import IO;
+
 import \helpers::TestHelpers;
 
 import vis::Figure;
@@ -21,3 +24,11 @@ test bool ExpectTrueTestFalse()= (false == ExpectTrue(false));
 
 test bool ExpectFalseTestTrue() = (true == ExpectFalse(false));
 test bool ExpectFalseTestTrue() = (false == ExpectFalse(true));
+
+loc SomeSampleFile = SampleFile("hsqldb/ColumnBase.java");
+loc SomeOtherSampleFile = SampleFile("hsqldb/Constraint.java");
+
+test bool TestEqualFiles() = ExpectEqualFiles(SomeSampleFile, readFileLines(SomeSampleFile));
+
+test bool TestEqualFiles() = ExpectEqualFiles(SomeSampleFile, SomeSampleFile);
+test bool TestUnEqualFiles() = (false == ExpectEqualFiles(SomeSampleFile, SomeOtherSampleFile));
