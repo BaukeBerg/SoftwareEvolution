@@ -7,6 +7,7 @@ import String;
 
 import \helpers::JavaHelpers;
 import \helpers::ListHelpers;
+import \helpers::StringHelpers;
 
 list[loc] EnumerateDirFiles(str SampleSubDir) = EnumerateDirFiles(toLocation("<SampleDir><SampleSubDir>"));
 list[loc] EnumerateDirFiles(loc FolderLoc)
@@ -57,6 +58,25 @@ list[str] IndexLines(list[str] InputLines, str FileName)
   }
   return Results;
 }
+
+alias TIndexedLine = tuple[str Index, str Content];
+
+void SplitIndexedFile(loc FileToSplit, loc IndexFile, loc ContentFile)
+{
+  list[str] AllLines = readFileLines(FileToSplit);
+  list[str] Indexes = [];
+  list[str] Contents = [];
+  for(Line <- AllLines)
+  {
+    TIndexedLine Split = SplitIndexedLine(Line);
+    Indexes += Split.Index;
+    Contents += Split.Content;      
+  }
+  writeFile(IndexFile, JoinList(Indexes));
+  writeFile(ContentFile, JoinList(Contents));
+}
+
+TIndexedLine SplitIndexedLine(str Input) = < StringToken(Input, "", "۩"), StringToken(Input, "۩", "") >;
 
 // Add color ....
 //
