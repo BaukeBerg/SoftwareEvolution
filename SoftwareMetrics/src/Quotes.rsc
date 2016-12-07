@@ -184,6 +184,8 @@ public list[str] WaitingQuotes = [
                                   "All of us who are concerned for peace and triumph of reason and justice must be keenly aware how small an influence reason and honest good will exert upon events in the political field.",
                                   "Anger dwells only in the bosom of fools.",
                                   "Any fool can know. The point is to understand.",
+                                  "Too much agreement kills a chat.",
+                                  "Nothing is impossible, the word itself says \"I\'m possible\"",
                                   "Any intelligent fool can make things bigger, more complex, and more violent. It takes a touch of genius -- and a lot of courage -- to move in the opposite direction.",
                                   "As far as the laws of mathematics refer to reality, they are not certain and as far as they are certain, they do not refer to reality.",
                                   "As far as the laws of mathematics refer to reality, they are not certain, and as far as they are certain, they do not refer to reality.",
@@ -310,9 +312,6 @@ public list[str] WaitingQuotes = [
                                   "Albert Einstein said the definition of insanity is doing the same thing over and again and expecting different results, they have a clear road map from those three efforts... this is an enormous waste of time, energy and money."                                  
                                 ]; 
                           
-                          
-
-
 void PrintQuote(int Counter) = PrintQuote(Counter, 50);                          
 void PrintQuote(int Counter, int QuoteInterval)
 {
