@@ -1,5 +1,6 @@
 module \helpers::Debugging
 
+import DateTime;
 import IO;
 
 bool LoggingEnabled = false;
@@ -12,3 +13,6 @@ public void DebugPrint(str TextToPrint)
     println(TextToPrint);
   }
 }
+
+public void Duration(datetime StartTime) = Duration("", StartTime);
+public void Duration(str Prefix, datetime StartTime) = println("<Prefix> duration: <createDuration(StartTime, now())>");
