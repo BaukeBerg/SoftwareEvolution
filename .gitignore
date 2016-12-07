@@ -6,3 +6,4 @@ SoftwareMetrics/sampleFiles/sanitizedsql
 SoftwareMetrics/sampleFiles/bulk
 *.log
 SoftwareMetrics/tools/MACS.err
+SoftwareMetrics/src/MainTestModule.rsc
