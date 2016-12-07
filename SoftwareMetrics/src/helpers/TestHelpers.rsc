@@ -47,7 +47,9 @@ bool ExpectNotEqual(&T Expected, &T Actual)
   return true;
 }
 
-bool EqualFiles(loc FileToScan, list[str] ContentToCompare)
+bool ExpectEqualFiles(loc ExpectedFile, loc ActualFile) = ExpectEqualFiles(ExpectedFile, readFileLines(ActualFile));
+
+bool ExpectEqualFiles(loc FileToScan, list[str] ContentToCompare)
 {
   if(false == ExpectEqual(readFileLines(FileToScan), ContentToCompare))
   {
