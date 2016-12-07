@@ -77,3 +77,18 @@ str GetClassName(loc FileToCheck)
   str TotalPath = FileToCheck.path;
   return substring(TotalPath, findLast(TotalPath, "/")+1);
 }
+
+void Comparer()
+{
+	loc l = |project://SoftwareMetrics/sampleFiles/smallsql/database/Column.java|;
+	list[Figure] b1 = [];
+	list[Figure] b2 = [];
+	
+	for(line <- readFileLines(l))
+	{
+		b1 += box(text(line, left()));
+		b2 += box(text(line, left()));
+	}
+	
+	render("Comparer", hcat([box(vcat(b1)), box(vcat(b2))], hgap(3)));
+}
