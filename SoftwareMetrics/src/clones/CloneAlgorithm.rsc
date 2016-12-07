@@ -52,11 +52,11 @@ TCloneList GetClonesList(THashInfo Information)
       LineNumber += LineIncrement(CurrentClones);
       Clones = InsertNewClones(Clones, CurrentClones);
       Clones = MergeClonesWithEqualStart(Clones, CurrentClones); 
-      Clones = MergeClonesWithOverlap(Clones);
       continue;      
     }
     LineNumber += 1;
   }
+  Clones = MergeClonesWithOverlap(Clones);      
   return Clones;
 }
 
@@ -134,7 +134,7 @@ TCloneList MergeClonesWithOverlap(TCloneList TotalClones)
   TCloneList MergedList = [];
   list[int] SkipIndexes = [];
   for(int First <- [0..size(TotalClones)], false == Contains(SkipIndexes, First))
-  {
+  { 
     TClone FirstClone = TotalClones[First];
     bool WasMerged = false;
     for(int Second <- [(First+1) .. size(TotalClones)])
@@ -142,6 +142,8 @@ TCloneList MergeClonesWithOverlap(TCloneList TotalClones)
       TClone SecondClone = TotalClones[Second];
       if(true == HasOverlap(FirstClone, SecondClone))
       {
+        // Try to trick this algorithm by sending small clones with big secondaries
+        // This can be conned by calling MergeClonesWithOverlap until NO more overlap is found
         println("<FirstClone> overlaps with <SecondClone>");
         TClone MergedClone = Merge(FirstClone, SecondClone);
         println("Added this <MergedClone> to the list");
@@ -151,19 +153,25 @@ TCloneList MergeClonesWithOverlap(TCloneList TotalClones)
       }            
     }
     
+    // If the clone was not merged, is was no dupe, so retain it
     if(false == WasMerged)
     {
       println("Added <FirstClone> to the list");
       MergedList += FirstClone;
     }    
   }
+  if(TotalClones != MergedList)
+  {
+    println("still some supes, go another iteration!");
+    MergedList = MergeClonesWithOverlap(MergedList);
+  }  
   return MergedList;
 }
 
 bool HasOverlap(TClone First, TClone Second) = InLimits(First.Start, Second.Start, LastLine(First));
+
 TClone Merge(TClone First, TClone Second)
 {
-  // if it is completely contained
   if(Contains(First, Second))
   {
     return First;
@@ -172,17 +180,16 @@ TClone Merge(TClone First, TClone Second)
   {
     return Second;
   }
-  println("Oh boy, clones with different endpoints. For correctness of line amount use the first start and last end... But... Doesn\'t this hold for all?");
-  return MergeClones(First, Second);  
+  return MergeClones(First, Second);
 }
 
 bool Contains(TClone First, TClone Second) = (First.Start <= Second.Start && LastLine(First) >= LastLine(Second));
-int LastLine(TClone Clone) = Clone.Start + Clone.Size;
+int LastLine(TClone Clone) = (Clone.Start + Clone.Size)-1;
 TClone MergeClones(TClone First, TClone Second)
 {
   int NewStart = min(First.Start, Second.Start);
-  int NewSize = max(LastLine(First), LastLine(Second)) - NewStart;  
-  return <NewStart, NewSize>;
+  int LastLine = max(LastLine(First), LastLine(Second));  
+  return <NewStart, LastLine - NewStart + 1>;
 }
 
 int RetrieveCloneSize(TCloneList Clones, int Start)
@@ -209,7 +216,7 @@ int CalcCloneSize(THashMap Lines, int LineNumber, int CloneLine)
   int Distance = CloneLine - LineNumber; // Distance between dupes
   for(n <- [CloneSize .. size(Lines)], CodeOverlapsClone(n, Distance) || (EndOfCloneReached(Lines, LineNumber+n, CloneLine+n)))
   {
-    println("Clone of <n> Lines");
+    println("Clone of <n> Lines: \<<LineNumber>, <n>\>");
     return n;
   }
   return size(Lines);
