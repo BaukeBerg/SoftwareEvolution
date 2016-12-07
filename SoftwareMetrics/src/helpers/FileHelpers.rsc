@@ -43,6 +43,7 @@ list[str] StripAndIndexFile(loc FileToStrip)
   return FileLines;
 }
 
+private str ColorSplitter = "Ѭ";
 private str FileSplitter = "۞";
 private str LineSplitter = "۩";
 
@@ -56,6 +57,10 @@ list[str] IndexLines(list[str] InputLines, str FileName)
   }
   return Results;
 }
+
+// Add color ....
+//
+// Color( ) 
 
 list[str] StripFileExtension(list[str] Files) = [ StripFileExtension(File) | File <- Files];
 str StripFileExtension(str File) = substring(File, 0, findLast(File, "."));
