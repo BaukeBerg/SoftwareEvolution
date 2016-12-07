@@ -15,13 +15,6 @@ int SampleFile(str FileName) = GetClonesForFile(PrepareFile(FileName));
 
 THashInfo PrepareFile(str FileName) = HashFile(TrimList(RemoveSingleLineComments(readFileLines(toLocation(SamplePath + FileName)))));
 
-TCloneList TestSingleCloneList() = GetClonesList(PrepareFile("SingleClone.txt"));
-TCloneList TestDoubleCloneList() = GetClonesList(PrepareFile("DoubleClone.txt"));
-TCloneList TestExtendedCloneList() = GetClonesList(PrepareFile("DoubleExtendedClone.txt"));
-TCloneList TestDualDifferentCloneList() = GetClonesList(PrepareFile("DoubleDifferentClones.txt"));
-TCloneList TestBraceCaseList() = GetClonesList(PrepareFile("BraceCase.txt"));
-TCloneList TestNoCloneList() = GetClonesList(PrepareFile("NoClone.txt"));
-
 TCloneList OverlappedClones = [ <6,6>,
                                 <14,14>,
                                 <20,6>
@@ -44,6 +37,7 @@ test bool TestContainmentUpperBound() = ExpectTrue(Contains(<1,10>, <6,4>));
 test bool TestSingleClone() = ExpectEqual(6, SampleFile("SingleClone.txt"));
 test bool TestDoubleClone() = ExpectEqual(12, SampleFile("DoubleClone.txt"));
 test bool TestExtendedClone() = ExpectEqual(14, SampleFile("DoubleExtendedClone.txt"));
+test bool TestDualOffsetClone() = ExpectEqual(14, SampleFile("DoubleOffsetClone.txt"));
 test bool TestDualDifferentClone() = ExpectEqual(20, SampleFile("DoubleDifferentClones.txt"));
 test bool TestBraceCase() = ExpectEqual(0, SampleFile("BraceCase.txt"));
 test bool TestNoClone() = ExpectEqual(0, SampleFile("NoClone.txt"));
