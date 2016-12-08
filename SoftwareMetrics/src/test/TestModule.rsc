@@ -8,6 +8,7 @@ import \helpers::FileHelpers;
 import \helpers::HtmlHelpers;
 import \helpers::ListHelpers;
 import \helpers::StringHelpers;
+import MainTestModule;
 
 // Generates a rascal module with all the unit tests
 public void GenerateTestModule()

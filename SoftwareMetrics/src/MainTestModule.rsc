@@ -30,13 +30,10 @@ test bool TryTestInfixOperatorOr(){ try{ return CheckAndReport("CalculateCCTest"
 test bool TryTestMergingOverlappedClones(){ try{ return CheckAndReport("CloneAlgorithmTest","TestMergingOverlappedClones()", TestMergingOverlappedClones());} catch: { CheckAndReport("CloneAlgorithmTest","!!! EXCEPTION IN TestMergingOverlappedClones() !!!", false); } return false; }
 test bool TryTestOverlapFunction(){ try{ return CheckAndReport("CloneAlgorithmTest","TestOverlapFunction()", TestOverlapFunction());} catch: { CheckAndReport("CloneAlgorithmTest","!!! EXCEPTION IN TestOverlapFunction() !!!", false); } return false; }
 test bool TryTestMergingClones(){ try{ return CheckAndReport("CloneAlgorithmTest","TestMergingClones()", TestMergingClones());} catch: { CheckAndReport("CloneAlgorithmTest","!!! EXCEPTION IN TestMergingClones() !!!", false); } return false; }
-test bool TryTestContainment(){ try{ return CheckAndReport("CloneAlgorithmTest","TestContainment()", TestContainment());} catch: { CheckAndReport("CloneAlgorithmTest","!!! EXCEPTION IN TestContainment() !!!", false); } return false; }
-test bool TryTestContainmentEqual(){ try{ return CheckAndReport("CloneAlgorithmTest","TestContainmentEqual()", TestContainmentEqual());} catch: { CheckAndReport("CloneAlgorithmTest","!!! EXCEPTION IN TestContainmentEqual() !!!", false); } return false; }
-test bool TryTestContainmentLowerBound(){ try{ return CheckAndReport("CloneAlgorithmTest","TestContainmentLowerBound()", TestContainmentLowerBound());} catch: { CheckAndReport("CloneAlgorithmTest","!!! EXCEPTION IN TestContainmentLowerBound() !!!", false); } return false; }
-test bool TryTestContainmentUpperBound(){ try{ return CheckAndReport("CloneAlgorithmTest","TestContainmentUpperBound()", TestContainmentUpperBound());} catch: { CheckAndReport("CloneAlgorithmTest","!!! EXCEPTION IN TestContainmentUpperBound() !!!", false); } return false; }
 test bool TryTestSingleClone(){ try{ return CheckAndReport("CloneAlgorithmTest","TestSingleClone()", TestSingleClone());} catch: { CheckAndReport("CloneAlgorithmTest","!!! EXCEPTION IN TestSingleClone() !!!", false); } return false; }
 test bool TryTestDoubleClone(){ try{ return CheckAndReport("CloneAlgorithmTest","TestDoubleClone()", TestDoubleClone());} catch: { CheckAndReport("CloneAlgorithmTest","!!! EXCEPTION IN TestDoubleClone() !!!", false); } return false; }
 test bool TryTestExtendedClone(){ try{ return CheckAndReport("CloneAlgorithmTest","TestExtendedClone()", TestExtendedClone());} catch: { CheckAndReport("CloneAlgorithmTest","!!! EXCEPTION IN TestExtendedClone() !!!", false); } return false; }
+test bool TryTestDualOffsetClone(){ try{ return CheckAndReport("CloneAlgorithmTest","TestDualOffsetClone()", TestDualOffsetClone());} catch: { CheckAndReport("CloneAlgorithmTest","!!! EXCEPTION IN TestDualOffsetClone() !!!", false); } return false; }
 test bool TryTestDualDifferentClone(){ try{ return CheckAndReport("CloneAlgorithmTest","TestDualDifferentClone()", TestDualDifferentClone());} catch: { CheckAndReport("CloneAlgorithmTest","!!! EXCEPTION IN TestDualDifferentClone() !!!", false); } return false; }
 test bool TryTestBraceCase(){ try{ return CheckAndReport("CloneAlgorithmTest","TestBraceCase()", TestBraceCase());} catch: { CheckAndReport("CloneAlgorithmTest","!!! EXCEPTION IN TestBraceCase() !!!", false); } return false; }
 test bool TryTestNoClone(){ try{ return CheckAndReport("CloneAlgorithmTest","TestNoClone()", TestNoClone());} catch: { CheckAndReport("CloneAlgorithmTest","!!! EXCEPTION IN TestNoClone() !!!", false); } return false; }
@@ -49,6 +46,8 @@ test bool TryTestIndexLines(){ try{ return CheckAndReport("FileHelperTests","Tes
 test bool TryTestStrippingIndexedInlineComments(){ try{ return CheckAndReport("FileHelperTests","TestStrippingIndexedInlineComments()", TestStrippingIndexedInlineComments());} catch: { CheckAndReport("FileHelperTests","!!! EXCEPTION IN TestStrippingIndexedInlineComments() !!!", false); } return false; }
 test bool TryTestStrippingMultilineComments(){ try{ return CheckAndReport("FileHelperTests","TestStrippingMultilineComments()", TestStrippingMultilineComments());} catch: { CheckAndReport("FileHelperTests","!!! EXCEPTION IN TestStrippingMultilineComments() !!!", false); } return false; }
 test bool TryTestStrippingExtension(){ try{ return CheckAndReport("FileHelperTests","TestStrippingExtension()", TestStrippingExtension());} catch: { CheckAndReport("FileHelperTests","!!! EXCEPTION IN TestStrippingExtension() !!!", false); } return false; }
+test bool TryTestSplittingIndexes(){ try{ return CheckAndReport("FileHelperTests","TestSplittingIndexes()", TestSplittingIndexes());} catch: { CheckAndReport("FileHelperTests","!!! EXCEPTION IN TestSplittingIndexes() !!!", false); } return false; }
+test bool TryTestSplittingContent(){ try{ return CheckAndReport("FileHelperTests","TestSplittingContent()", TestSplittingContent());} catch: { CheckAndReport("FileHelperTests","!!! EXCEPTION IN TestSplittingContent() !!!", false); } return false; }
 test bool TryCheckRed(){ try{ return CheckAndReport("GraphGeneratorTest","CheckRed()", CheckRed());} catch: { CheckAndReport("GraphGeneratorTest","!!! EXCEPTION IN CheckRed() !!!", false); } return false; }
 test bool TryCheckGreen(){ try{ return CheckAndReport("GraphGeneratorTest","CheckGreen()", CheckGreen());} catch: { CheckAndReport("GraphGeneratorTest","!!! EXCEPTION IN CheckGreen() !!!", false); } return false; }
 test bool TryCheckYellow(){ try{ return CheckAndReport("GraphGeneratorTest","CheckYellow()", CheckYellow());} catch: { CheckAndReport("GraphGeneratorTest","!!! EXCEPTION IN CheckYellow() !!!", false); } return false; }
@@ -115,8 +114,14 @@ test bool TryLineCountOfThree(){ try{ return CheckAndReport("StringHelpersTester
 test bool TryTestEncoding(){ try{ return CheckAndReport("StringHelpersTester","TestEncoding()", TestEncoding());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN TestEncoding() !!!", false); } return false; }
 test bool TryTestDecoding(){ try{ return CheckAndReport("StringHelpersTester","TestDecoding()", TestDecoding());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN TestDecoding() !!!", false); } return false; }
 test bool TryTestTrimAssumption(){ try{ return CheckAndReport("StringHelpersTester","TestTrimAssumption()", TestTrimAssumption());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN TestTrimAssumption() !!!", false); } return false; }
+test bool TryTestStringTokenFirst(){ try{ return CheckAndReport("StringHelpersTester","TestStringTokenFirst()", TestStringTokenFirst());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN TestStringTokenFirst() !!!", false); } return false; }
+test bool TryTestStringTokenLast(){ try{ return CheckAndReport("StringHelpersTester","TestStringTokenLast()", TestStringTokenLast());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN TestStringTokenLast() !!!", false); } return false; }
 test bool TryTestStringToken(){ try{ return CheckAndReport("StringHelpersTester","TestStringToken()", TestStringToken());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN TestStringToken() !!!", false); } return false; }
+test bool TryTestStringTokenOverLoad(){ try{ return CheckAndReport("StringHelpersTester","TestStringTokenOverLoad()", TestStringTokenOverLoad());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN TestStringTokenOverLoad() !!!", false); } return false; }
+test bool TryTestStringTokenOverLoad(){ try{ return CheckAndReport("StringHelpersTester","TestStringTokenOverLoad()", TestStringTokenOverLoad());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN TestStringTokenOverLoad() !!!", false); } return false; }
 test bool TryTestLargerStringToken(){ try{ return CheckAndReport("StringHelpersTester","TestLargerStringToken()", TestLargerStringToken());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN TestLargerStringToken() !!!", false); } return false; }
+test bool TryTestSubStringEquivalence(){ try{ return CheckAndReport("StringHelpersTester","TestSubStringEquivalence()", TestSubStringEquivalence());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN TestSubStringEquivalence() !!!", false); } return false; }
+test bool TryTestSubStringInt(){ try{ return CheckAndReport("StringHelpersTester","TestSubStringInt()", TestSubStringInt());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN TestSubStringInt() !!!", false); } return false; }
 test bool TryTestClipString(){ try{ return CheckAndReport("StringHelpersTester","TestClipString()", TestClipString());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN TestClipString() !!!", false); } return false; }
 test bool TryTestClipStringWithSplit(){ try{ return CheckAndReport("StringHelpersTester","TestClipStringWithSplit()", TestClipStringWithSplit());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN TestClipStringWithSplit() !!!", false); } return false; }
 test bool TryExpectEqualIntTest(){ try{ return CheckAndReport("TestHelpersTester","ExpectEqualIntTest()", ExpectEqualIntTest());} catch: { CheckAndReport("TestHelpersTester","!!! EXCEPTION IN ExpectEqualIntTest() !!!", false); } return false; }
@@ -130,4 +135,135 @@ test bool TryExpectTrueTestTrue(){ try{ return CheckAndReport("TestHelpersTester
 test bool TryExpectTrueTestFalse(){ try{ return CheckAndReport("TestHelpersTester","ExpectTrueTestFalse()", ExpectTrueTestFalse());} catch: { CheckAndReport("TestHelpersTester","!!! EXCEPTION IN ExpectTrueTestFalse() !!!", false); } return false; }
 test bool TryExpectFalseTestTrue(){ try{ return CheckAndReport("TestHelpersTester","ExpectFalseTestTrue()", ExpectFalseTestTrue());} catch: { CheckAndReport("TestHelpersTester","!!! EXCEPTION IN ExpectFalseTestTrue() !!!", false); } return false; }
 test bool TryExpectFalseTestTrue(){ try{ return CheckAndReport("TestHelpersTester","ExpectFalseTestTrue()", ExpectFalseTestTrue());} catch: { CheckAndReport("TestHelpersTester","!!! EXCEPTION IN ExpectFalseTestTrue() !!!", false); } return false; }
+test bool TryTestEqualFiles(){ try{ return CheckAndReport("TestHelpersTester","TestEqualFiles()", TestEqualFiles());} catch: { CheckAndReport("TestHelpersTester","!!! EXCEPTION IN TestEqualFiles() !!!", false); } return false; }
+test bool TryTestEqualFiles(){ try{ return CheckAndReport("TestHelpersTester","TestEqualFiles()", TestEqualFiles());} catch: { CheckAndReport("TestHelpersTester","!!! EXCEPTION IN TestEqualFiles() !!!", false); } return false; }
+test bool TryTestUnEqualFiles(){ try{ return CheckAndReport("TestHelpersTester","TestUnEqualFiles()", TestUnEqualFiles());} catch: { CheckAndReport("TestHelpersTester","!!! EXCEPTION IN TestUnEqualFiles() !!!", false); } return false; }
 
+bool RunAllTests()
+{
+  InitializeTestReport();
+  bool Result = true;
+  if(false == TryTestAssumeIntToNumConversion()){ Result = false;}
+  if(false == TryTestAssumeRounding()){ Result = false;}
+  if(false == TryTestAssumeJoinList()){ Result = false;}
+  if(false == TryTestAssumeForLoop()){ Result = false;}
+  if(false == TryTestIntegerDivision()){ Result = false;}
+  if(false == TryAssumeIteratorIncrementing()){ Result = false;}
+  if(false == TryDoWithTry()){ Result = false;}
+  if(false == TryTestTernaryOperator()){ Result = false;}
+  if(false == TryTestInfixOperatorAnd()){ Result = false;}
+  if(false == TryTestInfixOperatorOr()){ Result = false;}
+  if(false == TryTestMergingOverlappedClones()){ Result = false;}
+  if(false == TryTestOverlapFunction()){ Result = false;}
+  if(false == TryTestMergingClones()){ Result = false;}
+  if(false == TryTestSingleClone()){ Result = false;}
+  if(false == TryTestDoubleClone()){ Result = false;}
+  if(false == TryTestExtendedClone()){ Result = false;}
+  if(false == TryTestDualOffsetClone()){ Result = false;}
+  if(false == TryTestDualDifferentClone()){ Result = false;}
+  if(false == TryTestBraceCase()){ Result = false;}
+  if(false == TryTestNoClone()){ Result = false;}
+  if(false == TryTestMaxOfList()){ Result = false;}
+  if(false == TryFindFilesInDirectory()){ Result = false;}
+  if(false == TryFindFilesInEmptyDir()){ Result = false;}
+  if(false == TryCheckFindNameInDir()){ Result = false;}
+  if(false == TryCheckFindNameWithourDir()){ Result = false;}
+  if(false == TryTestIndexLines()){ Result = false;}
+  if(false == TryTestStrippingIndexedInlineComments()){ Result = false;}
+  if(false == TryTestStrippingMultilineComments()){ Result = false;}
+  if(false == TryTestStrippingExtension()){ Result = false;}
+  if(false == TryTestSplittingIndexes()){ Result = false;}
+  if(false == TryTestSplittingContent()){ Result = false;}
+  if(false == TryCheckRed()){ Result = false;}
+  if(false == TryCheckGreen()){ Result = false;}
+  if(false == TryCheckYellow()){ Result = false;}
+  if(false == TryTestFullClassPath()){ Result = false;}
+  if(false == TryTestClassName()){ Result = false;}
+  if(false == TryTestMethodSize()){ Result = false;}
+  if(false == TryTestMethodBody()){ Result = false;}
+  if(false == TryTestLineCountForFile()){ Result = false;}
+  if(false == TryExpectSingleLineComment()){ Result = false;}
+  if(false == TryExpectSingleLineStreamComment()){ Result = false;}
+  if(false == TryCheckBlockCommentRemoval()){ Result = false;}
+  if(false == TryCheckBlockCommentMultiLine()){ Result = false;}
+  if(false == TryCheckAbstractMethodSize()){ Result = false;}
+  if(false == TryCheckValid()){ Result = false;}
+  if(false == TryCheckLowBound()){ Result = false;}
+  if(false == TryCheckTopBound()){ Result = false;}
+  if(false == TryCheckCenterItem()){ Result = false;}
+  if(false == TryCheckListPrint()){ Result = false;}
+  if(false == TryCheckEmptyListPrint()){ Result = false;}
+  if(false == TryCheckBackAndForth()){ Result = false;}
+  if(false == TryCheckClonesPrint()){ Result = false;}
+  if(false == TryCheckClonesBackAndForth()){ Result = false;}
+  if(false == TryCheckListTrimming()){ Result = false;}
+  if(false == TryCheckListTrimmingRemoveEmptyLines()){ Result = false;}
+  if(false == TryTestListJoin()){ Result = false;}
+  if(false == TryTestTokenizedListTrimming()){ Result = false;}
+  if(false == TryTestPadding()){ Result = false;}
+  if(false == TryBelowLower()){ Result = false;}
+  if(false == TryAboveUpper()){ Result = false;}
+  if(false == TryNormal()){ Result = false;}
+  if(false == TryInLimitsBelow()){ Result = false;}
+  if(false == TryInLimitsAbove()){ Result = false;}
+  if(false == TryInLimitsOk()){ Result = false;}
+  if(false == TryDistributionOk()){ Result = false;}
+  if(false == TryDistributionRounding()){ Result = false;}
+  if(false == TryFractionTest()){ Result = false;}
+  if(false == TryPercentageTest()){ Result = false;}
+  if(false == TryTestVolumePlusPlus()){ Result = false;}
+  if(false == TryTestVolumePlus()){ Result = false;}
+  if(false == TryTestVolumeNeutral()){ Result = false;}
+  if(false == TryTestVolumeMinus()){ Result = false;}
+  if(false == TryTestVolumeMinusMinus()){ Result = false;}
+  if(false == TryTestVeryHigh()){ Result = false;}
+  if(false == TryTestHigh()){ Result = false;}
+  if(false == TryTestMedium()){ Result = false;}
+  if(false == TryTestLow()){ Result = false;}
+  if(false == TryTestDistributionPlusPlus()){ Result = false;}
+  if(false == TryTestDistributionPlus()){ Result = false;}
+  if(false == TryTestDistributionNeutral()){ Result = false;}
+  if(false == TryTestDistributionMinus()){ Result = false;}
+  if(false == TryTestDistributionMinusMinus()){ Result = false;}
+  if(false == TryTestSigRatingPlusPlus()){ Result = false;}
+  if(false == TryTestSigRatingPlus()){ Result = false;}
+  if(false == TryTestSigRatingNeutral()){ Result = false;}
+  if(false == TryTestSigRatingMinus()){ Result = false;}
+  if(false == TryTestSigRatingMinusMinus()){ Result = false;}
+  if(false == TryScanColumnJava()){ Result = false;}
+  if(false == TryScanWhiteLineJavaFile()){ Result = false;}
+  if(false == TryScanSourceCodeLines()){ Result = false;}
+  if(false == TryIndentTester()){ Result = false;}
+  if(false == TryTabIndent()){ Result = false;}
+  if(false == TryLineCountOfTwo()){ Result = false;}
+  if(false == TryLineCountOfThree()){ Result = false;}
+  if(false == TryTestEncoding()){ Result = false;}
+  if(false == TryTestDecoding()){ Result = false;}
+  if(false == TryTestTrimAssumption()){ Result = false;}
+  if(false == TryTestStringTokenFirst()){ Result = false;}
+  if(false == TryTestStringTokenLast()){ Result = false;}
+  if(false == TryTestStringToken()){ Result = false;}
+  if(false == TryTestStringTokenOverLoad()){ Result = false;}
+  if(false == TryTestStringTokenOverLoad()){ Result = false;}
+  if(false == TryTestLargerStringToken()){ Result = false;}
+  if(false == TryTestSubStringEquivalence()){ Result = false;}
+  if(false == TryTestSubStringInt()){ Result = false;}
+  if(false == TryTestClipString()){ Result = false;}
+  if(false == TryTestClipStringWithSplit()){ Result = false;}
+  if(false == TryExpectEqualIntTest()){ Result = false;}
+  if(false == TryExpectFalseIsEqualIntTest()){ Result = false;}
+  if(false == TryExpectNotEqualintTest()){ Result = false;}
+  if(false == TryExpectFalseIsNotEqualintTest()){ Result = false;}
+  if(false == TryShowMeARedCell()){ Result = false;}
+  if(false == TryShowMeAGreenCell()){ Result = false;}
+  if(false == TryCheckColourCompare()){ Result = false;}
+  if(false == TryExpectTrueTestTrue()){ Result = false;}
+  if(false == TryExpectTrueTestFalse()){ Result = false;}
+  if(false == TryExpectFalseTestTrue()){ Result = false;}
+  if(false == TryExpectFalseTestTrue()){ Result = false;}
+  if(false == TryTestEqualFiles()){ Result = false;}
+  if(false == TryTestEqualFiles()){ Result = false;}
+  if(false == TryTestUnEqualFiles()){ Result = false;}
+  FinalizeTestReport();
+  return Result;
+}
