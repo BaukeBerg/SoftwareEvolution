@@ -2,6 +2,7 @@ module \test::AssumptionTests
 
 import List;
 import Set;
+import String;
 
 import analysis::statistics::Descriptive;
 import \util::Math;
@@ -13,8 +14,6 @@ import \helpers::TestHelpers;
 
 test bool TestAssumeIntToNumConversion() = ExpectEqual(2.5, mean([2, 3]));
 test bool TestAssumeRounding() = ExpectEqual(3, round(mean([2, 3])));
-
-
 
 list[str] TestList = ["Hello", "Goeie", "Goedendag"];
 
@@ -75,6 +74,11 @@ bool GetError()
   return Empty[100];
 }
 
- 
+str RegexForInts = ".*[\\s=]+[0-9]+[\\s;]+.*";
 
+test bool AssumeRegexTrue() = ExpectTrue(rexpMatch("String 88 ", RegexForInts));
+test bool AssumeRegexWithColon() = ExpectTrue(rexpMatch("String 88;", RegexForInts));
+test bool AssumeRegexWithEqual() = ExpectTrue(rexpMatch("String=88;", RegexForInts));
+test bool AssumeRegexNoLeadingSpace() = ExpectFalse(rexpMatch("String88 ", RegexForInts));
+test bool AssumeRegexNoTralingSpace() = ExpectFalse(rexpMatch("String 88", RegexForInts));
  
