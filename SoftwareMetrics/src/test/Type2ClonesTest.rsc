@@ -8,12 +8,14 @@ import \helpers::TestHelpers;
 import FileLocations;
 import IO;
 
-loc SmallSqlSample = SampleFile("type2clones/SmallSqlContent.txt");
+loc SmallSqlSampleFile = SampleFile("type2clones/SmallSqlContent.txt");
 loc TypeTwoFile = OutputFile("type2clones/LastCloneTest.txt");
-loc SingleClone = SampleFile("type2clones/SingleClone.txt");
+loc SingleCloneFile = SampleFile("type2clones/SingleClone.txt");
+loc NumericSampleFile = SampleFile("type2clones/NumericClones.txt");
 
-int SmallSqlSample() = GetClonedLinesDifference(SmallSqlSample);
-int SingleCloneSample() = GetClonedLinesDifference(SingleClone);
+test bool SmallSqlSample() = ExpectEqual(0, GetClonedLinesDifference(SmallSqlSampleFile));
+test bool SingleCloneSample() = ExpectEqual(6, GetClonedLinesDifference(SingleCloneFile));
+test bool Type2NumericClones() = ExpectEqual(6, GetClonedLinesDifference(NumericSampleFile));
 
 int GetClonedLinesDifference(loc FileToCheck)
 {
@@ -23,6 +25,8 @@ int GetClonedLinesDifference(loc FileToCheck)
   println("Type 1: <Type1Clones>, Type2: <Type2Clones>");
   return Type2Clones - Type1Clones;
 }
+
+
 
 public list[str] AddedTypes = [
                              // Earlier notation = higher priority!
