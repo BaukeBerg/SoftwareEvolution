@@ -11,6 +11,7 @@ import \helpers::StringHelpers;
 import MainTestModule;
 
 // Generates a rascal module with all the unit tests
+// Both the separate unit tests as
 public void GenerateTestModule()
 {
   list[loc] TestFiles = EnumerateDirFiles(TestDir);
@@ -57,11 +58,6 @@ loc TestReport = OutputFile("TestReport.html");
 
 void RemoveReport() = remove(TestReport);
 
-void InitializeTestReport()
-{
-  ResetFile(TestReport);
-  AppendToFile(TestReport, OpenTable() + Caption("Test results"));
-}
 
 bool CheckAndReport(str ModuleName, str MethodName, bool TestResult)
 {
@@ -71,6 +67,12 @@ bool CheckAndReport(str ModuleName, str MethodName, bool TestResult)
   }
   AppendToFile(TestReport, TestRow(ModuleName, MethodName, TestResult));
   return TestResult;
+}
+
+void InitializeTestReport()
+{
+  ResetFile(TestReport);
+  AppendToFile(TestReport, OpenTable() + Caption("Test results"));
 }
 
 void FinalizeTestReport()
