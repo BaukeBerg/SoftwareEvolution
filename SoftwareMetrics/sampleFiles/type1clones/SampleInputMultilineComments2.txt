@@ -1,0 +1,13 @@
+final class SQLParser {
+  /* I should also be gone */
+  SSConnection con;
+  /** These lines should all be gone!!
+  private char[] sql;
+  private List tokens; // This comment should be stripped
+  println(123);
+  println(456);
+  private int tokenIdx;
+  */
+  // This line is a comment
+  Command parse(SSConnection con, String sqlString) throws SQLException{
+  this.con = con;
