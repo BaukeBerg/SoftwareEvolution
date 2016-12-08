@@ -34,3 +34,15 @@ public loc HtmlDetailsFile(str ProjectName, str ForFile) = toLocation("<OutputDi
 
 public loc SampleFile(str ForFile) = toLocation("<SampleDir><ForFile>");
 public loc OutputFile(str ForFile) = toLocation("<OutputDir><ForFile>");
+
+// Clone algorithm locations
+public loc SmallSqlIntermediate = OutputFile("bulk/IndexedSmallSqlFile.java");
+public loc SmallSqlIndexes = OutputFile("bulk/SmallSqlIndexes.txt"); 
+public loc SmallSqlContent = OutputFile("bulk/SmallSqlContent.txt");
+
+public loc HsqlDbIntermediate = OutputFile("bulk/IndexedHsqlDbFile.java");
+public loc HsqlDbIndexes = OutputFile("bulk/HsqlDbIndexes.txt");
+public loc HsqlDbContent = OutputFile("bulk/HsqlDbContent.txt");
+
+public loc SmallSqlContent_Type2 = OutputFile("bulk/SmallSqlContent_Type2.txt");
+public loc HsqlDbContent_Type2 = OutputFile("bulk/HsqlDbContent_Type2.txt");
