@@ -17,7 +17,7 @@ public void GenerateTestModule()
   FileNames = StripFileExtension(FileNames);
   FileNames = PadList("import \\test::", FileNames, ";");
   FileNames += "\r\n";
-  list[str] TestCalls = [];
+  list [str] TestCalls = [];
   list[str] FunctionDefinitions = [];
   for(TestFile <- TestFiles)
   {
@@ -25,32 +25,25 @@ public void GenerateTestModule()
     {
       if(startsWith(Line, "test bool "))
       {
-        FunctionDefinitions += CreateTryCatchHarness(StripFileExtension(FileName(TestFile)), TestMethodName(Line));  
+        str TryCatchFunction = CreateTryCatchHarness(StripFileExtension(FileName(TestFile)), TestMethodName(Line));  
+        FunctionDefinitions += TryCatchFunction;
+        TestCalls += TestMethodName(TryCatchFunction);
       }
     }
   } 
   TestCalls = PadList("  if(false == ", TestCalls, "){ Result = false;}");
-  CreateTestModule(FileNames + FunctionDefinitions);
+  CreateTestModule(FileNames + FunctionDefinitions, TestCalls);
   InitializeTestReport();
 }
 
-str TestMethodName(str MethodLine)
-{
-  try
-  {
-    return StringToken(MethodLine, "test bool ", "()")+ "()";
-  }
-  catch:
-  {
-    println(MethodLine);
-  }
-  return "test bool FailedToConvert_<MethodLine>_() = false;";
-}
-void CreateTestModule(list[str] Modules)
+str TestMethodName(str MethodLine) = StringToken(MethodLine, "bool ", findFirst(MethodLine, "()"))+ "()";
+
+void CreateTestModule(list[str] Modules, list[str] TestCalls)
 {
   loc TestModule = toLocation("<SourceDir>MainTestModule.rsc");
   ResetFile(TestModule);
   AppendToFile(TestModule, "module MainTestModule\r\n\r\n<JoinList(Modules)>\r\n\r\n");
+  AppendToFile(TestModule, "bool RunAllTests()\r\n{\r\n  InitializeTestReport();\r\n  bool Result = true;\r\n<JoinList(TestCalls, "\r\n")>\r\n  FinalizeTestReport();\r\n  return Result;\r\n}");
 }
 
 void PrintResult(bool Result) = Result ? print("true") : print("false");
