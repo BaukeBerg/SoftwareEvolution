@@ -36,11 +36,11 @@ public loc SampleFile(str ForFile) = toLocation("<SampleDir><ForFile>");
 public loc OutputFile(str ForFile) = toLocation("<OutputDir><ForFile>");
 
 // Clone algorithm locations
-public loc SmallSqlIntermediate = OutputFile("bulk/IndexedSmallSqlFile.java");
+public loc SmallSqlIntermediate = SampleFile("clones/IndexedSmallSqlFile.java");
 public loc SmallSqlIndexes = SampleFile("clones/SmallSqlIndexes.txt"); 
 public loc SmallSqlContent = SampleFile("clones/SmallSqlContent.txt");
 
-public loc HsqlDbIntermediate = OutputFile("bulk/IndexedHsqlDbFile.java");
+public loc HsqlDbIntermediate = SampleFile("clones/IndexedHsqlDbFile.java");
 public loc HsqlDbIndexes = SampleFile("clones/HsqlDbIndexes.txt");
 public loc HsqlDbContent = SampleFile("clones/HsqlDbContent.txt");
 
