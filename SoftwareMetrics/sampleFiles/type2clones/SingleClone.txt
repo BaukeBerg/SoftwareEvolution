@@ -1,0 +1,14 @@
+// Single Clone, very easy, since it only has to iterate over the thing once.
+// Should return 6 cloned lines
+int One
+int Two
+int Three
+int Four
+int Five
+int Six
+bool One
+bool Two
+bool Three
+bool Four
+bool Five
+bool Six

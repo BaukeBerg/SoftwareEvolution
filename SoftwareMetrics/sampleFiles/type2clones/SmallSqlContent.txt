@@ -1,0 +1,995 @@
+package smallsql.database;
+import java.io.*;
+import java.nio.channels.FileChannel;
+import java.sql.*;
+import smallsql.database.language.Language;
+class Column implements Cloneable{
+private Expression defaultValue = Expression.NULL;
+private String defaultDefinition;
+private String name;
+private boolean identity;
+private boolean caseSensitive;
+private boolean nullable = true;
+private int scale;
+private int precision;
+private int dataType;
+private Identity counter;
+void setName( String name ){
+this.name = name;
+}
+void setDefaultValue(Expression defaultValue, String defaultDefinition){
+this.defaultValue 		= defaultValue;
+this.defaultDefinition	= defaultDefinition;
+}
+Expression getDefaultValue(SSConnection con) throws SQLException{
+if(identity)
+counter.createNextValue(con);
+return defaultValue;
+}
+String getDefaultDefinition(){
+return defaultDefinition;
+}
+String getName(){
+return name;
+}
+boolean isAutoIncrement(){
+return identity;
+}
+void setAutoIncrement(boolean identity){
+this.identity = identity;
+}
+int initAutoIncrement(FileChannel raFile, long filePos) throws IOException{
+if(identity){
+counter = new Identity(raFile, filePos);
+defaultValue = new ExpressionValue( counter, SQLTokenizer.BIGINT );
+}
+return 8;
+}
+void setNewAutoIncrementValue(Expression obj) throws Exception{
+if(identity){
+counter.setNextValue(obj);
+}
+}
+boolean isCaseSensitive(){
+return caseSensitive;
+}
+void setNullable(boolean nullable){
+this.nullable = nullable;
+}
+boolean isNullable(){
+return nullable;
+}
+void setDataType(int dataType){
+this.dataType = dataType;
+}
+int getDataType(){
+return dataType;
+}
+int getDisplaySize(){
+return SSResultSetMetaData.getDisplaySize( dataType, precision, scale);
+}
+void setScale(int scale){
+this.scale = scale;
+}
+int getScale(){
+switch(dataType){
+case SQLTokenizer.DECIMAL:
+case SQLTokenizer.NUMERIC:
+return scale;
+default:
+return Expression.getScale(dataType);
+}
+}
+void setPrecision(int precision) throws SQLException{
+if(precision<0) throw SmallSQLException.create(Language.COL_INVALID_SIZE, new Object[] { new Integer(precision), name});
+this.precision = precision;
+}
+int getPrecision(){
+return SSResultSetMetaData.getDataTypePrecision( dataType, precision );
+}
+int getColumnSize(){
+if(SSResultSetMetaData.isNumberDataType(dataType))
+return getPrecision();
+else return getDisplaySize();
+}
+int getFlag(){
+return (identity        ? 1 : 0) |
+(caseSensitive   ? 2 : 0) |
+(nullable        ? 4 : 0);
+}
+void setFlag(int flag){
+identity        = (flag & 1) > 0;
+caseSensitive   = (flag & 2) > 0;
+nullable        = (flag & 4) > 0;
+}
+Column copy(){
+try{
+return (Column)clone();
+}catch(Exception e){return null;}
+}
+}
+package smallsql.database;
+class ColumnExpression extends Column {
+final private Expression expr;
+ColumnExpression(Expression expr){
+this.expr = expr;
+}
+String getName(){
+return expr.getAlias();
+}
+boolean isAutoIncrement(){
+return expr.isAutoIncrement();
+}
+boolean isCaseSensitive(){
+return expr.isCaseSensitive();
+}
+boolean isNullable(){
+return expr.isNullable();
+}
+int getDataType(){
+return expr.getDataType();
+}
+int getDisplaySize(){
+return expr.getDisplaySize();
+}
+int getScale(){
+return expr.getScale();
+}
+int getPrecision(){
+return expr.getPrecision();
+}
+}
+package smallsql.database;
+final class Columns {
+private int size;
+private Column[] data;
+Columns(){
+data = new Column[16];
+}
+final int size(){
+return size;
+}
+final Column get(int idx){
+if (idx >= size)
+throw new IndexOutOfBoundsException("Column index: "+idx+", Size: "+size);
+return data[idx];
+}
+final Column get(String name){
+for(int i = 0; i < size; i++){
+Column column = data[i];
+if(name.equalsIgnoreCase(column.getName())){
+return column;
+}
+}
+return null;
+}
+final void add(Column column){
+if(column == null){
+throw new NullPointerException("Column is null.");
+}
+if(size >= data.length){
+resize(size << 1);
+}
+data[size++] = column;
+}
+Columns copy(){
+Columns copy = new Columns();
+Column[] cols = copy.data = (Column[]) data.clone();
+for(int i=0; i<size; i++){
+cols[i] = cols[i].copy();
+}
+copy.size = size;
+return copy;
+}
+private final void resize(int newSize){
+Column[] dataNew = new Column[newSize];
+System.arraycopy(data, 0, dataNew, 0, size);
+data = dataNew;
+}
+}
+package smallsql.database;
+import java.sql.*;
+import smallsql.database.language.Language;
+abstract class Command {
+int type;
+String catalog;
+String name;
+SSResultSet rs;
+int updateCount = -1;
+final Expressions columnExpressions;
+Expressions params  = new Expressions();
+final Logger log;
+Command(Logger log){
+this.log = log;
+this.columnExpressions = new Expressions();
+}
+Command(Logger log, Expressions columnExpressions){
+this.log = log;
+this.columnExpressions = columnExpressions;
+}
+void addColumnExpression( Expression column ) throws SQLException{
+columnExpressions.add( column );
+}
+void addParameter( ExpressionValue param ){
+params.add( param );
+}
+void verifyParams() throws SQLException{
+for(int p=0; p<params.size(); p++){
+if(((ExpressionValue)params.get(p)).isEmpty())
+throw SmallSQLException.create(Language.PARAM_EMPTY, new Integer(p+1));
+}
+}
+void clearParams(){
+for(int p=0; p<params.size(); p++){
+((ExpressionValue)params.get(p)).clear();
+}
+}
+private ExpressionValue getParam(int idx) throws SQLException{
+if(idx < 1 || idx > params.size())
+throw SmallSQLException.create(Language.PARAM_IDX_OUT_RANGE, new Object[] { new Integer(idx), new Integer(params.size())});
+return ((ExpressionValue)params.get(idx-1));
+}
+void setParamValue(int idx, Object value, int dataType) throws SQLException{
+getParam(idx).set( value, dataType );
+if(log.isLogging()){
+log.println("param"+idx+'='+value+"; type="+dataType);
+}
+}
+void setParamValue(int idx, Object value, int dataType, int length) throws SQLException{
+getParam(idx).set( value, dataType, length );
+if(log.isLogging()){
+log.println("param"+idx+'='+value+"; type="+dataType+"; length="+length);
+}
+}
+final void execute(SSConnection con, SSStatement st) throws SQLException{
+int savepoint = con.getSavepoint();
+try{
+executeImpl( con, st );
+}catch(Throwable e){
+con.rollback(savepoint);
+throw SmallSQLException.createFromException(e);
+}finally{
+if(con.getAutoCommit()) con.commit();
+}
+}
+abstract void executeImpl(SSConnection con, SSStatement st) throws Exception;
+SSResultSet getQueryResult() throws SQLException{
+if(rs == null)
+throw SmallSQLException.create(Language.RSET_NOT_PRODUCED);
+return rs;
+}
+SSResultSet getResultSet(){
+return rs;
+}
+int getUpdateCount(){
+return updateCount;
+}
+boolean getMoreResults(){
+rs = null;
+updateCount = -1;
+return false;
+}
+void setMaxRows(int max){}
+int getMaxRows(){return -1;}
+}
+package smallsql.database;
+import java.io.*;
+import smallsql.database.language.Language;
+public class CommandCreateDatabase extends Command{
+CommandCreateDatabase( Logger log, String name ){
+super(log);
+this.type = SQLTokenizer.DATABASE;
+if(name.startsWith("file:"))
+name = name.substring(5);
+this.name = name;
+}
+@Override
+void executeImpl(SSConnection con, SSStatement st) throws Exception{
+if( con.isReadOnly() ){
+throw SmallSQLException.create(Language.DB_READONLY);
+}
+File dir = new File( name );
+dir.mkdirs();
+if(!new File(dir, Utils.MASTER_FILENAME).createNewFile()){
+throw SmallSQLException.create(Language.DB_EXISTENT, name);
+}
+}
+}
+package smallsql.database;
+public class CommandCreateView extends Command{
+private Columns columns = new Columns();
+String sql;
+CommandCreateView( Logger log, String name ){
+super(log);
+this.type = SQLTokenizer.VIEW;
+this.name = name;
+}
+void addColumn( Column column ){
+columns.add( column );
+}
+void executeImpl(SSConnection con, SSStatement st) throws Exception{
+con.getDatabase(false).createView(con, name, sql);
+}
+}
+package smallsql.database;
+class CommandDelete extends CommandSelect {
+CommandDelete(Logger log){
+super(log);
+}
+void executeImpl(SSConnection con, SSStatement st) throws Exception {
+compile(con);
+TableViewResult result = TableViewResult.getTableViewResult(from);
+updateCount = 0;
+from.execute();
+while(next()){
+result.deleteRow();
+updateCount++;
+}
+}
+}
+package smallsql.database;
+import java.io.*;
+import smallsql.database.language.Language;
+public class CommandDrop extends Command {
+CommandDrop( Logger log, String catalog, String name, int type ){
+super(log);
+this.type 		= type;
+this.catalog 	= catalog;
+this.name 		= name;
+}
+void executeImpl(SSConnection con, SSStatement st) throws Exception {
+switch(type){
+case SQLTokenizer.DATABASE:
+if(name.startsWith("file:"))
+name = name.substring(5);
+File dir = new File( name );
+if(!dir.isDirectory() ||
+!new File( dir, Utils.MASTER_FILENAME ).exists())
+throw SmallSQLException.create(Language.DB_NONEXISTENT, name);
+File files[] = dir.listFiles();
+if(files != null)
+for(int i=0; i<files.length; i++){
+files[i].delete();
+}
+dir.delete();
+break;
+case SQLTokenizer.TABLE:
+Database.dropTable( con, catalog, name );
+break;
+case SQLTokenizer.VIEW:
+Database.dropView( con, catalog, name );
+break;
+case SQLTokenizer.INDEX:
+case SQLTokenizer.PROCEDURE:
+throw new java.lang.UnsupportedOperationException();
+default:
+throw new Error();
+}
+}
+}
+package smallsql.database;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import smallsql.database.language.Language;
+public class CommandInsert extends Command {
+boolean noColumns;
+private CommandSelect cmdSel;
+private Table table;
+private long tableTimestamp;
+private int[] matrix;
+CommandInsert(Logger log, String name){
+super(log);
+this.name = name;
+}
+void addColumnExpression(Expression column) throws SQLException{
+if(columnExpressions.indexOf(column) >= 0){
+throw SmallSQLException.create(Language.COL_DUPLICATE, column);
+}
+super.addColumnExpression(column);
+}
+void addValues(Expressions values){
+this.cmdSel = new CommandSelect(log, values );
+}
+void addValues( CommandSelect cmdSel ){
+this.cmdSel = cmdSel;
+}
+private void compile(SSConnection con) throws Exception{
+TableView tableView = con.getDatabase(false).getTableView( con, name);
+if(!(tableView instanceof Table))
+throw SmallSQLException.create(Language.VIEW_INSERT);
+table = (Table)tableView;
+tableTimestamp = table.getTimestamp();
+cmdSel.compile(con);
+int count = table.columns.size();
+matrix = new int[count];
+if(noColumns){
+columnExpressions.clear();
+for(int i=0; i<count; i++){
+matrix[i] = i;
+}
+if(count != cmdSel.columnExpressions.size())
+throw SmallSQLException.create(Language.COL_VAL_UNMATCH);
+}else{
+for(int i=0; i<count; i++) matrix[i] = -1;
+for(int c=0; c<columnExpressions.size(); c++){
+Expression sqlCol = columnExpressions.get(c);
+String sqlColName = sqlCol.getName();
+int idx = table.findColumnIdx( sqlColName );
+if(idx >= 0){
+matrix[idx] = c;
+}else{
+throw SmallSQLException.create(Language.COL_MISSING, sqlColName);
+}
+}
+if(columnExpressions.size() != cmdSel.columnExpressions.size())
+throw SmallSQLException.create(Language.COL_VAL_UNMATCH);
+}
+}
+void executeImpl(SSConnection con, SSStatement st) throws Exception {
+if(table == null || tableTimestamp != table.getTimestamp()) compile( con );
+final IndexDescriptions indexes = table.indexes;
+updateCount = 0;
+cmdSel.from.execute();
+cmdSel.beforeFirst();
+Strings keyColumnNames = null;
+ArrayList keys = null;
+boolean needGeneratedKeys = st.needGeneratedKeys();
+int generatedKeysType = 0;
+while(cmdSel.next()){
+if(needGeneratedKeys){
+keyColumnNames = new Strings();
+keys = new ArrayList();
+if(st.getGeneratedKeyNames() != null)
+generatedKeysType = 1;
+if(st.getGeneratedKeyIndexes() != null)
+generatedKeysType = 2;
+}
+StoreImpl store = table.getStoreInsert( con );
+for(int c=0; c<matrix.length; c++){
+Column column = table.columns.get(c);
+int idx = matrix[c];
+Expression valueExpress;
+if(idx >= 0){
+valueExpress = cmdSel.columnExpressions.get(idx);
+}else{
+valueExpress = column.getDefaultValue(con);
+if(needGeneratedKeys && generatedKeysType == 0 && valueExpress != Expression.NULL){
+keyColumnNames.add(column.getName());
+keys.add(valueExpress.getObject());
+}
+}
+if(needGeneratedKeys && generatedKeysType == 1){
+String[] keyNames = st.getGeneratedKeyNames();
+for(int i=0; i<keyNames.length; i++){
+if(column.getName().equalsIgnoreCase(keyNames[i])){
+keyColumnNames.add(column.getName());
+keys.add(valueExpress.getObject());
+break;
+}
+}
+}
+if(needGeneratedKeys && generatedKeysType == 2){
+int[] keyIndexes = st.getGeneratedKeyIndexes();
+for(int i=0; i<keyIndexes.length; i++){
+if(c+1 == keyIndexes[i]){
+keyColumnNames.add(column.getName());
+keys.add(valueExpress.getObject());
+break;
+}
+}
+}
+store.writeExpression( valueExpress, column );
+for(int i=0; i<indexes.size(); i++){
+indexes.get(i).writeExpression( c, valueExpress );
+}
+}
+store.writeFinsh( con );
+for(int i=0; i<indexes.size(); i++){
+indexes.get(i).writeFinish( con );
+}
+updateCount++;
+if(needGeneratedKeys){
+Object[][] data = new Object[1][keys.size()];
+keys.toArray(data[0]);
+st.setGeneratedKeys(new SSResultSet( st, Utils.createMemoryCommandSelect( con, keyColumnNames.toArray(), data)));
+}
+}
+}
+}
+package smallsql.database;
+import java.sql.*;
+import smallsql.database.language.Language;
+class CommandSelect extends Command{
+private DataSources tables;
+private Expression where;
+RowSource from;
+private Expressions groupBy;
+private Expression having;
+private Expressions orderBy;
+private boolean isAggregateFunction;
+private int maxRows = -1;
+private boolean isDistinct;
+CommandSelect(Logger log){
+super(log);
+}
+CommandSelect(Logger log, Expressions columnExpressions){
+super(log, columnExpressions);
+}
+boolean compile(SSConnection con) throws Exception{
+boolean needCompile = false;
+if(tables != null){
+for(int i=0; i<tables.size(); i++){
+DataSource fromEntry = tables.get(i);
+needCompile |= fromEntry.init( con );
+}
+}
+if(from == null){
+from = new NoFromResult();
+tables = new DataSources();
+needCompile = true;
+}
+if(!needCompile) return false;
+for(int i=0; i<columnExpressions.size(); i++){
+Expression col = columnExpressions.get(i);
+if(col.getAlias() == null){
+col.setAlias("col" + (i+1));
+}
+if(col.getType() != Expression.NAME){
+compileLinkExpressionParams(col);
+continue;
+}
+ExpressionName expr = (ExpressionName)col;
+if("*".equals( expr.getName() )){
+String tableAlias = expr.getTableAlias();
+if(tableAlias != null){
+int t=0;
+for(; t<tables.size(); t++){
+DataSource fromEntry = tables.get(t);
+if(tableAlias.equalsIgnoreCase( fromEntry.getAlias() )){
+TableView table = fromEntry.getTableView();
+columnExpressions.remove(i);
+i = compileAdd_All_Table_Columns( fromEntry, table, i ) - 1;
+break;
+}
+}
+if(t==tables.size()) throw SmallSQLException.create(Language.COL_WRONG_PREFIX, new Object[] {tableAlias});
+}else{
+columnExpressions.remove(i);
+for(int t=0; t<tables.size(); t++){
+DataSource fromEntry = tables.get(t);
+TableView table = fromEntry.getTableView();
+i = compileAdd_All_Table_Columns( fromEntry, table, i );
+}
+i--;
+}
+}else{
+compileLinkExpressionName( expr );
+}
+}
+if(where != null) compileLinkExpression( where );
+if(having != null) compileLinkExpression( having );
+if(orderBy != null) {
+for(int i=0; i<orderBy.size(); i++){
+compileLinkExpression( orderBy.get(i));
+}
+}
+if(groupBy != null){
+for(int i=0; i<groupBy.size(); i++){
+compileLinkExpression( groupBy.get(i) );
+}
+}
+if(from instanceof Join){
+compileJoin( (Join)from );
+}
+if(where != null){
+from = new Where( from, where );
+}
+if(isGroupResult()) {
+from = new GroupResult( this, from, groupBy, having, orderBy);
+if(having != null){
+from = new Where( from, having );
+}
+}
+if(isDistinct){
+from = new Distinct( from, columnExpressions );
+}
+if(orderBy != null){
+from = new SortedResult( from, orderBy );
+}
+return true;
+}
+final boolean isGroupResult(){
+return groupBy != null || having != null || isAggregateFunction;
+}
+private void compileJoin( Join singleJoin ) throws Exception{
+if(singleJoin.condition != null) compileLinkExpressionParams( singleJoin.condition );
+if(singleJoin.left instanceof Join){
+compileJoin( (Join)singleJoin.left );
+}
+if(singleJoin.right instanceof Join){
+compileJoin( (Join)singleJoin.right );
+}
+}
+private void compileLinkExpression( Expression expr) throws Exception{
+if(expr.getType() == Expression.NAME)
+compileLinkExpressionName( (ExpressionName)expr);
+else compileLinkExpressionParams( expr );
+}
+private void compileLinkExpressionName(ExpressionName expr) throws Exception{
+String tableAlias = expr.getTableAlias();
+if(tableAlias != null){
+int t = 0;
+for(; t < tables.size(); t++){
+DataSource fromEntry = tables.get(t);
+if(tableAlias.equalsIgnoreCase(fromEntry.getAlias())){
+TableView table = fromEntry.getTableView();
+int colIdx = table.findColumnIdx(expr.getName());
+if(colIdx >= 0){
+expr.setFrom(fromEntry, colIdx, table);
+break;
+}else
+throw SmallSQLException.create(Language.COL_INVALID_NAME, new Object[]{expr.getName()});
+}
+}
+if(t == tables.size())
+throw SmallSQLException.create(Language.COL_WRONG_PREFIX, tableAlias);
+}else{
+boolean isSetFrom = false;
+for(int t = 0; t < tables.size(); t++){
+DataSource fromEntry = tables.get(t);
+TableView table = fromEntry.getTableView();
+int colIdx = table.findColumnIdx(expr.getName());
+if(colIdx >= 0){
+if(isSetFrom){
+throw SmallSQLException.create(Language.COL_AMBIGUOUS, expr.getName());
+}
+isSetFrom = true;
+expr.setFrom(fromEntry, colIdx, table);
+}
+}
+if(!isSetFrom){
+throw SmallSQLException.create(Language.COL_INVALID_NAME, expr.getName());
+}
+}
+compileLinkExpressionParams(expr);
+}
+private void compileLinkExpressionParams(Expression expr) throws Exception{
+Expression[] expParams = expr.getParams();
+isAggregateFunction = isAggregateFunction || expr.getType() >= Expression.GROUP_BEGIN;
+if(expParams != null){
+for(int k=0; k<expParams.length; k++){
+Expression param = expParams[k];
+int paramType = param.getType();
+isAggregateFunction = isAggregateFunction || paramType >= Expression.GROUP_BEGIN;
+if(paramType == Expression.NAME)
+compileLinkExpressionName( (ExpressionName)param );
+else compileLinkExpressionParams( param );
+}
+}
+expr.optimize();
+}
+private final int compileAdd_All_Table_Columns( DataSource fromEntry, TableView table, int position){
+for(int k=0; k<table.columns.size(); k++){
+ExpressionName expr = new ExpressionName( table.columns.get(k).getName() );
+expr.setFrom( fromEntry, k, table );
+columnExpressions.add( position++, expr );
+}
+return position;
+}
+void executeImpl(SSConnection con, SSStatement st) throws Exception{
+compile(con);
+if((st.rsType == ResultSet.TYPE_SCROLL_INSENSITIVE || st.rsType == ResultSet.TYPE_SCROLL_SENSITIVE) &&
+!from.isScrollable()){
+from = new Scrollable(from);
+}
+from.execute();
+rs =  new SSResultSet( st, this );
+}
+void beforeFirst() throws Exception{
+from.beforeFirst();
+}
+boolean isBeforeFirst() throws SQLException{
+return from.isBeforeFirst();
+}
+boolean isFirst() throws SQLException{
+return from.isFirst();
+}
+boolean first() throws Exception{
+return from.first();
+}
+boolean previous() throws Exception{
+return from.previous();
+}
+boolean next() throws Exception{
+if(maxRows >= 0 && from.getRow() >= maxRows){
+from.afterLast();
+return false;
+}
+return from.next();
+}
+final boolean last() throws Exception{
+if(maxRows >= 0){
+if(maxRows == 0){
+from.beforeFirst();
+return false;
+}
+return from.absolute(maxRows);
+}
+return from.last();
+}
+final void afterLast() throws Exception{
+from.afterLast();
+}
+boolean isLast() throws Exception{
+return from.isLast();
+}
+boolean isAfterLast() throws Exception{
+return from.isAfterLast();
+}
+final boolean absolute(int row) throws Exception{
+return from.absolute(row);
+}
+final boolean relative(int rows) throws Exception{
+return from.relative(rows);
+}
+final int getRow() throws Exception{
+int row = from.getRow();
+if(maxRows >= 0 && row > maxRows) return 0;
+return row;
+}
+final void updateRow(SSConnection con, Expression[] newRowSources) throws SQLException{
+int savepoint = con.getSavepoint();
+try{
+for(int t=0; t<tables.size(); t++){
+TableViewResult result = TableViewResult.getTableViewResult( tables.get(t) );
+TableView table = result.getTableView();
+Columns tableColumns = table.columns;
+int count = tableColumns.size();
+Expression[] updateValues = new Expression[count];
+boolean isUpdateNeeded = false;
+for(int i=0; i<columnExpressions.size(); i++){
+Expression src = newRowSources[i];
+if(src != null && (!(src instanceof ExpressionValue) || !((ExpressionValue)src).isEmpty())){
+Expression col = columnExpressions.get(i);
+if(!col.isDefinitelyWritable())
+throw SmallSQLException.create(Language.COL_READONLY, new Integer(i));
+ExpressionName exp = (ExpressionName)col;
+if(table == exp.getTable()){
+updateValues[exp.getColumnIndex()] = src;
+isUpdateNeeded = true;
+continue;
+}
+}
+}
+if(isUpdateNeeded){
+result.updateRow(updateValues);
+}
+}
+}catch(Throwable e){
+con.rollback(savepoint);
+throw SmallSQLException.createFromException(e);
+}finally{
+if(con.getAutoCommit()) con.commit();
+}
+}
+final void insertRow(SSConnection con, Expression[] newRowSources) throws SQLException{
+if(tables.size() > 1)
+throw SmallSQLException.create(Language.JOIN_INSERT);
+if(tables.size() == 0)
+throw SmallSQLException.create(Language.INSERT_WO_FROM);
+int savepoint = con.getSavepoint();
+try{
+TableViewResult result = TableViewResult.getTableViewResult( tables.get(0) );
+TableView table = result.getTableView();
+Columns tabColumns = table.columns;
+int count = tabColumns.size();
+Expression[] updateValues = new Expression[count];
+if(newRowSources != null){
+for(int i=0; i<columnExpressions.size(); i++){
+Expression src = newRowSources[i];
+if(src != null && (!(src instanceof ExpressionValue) || !((ExpressionValue)src).isEmpty())){
+Expression rsColumn = columnExpressions.get(i);
+if(!rsColumn.isDefinitelyWritable())
+throw SmallSQLException.create(Language.COL_READONLY, new Integer(i));
+ExpressionName exp = (ExpressionName)rsColumn;
+if(table == exp.getTable()){
+updateValues[exp.getColumnIndex()] = src;
+continue;
+}
+}
+updateValues[i] = null;
+}
+}
+result.insertRow(updateValues);
+}catch(Throwable e){
+con.rollback(savepoint);
+throw SmallSQLException.createFromException(e);
+}finally{
+if(con.getAutoCommit()) con.commit();
+}
+}
+final void deleteRow(SSConnection con) throws SQLException{
+int savepoint = con.getSavepoint();
+try{
+if(tables.size() > 1)
+throw SmallSQLException.create(Language.JOIN_DELETE);
+if(tables.size() == 0)
+throw SmallSQLException.create(Language.DELETE_WO_FROM);
+TableViewResult.getTableViewResult( tables.get(0) ).deleteRow();
+}catch(Throwable e){
+con.rollback(savepoint);
+throw SmallSQLException.createFromException(e);
+}finally{
+if(con.getAutoCommit()) con.commit();
+}
+}
+public int findColumn(String columnName) throws SQLException {
+Expressions columns = columnExpressions;
+for(int i=0; i<columns.size(); i++){
+if(columnName.equalsIgnoreCase(columns.get(i).getAlias()))
+return i;
+}
+throw SmallSQLException.create(Language.COL_MISSING, columnName);
+}
+final void setDistinct(boolean distinct){
+this.isDistinct = distinct;
+}
+final void setSource(RowSource join){
+this.from = join;
+}
+final void setTables( DataSources from ){
+this.tables = from;
+}
+final void setWhere( Expression where ){
+this.where = where;
+}
+final void setGroup(Expressions group){
+this.groupBy = group;
+}
+final void setHaving(Expression having){
+this.having = having;
+}
+final void setOrder(Expressions order){
+this.orderBy = order;
+}
+final void setMaxRows(int max){
+maxRows = max;
+}
+final int getMaxRows(){
+return maxRows;
+}
+}
+package smallsql.database;
+public class CommandSet extends Command {
+int isolationLevel;
+CommandSet( Logger log, int type ){
+super(log);
+this.type = type;
+}
+void executeImpl(SSConnection con, SSStatement st) throws java.sql.SQLException {
+switch(type){
+case SQLTokenizer.LEVEL:
+con.isolationLevel = isolationLevel;
+break;
+case SQLTokenizer.USE:
+con.setCatalog(name);
+break;
+default:
+throw new Error();
+}
+}
+}
+package smallsql.database;
+import java.sql.SQLException;
+import smallsql.database.language.Language;
+final class CommandTable extends Command{
+final private Columns columns = new Columns();
+final private IndexDescriptions indexes = new IndexDescriptions();
+final private ForeignKeys foreignKeys = new ForeignKeys();
+final private int tableCommandType;
+CommandTable( Logger log, String catalog, String name, int tableCommandType ){
+super(log);
+this.type = SQLTokenizer.TABLE;
+this.catalog = catalog;
+this.name = name;
+this.tableCommandType = tableCommandType;
+}
+void addColumn(Column column) throws SQLException{
+addColumn(columns, column);
+}
+void addIndex( IndexDescription indexDescription ) throws SQLException{
+indexes.add(indexDescription);
+}
+void addForeingnKey(ForeignKey key){
+foreignKeys.add(key);
+}
+void executeImpl(SSConnection con, SSStatement st) throws Exception{
+Database database = catalog == null ?
+con.getDatabase(false) :
+Database.getDatabase( catalog, con, false );
+switch(tableCommandType){
+case SQLTokenizer.CREATE:
+database.createTable( con, name, columns, indexes, foreignKeys );
+break;
+case SQLTokenizer.ADD:
+con = new SSConnection(con);
+Table oldTable = (Table)database.getTableView( con, name);
+TableStorePage tableLock = oldTable.requestLock( con, SQLTokenizer.ALTER, -1);
+String newName = "#" + System.currentTimeMillis() + this.hashCode();
+try{
+Columns oldColumns = oldTable.columns;
+Columns newColumns = oldColumns.copy();
+for(int i = 0; i < columns.size(); i++){
+addColumn(newColumns, columns.get(i));
+}
+Table newTable = database.createTable( con, newName, newColumns, oldTable.indexes, indexes, foreignKeys );
+StringBuffer buffer = new StringBuffer(256);
+buffer.append("INSERT INTO ").append( newName ).append( '(' );
+for(int c=0; c<oldColumns.size(); c++){
+if(c != 0){
+buffer.append( ',' );
+}
+buffer.append( oldColumns.get(c).getName() );
+}
+buffer.append( ")  SELECT * FROM " ).append( name );
+con.createStatement().execute( buffer.toString() );
+database.replaceTable( oldTable, newTable );
+}catch(Exception ex){
+try {
+database.dropTable(con, newName);
+} catch (Exception ex1) {}
+try{
+indexes.drop(database);
+} catch (Exception ex1) {}
+throw ex;
+}finally{
+tableLock.freeLock();
+}
+break;
+default:
+throw new Error();
+}
+}
+private void addColumn(Columns cols, Column column) throws SQLException{
+if(cols.get(column.getName()) != null){
+throw SmallSQLException.create(Language.COL_DUPLICATE, column.getName());
+}
+cols.add(column);
+}
+}
+package smallsql.database;
+class CommandUpdate extends CommandSelect {
+private Expressions sources = new Expressions();
+private Expression[] newRowSources;
+CommandUpdate( Logger log ){
+super(log);
+}
+void addSetting(Expression dest, Expression source){
+columnExpressions.add(dest);
+sources.add(source);
+}
+void executeImpl(SSConnection con, SSStatement st) throws Exception {
+int count = columnExpressions.size();
+columnExpressions.addAll(sources);
+compile(con);
+columnExpressions.setSize(count);
+newRowSources = sources.toArray();
+updateCount = 0;
+from.execute();
+for(int i=0; i<columnExpressions.size(); i++){
+ExpressionName expr = (ExpressionName)columnExpressions.get(i);
+DataSource ds = expr.getDataSource();
+TableResult tableResult = (TableResult)ds;
+tableResult.lock = SQLTokenizer.UPDATE;
+}
+while(true){
+synchronized(con.getMonitor()){
+if(!next()){
+return;
+}
+updateRow(con, newRowSources);
+}
+updateCount++;
+}
+}
+}

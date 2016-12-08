@@ -4,11 +4,16 @@ import FileLocations;
 import IO;
 import String;
 
+import \helpers::ListHelpers;
+
 void CreateAllOutput()
 {
-  CreateType2Output(SmallSqlContent, SmallSqlContent_Type2);
-  CreateType2Output(HsqlDbContent, HsqlDbContent_Type2);
+  Type2ClonesSmallSql();
+  Type2ClonesHsqlDb();
 }
+
+void Type2ClonesSmallSql() = CreateType2Output(SmallSqlContent, SmallSqlContent_Type2);
+void Type2ClonesHsqlDb() = CreateType2Output(HsqlDbContent, HsqlDbContent_Type2);
 
 bool RemoveNumbers = true;
 bool RemoveNames = true;
@@ -40,8 +45,9 @@ str StripTypes(str Line) = ReplaceTypes(Line, TypesToReplace, TypeChar);
 // only replace one instance
 str ReplaceTypes(str Line, list[str] Types, str Replacement)
 {
-  for(Type <- Types, contains(Line, Type))
+  for(Type <- Types, startsWith(Line, Type))
   {
+    println("replaced <Type> in <Line>");
     return replaceAll(Line, Type, Replacement);
   }
   return Line;
@@ -52,6 +58,20 @@ list[str] TypesToReplace = [
                              "private int ",
                              "public int ",
                              "protected int ",
-                             "int "
+                             "int ",
+                             "private boolean ",
+                             "private String ",
+                             "private Identity ",
+                             "private Expression ",
+                             "boolean ",
+                             "String ",
+                             "SSResultSet ",
+                             "Expression ",
+                             "ExpressionName ",
+                             "final void ",
+                             "final int ",
+                             "final bool ",
+                             "final String ",
+                             "bool "                        
                            ];
                        
