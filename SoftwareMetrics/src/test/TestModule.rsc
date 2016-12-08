@@ -34,7 +34,7 @@ public void GenerateTestModule()
   } 
   TestCalls = PadList("  if(false == ", TestCalls, "){ Result = false;}");
   CreateTestModule(FileNames + FunctionDefinitions, TestCalls);
-  InitializeTestReport();
+  RemoveReport();
 }
 
 str TestMethodName(str MethodLine) = StringToken(MethodLine, "bool ", findFirst(MethodLine, "()"))+ "()";
@@ -54,6 +54,8 @@ str CreateTestCall(str ModuleName, str MethodName) = "CheckAndReport(\"<ModuleNa
 str FailTestCall(str ModuleName, str MethodName) = "CheckAndReport(\"<ModuleName>\",\"!!! EXCEPTION IN <MethodName> !!!\", false)";
 
 loc TestReport = OutputFile("TestReport.html");
+
+void RemoveReport() = remove(TestReport);
 
 void InitializeTestReport()
 {
