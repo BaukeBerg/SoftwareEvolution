@@ -63,6 +63,10 @@ void InitializeTestReport()
 
 bool CheckAndReport(str ModuleName, str MethodName, bool TestResult)
 {
+  if(false == exists(TestReport))
+  {
+    InitializeTestReport();
+  }
   AppendToFile(TestReport, TestRow(ModuleName, MethodName, TestResult));
   return TestResult;
 }
