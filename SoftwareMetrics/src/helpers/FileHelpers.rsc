@@ -83,8 +83,36 @@ str GetColor(str indexLine) = contains(indexLine, ColorSplitter) ? StringToken(i
 list[str] NormalizeIndexedFile(loc FileToNormalize)
 {
   list[str] Results = [];
-  
+  int LastPos = 0;
+  str CurrentColor = "";
+  for(Line <- readFileLines(FileToNormalize))
+  {
+    int ThisLine = LineNumber(Line);
+    int Gap = ThisLine - LastPos;
+    for(n <- [1 .. Gap])
+    {
+      CurrentColor = UpdateColor(CurrentColor, GetColor(Line));
+      Results += SetLineInfo(Line, CurrentColor, LastPos+n);
+    }
+    Results += Line;
+    CurrentColor = GetColor(Line);
+    LastPos = ThisLine;
+  }
+  return Results;
 }
+
+str UpdateColor(str Current, str New) = (Current == New) ? Current : "";
+
+int LineNumber(str LineToCheck) = toInt(StringToken(LineToCheck, FileSplitter, ""));
+str SetLineInfo(str LineToEdit, str Color, int PosToInsert)
+{
+  LineToEdit = StripColor(LineToEdit);
+  LineToEdit = AddColor(LineToEdit, Color);
+  return "<StringToken(LineToEdit, "", FileSplitter)><FileSplitter><PosToInsert>";
+ }
+
+str StripColor(LineToEdit) = (-1 == findFirst(LineToEdit, ColorSplitter)) ? LineToEdit : StringToken(LineToEdit, ColorSplitter, "");
+str AddColor(str Line, str Color) = "" == Color ? Line : "<Color><ColorSplitter><Line>";
 
 list[str] StripFileExtension(list[str] Files) = [ StripFileExtension(File) | File <- Files];
 str StripFileExtension(str File) = substring(File, 0, findLast(File, "."));

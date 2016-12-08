@@ -25,6 +25,19 @@ bool ExpectEqualColors(Color Expected, Color Actual) = ExpectEqual(ExtractColour
 bool ExpectFalse(bool TestMe) = ExpectEqual(false, TestMe);
 bool ExpectTrue(bool TestMe) = ExpectEqual(true, TestMe);
 
+bool ExpectEqual(list[str] Expected, list[str] Actual, loc FileToStore)
+{
+  bool Result = ExpectEqual(Expected, Actual);
+  writeFile(FileToStore, JoinList(Actual));
+  return Result;
+}
+
+bool ExpectEqual(&T Expected, &T Actual, loc FileToStore)
+{
+  bool Result = ExpectEqual(Expected, Actual);
+  writeFile(FileToStore, Actual);
+  return result;
+}
 
 // Prints the resuls when they are not expected, faster debugging of tests
 bool ExpectEqual(&T Expected, &T Actual)
