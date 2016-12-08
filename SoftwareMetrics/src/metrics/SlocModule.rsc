@@ -14,17 +14,7 @@ import \helpers::FileHelpers;
 
 import FileLocations;
 /// Simple data structures 
-public data TStaticMetrics = Init(str FileName = "NoFileNameSpecified",
-                               int TotalLines = 0,     
-                               int CodeLines = 0,                          
-                               int WhiteSpaces = 0,
-                               int LLOC = 0,
-                               int Curlies = 0,
-                               int Comments = 0,
-                               int MaxIndent = 0
-                               )
-                               |
-                               Init(str FileName,
+alias TStaticMetrics =  tuple[str FileName,
                                int TotalLines,
                                int CodeLines,
                                int WhiteSpaces,
@@ -32,8 +22,11 @@ public data TStaticMetrics = Init(str FileName = "NoFileNameSpecified",
                                int Curlies,
                                int Comments,
                                int MaxIndent
-                               );
-                               
+                               ];
+
+
+TStaticMetrics Init() = <"UnknownFile", 0,0,0,0,0,0,0>;
+
 
 str TableColumns() = RowWithValues(["FileName","File lines","CodeLines","WhiteSpaces","LLOC","Curlies","Comments","MaxIndent","Details"]);
 

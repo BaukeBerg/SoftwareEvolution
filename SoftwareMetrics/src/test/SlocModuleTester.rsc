@@ -1,12 +1,12 @@
 module \test::SlocModuleTester
 
-import \metrics::SlocModule; // Required for testing functions
+import \metrics::SlocModule;// Required for testing functions
 import \helpers::TestHelpers; // Some convenience printing functions
 import IO; // Used to print on screen
 
 test bool ScanColumnJava() = StaticMetricsCheck
                              (
-                                Init("/sampleFiles/slocmodule/ColumnsSample.java", 161,48,14,35,13,7,16),
+                                <"/sampleFiles/slocmodule/ColumnsSample.java", 161,48,14,35,13,7,16>,
                                 ScanJavaFile(|project://SoftwareMetrics/sampleFiles/slocmodule/ColumnsSample.java|)
                              );
 
