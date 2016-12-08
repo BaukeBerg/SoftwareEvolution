@@ -42,16 +42,12 @@ void CreateIntermediateOutput(str ProjectName, loc ProjectIntermediate, loc Proj
 
 TCloneList GetSmallSqlClones()
 {
-  Start = now();
   TCloneList Clones = GetClonesList(SmallSqlContent);
-  Duration("Finished smallsql clones.", Start);
   return Clones;
 }
 
 TCloneClasses GetSmallSqlCloneClasses()
 {
-  Start = now();
   TCloneClasses CloneClasses = GetClonesClasses(SmallSqlContent);
-  Duration("Finished retrieving clonepairs.", Start);
   return CloneClasses;
 }

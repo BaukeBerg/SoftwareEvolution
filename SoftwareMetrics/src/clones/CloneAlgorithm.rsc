@@ -28,9 +28,7 @@ int GetClonesPercentage(loc FileToCheck)
 
 int GetClonesForFile(loc FileToCheck)
 {
-  StartTime = now();    
   int Result = GetClonesForFile(HashFile(FileToCheck));
-  println("Duration <createDuration(StartTime, now())>");
   return Result;
 }
 
@@ -47,6 +45,7 @@ TCloneClasses GetClonesClasses(THashInfo Information) = GatherClones(Information
 
 TCloneInfo GatherClones(THashInfo Information)
 {
+  Start = now();
   TStringMap Dictionary = Information.StringMap;
   THashMap Lines = Information.HashMap;
   int FileSize = size(Lines);
@@ -71,7 +70,10 @@ TCloneInfo GatherClones(THashInfo Information)
     }
     LineNumber += 1;
   }
+  Duration("Found all clones, now merging overlapping clones!", Start);
+  Start = now();
   Clones = MergeClonesWithOverlap(Clones);  // Clones is a nicely organized    
+  Duration("Merged all clones!", Start);
   return <AllClones, Clones>;
 }
 
