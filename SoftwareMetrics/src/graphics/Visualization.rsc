@@ -118,33 +118,23 @@ void Comparer()
 	render("Comparer", hcat([box(vcat(b1)), box(vcat(b2))], hgap(3)));
 }
 
-//FProperty GetColor(int index, loc indexedLoc)
-//{
-//	list[str] indexedFile = readFileLines(indexedLoc);
-//	bool found = false;
-//	int i = 0;
-//	
-//	while(i < size(indexedFile), !found)
-//	{
-//		StringToken(indexedFile[i], "", "۩");
-//		i += 1;
-//	}
-//	return fillColor("white");
-//}
-
 void Comparer2()
 {
 	loc indexedLoc = |project://SoftwareMetrics/sampleFiles/filehelpers/SampleIndexes.txt|;
 	
-	list[str] indexedFile = readFileLines(indexedLoc);
+	list[str] indexedLines = readFileLines(indexedLoc);
 	list[str] inputLines = readFileLines(SampleFile("type1clones/SampleInput.txt"));
 	list[Figure] b1 = [];
-	int len = size(indexedFile);
+	int len = size(indexedLines);
 	
 	for(i <- [0 .. len])
 	{
-		b1 += box(text(inputLines[i], left()), fillColor(GetColor(indexedFile[i])));
+		b1 += GenerateBox(inputLines[i], indexedLines[i]);
 	}
 	
-	render("Comparer", hcat([box(vcat(b1))], hgap(3)));
+	RenderFigure("Comparer", hcat([box(vcat(b1))], hgap(3)));
 }
+
+Figure GenerateBox(str inputLine, str indexedLine) = box(text(inputLine, left()), fillColor(GetColor(indexedLine)));
+
+void RenderFigure(str caption, Figure fig) = render(caption, fig);
