@@ -2,6 +2,7 @@ module \test::AssumptionTests
 
 import List;
 import Set;
+import String;
 
 import analysis::statistics::Descriptive;
 import \util::Math;
@@ -13,8 +14,6 @@ import \helpers::TestHelpers;
 
 test bool TestAssumeIntToNumConversion() = ExpectEqual(2.5, mean([2, 3]));
 test bool TestAssumeRounding() = ExpectEqual(3, round(mean([2, 3])));
-
-
 
 list[str] TestList = ["Hello", "Goeie", "Goedendag"];
 
@@ -74,7 +73,3 @@ bool GetError()
   list[bool] Empty = [];
   return Empty[100];
 }
-
- 
-
- 

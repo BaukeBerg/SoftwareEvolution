@@ -3,6 +3,7 @@ module \helpers::FileHelpers
 import FileLocations;
 import IO;
 import List;
+import Quotes;
 import String;
 
 import \helpers::JavaHelpers;
@@ -37,7 +38,7 @@ bool IsDirectory(loc Path) = (-1 == findLast(Path.path, "."));
 list[str] StripAndIndexFile(loc FileToStrip)
 {
   list[str] FileLines = readFileLines(FileToStrip);
-  FileLines = IndexLines(FileLines, FileName(FileToStrip));
+  FileLines = IndexLines(FileLines, GetSamplePath(FileToStrip));
   FileLines = RemoveSingleLineComments(FileLines, LineSplitter);
   FileLines = RemoveBlockComments(FileLines);
   FileLines = TrimList(FileLines, LineSplitter);
@@ -57,6 +58,7 @@ void SplitIndexedFile(loc FileToSplit, loc IndexFile, loc ContentFile)
   list[str] Contents = [];
   for(Line <- AllLines)
   {
+    PrintQuote();
     TIndexedLine Split = SplitIndexedLine(Line);
     Indexes += Split.Index;
     Contents += Split.Content;      

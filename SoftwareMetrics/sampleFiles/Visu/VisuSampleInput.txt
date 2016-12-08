@@ -1,4 +1,4 @@
-﻿SampleInputMultilineComments.txt۞1
-RedѬSampleInputMultilineComments.txt۞3
-RedѬSampleInputMultilineComments.txt۞10
-SampleInputMultilineComments.txt۞11
+﻿type1clones/SampleInputMultilineComments.txt۞1
+RedѬtype1clones/SampleInputMultilineComments.txt۞3
+RedѬtype1clones/SampleInputMultilineComments.txt۞10
+type1clones/SampleInputMultilineComments.txt۞11
