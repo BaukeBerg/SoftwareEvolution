@@ -4,6 +4,7 @@ import DateTime;
 import FileLocations;
 import IO;
 import ParseTree;
+import Quotes;
 import vis::ParseTree;
 
 import \clones::CloneAlgorithm;
@@ -14,14 +15,6 @@ import \helpers::ListHelpers;
 
 import lang::java::\syntax::Java15;
 
-loc SmallSqlIntermediate = OutputFile("bulk/IndexedSmallSqlFile.java");
-loc SmallSqlIndexes = OutputFile("bulk/SmallSqlIndexes.txt"); 
-loc SmallSqlContent = OutputFile("bulk/SmallSqlContent.txt");
-
-loc HsqlDbIntermediate = OutputFile("bulk/IndexedHsqlDbFile.java");
-loc HsqlDbIndexes = OutputFile("bulk/HsqlDbIndexes.txt");
-loc HsqlDbContent = OutputFile("bulk/HsqlDbContent.txt");
-
 void CreateAllOutput()
 {
   CreateIntermediateOutput("smallsql", SmallSqlIntermediate, SmallSqlIndexes, SmallSqlContent);
@@ -30,14 +23,21 @@ void CreateAllOutput()
 
 void CreateIntermediateOutput(str ProjectName, loc ProjectIntermediate, loc ProjectFilesIndexes, loc ProjectFilesContent)
 {
+  Start = now();
   list[loc] ProjectFiles = EnumerateDirFiles(SampleFile(ProjectName));
   list[str] IndexedOutput = [];
   for(File <- ProjectFiles)
   {
+    PrintQuote();
     IndexedOutput += StripAndIndexFile(File);
   }
+  Duration("Created indexed output", Start);
+  Start = now();
   writeFile(ProjectIntermediate, JoinList(IndexedOutput));
+  Duration("Wrote intermediate for <ProjectName>.", Start);
+  Start = now();
   SplitIndexedFile(ProjectIntermediate, ProjectFilesIndexes, ProjectFilesContent);
+  Duration("Done splitting indexed file.", Start);
 }
 
 TCloneList GetSmallSqlClones()

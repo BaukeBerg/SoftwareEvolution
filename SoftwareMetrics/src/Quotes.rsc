@@ -312,11 +312,22 @@ public list[str] WaitingQuotes = [
                                   "Albert Einstein said the definition of insanity is doing the same thing over and again and expecting different results, they have a clear road map from those three efforts... this is an enormous waste of time, energy and money."                                  
                                 ]; 
                           
+
+int GlobalCounter = 0;
+
+bool QuotesEnabled = false;
+
+void PrintQuote()
+{
+  PrintQuote(GlobalCounter);
+  GlobalCounter += 1;
+}
 void PrintQuote(int Counter) = PrintQuote(Counter, 50);                          
 void PrintQuote(int Counter, int QuoteInterval)
 {
-  if(0 == Counter % QuoteInterval)
+  if((0 == Counter % QuoteInterval)
+    && (true == QuotesEnabled))
   {
-    println(WaitingQuotes[arbInt(size(WaitingQuotes))]);
+    println(WaitingQuotes[arbInt(size(WaitingQuotes))]) ;
   }
 }
