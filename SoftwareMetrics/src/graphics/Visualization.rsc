@@ -120,21 +120,66 @@ void Comparer()
 
 void Comparer2()
 {
-	loc indexedLoc = |project://SoftwareMetrics/sampleFiles/filehelpers/SampleIndexes.txt|;
+	loc indexedLoc = |project://SoftwareMetrics/sampleFiles/Visu/VisuSampleResult.txt|;
+	loc indexedCloneLoc = |project://SoftwareMetrics/sampleFiles/Visu/VisuSampleResult2.txt|;
 	
 	list[str] indexedLines = readFileLines(indexedLoc);
-	list[str] inputLines = readFileLines(SampleFile("type1clones/SampleInput.txt"));
-	list[Figure] b1 = [];
-	int len = size(indexedLines);
+	list[str] indexedCloneLines = readFileLines(indexedCloneLoc);
 	
-	for(i <- [0 .. len])
-	{
-		b1 += GenerateBox(inputLines[i], indexedLines[i]);
-	}
-	
-	RenderFigure("Comparer", hcat([box(vcat(b1))], hgap(3)));
+	b1 = GenerateBox(indexedLines);
+	b2 = GenerateBox(indexedCloneLines);
+	RenderFigure("Comparer", hcat([b1, b2], hgap(3)));
 }
 
-Figure GenerateBox(str inputLine, str indexedLine) = box(text(inputLine, left()), fillColor(GetColor(indexedLine)));
+Figure GenerateBox(list[str] indexedLines)
+{
+	list[Figure] boxList = [];
+	list[str] inputLines = readFileLines(SampleFile("type1clones/<GetFilePath(indexedLines[0])>"));
+	//println("type1clones/<GetFilePath(indexedLines[0])>");
+	for(i <- [0 .. size(indexedLines)])
+	{
+		boxList += GenerateBox("<i+1>: <inputLines[i]>", indexedLines[i]);
+	}	
+	return box(vcat(boxList));
+}
+
+Figure GenerateBox(Figure fig) = box(fig);
+Figure GenerateBox(str inputLine, str indexedLine) = box(text(inputLine, left()), fillColor(GetColor(indexedLine)), lineColor(GetColor(indexedLine)));
 
 void RenderFigure(str caption, Figure fig) = render(caption, fig);
+
+public void btn() = render(vcat([button("btn", void(){Comparer2();})]));
+
+void ControlPanel()
+{
+	b1 = box(text("Control Panel", top()));
+	b2 = vcat([button("SmallSql", void(){Comparer2();})]);
+	b3 = vcat([button("HsqlDb", void(){Comparer2();})]);
+	b2n3 = vcat([b2, b3]); 
+	
+	tmap = treemap([box(vcat([button("SmallSql", void(){Comparer2();}),
+														button("HsqlDb", void(){Comparer2();})
+													])),
+									box(vcat([text("Options"),
+														ChoiceOptions()
+													])),
+									box(hcat([text("Types"),
+														ComboTypes()
+													]))
+								]);
+	render(tmap);
+}
+
+public Figure ChoiceOptions(){
+  str state = "Type 1";
+  return vcat([ choice(["Type 1","Type 2","Type 3","Type 4", "Priming Type"], void(str s){ state = s;}),
+                text(str(){return "Current state: " + state ;}, left())
+              ]);
+}
+
+public Figure ComboTypes(){
+  str state = "";
+  return vcat([ combo(["A","B","C","D"], void(str s){ state = s;}),
+                text(str(){return "Current state: " + state ;}, left())
+              ]);
+}
