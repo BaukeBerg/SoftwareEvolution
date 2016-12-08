@@ -1,0 +1,14 @@
+// Single Clone, very easy, since it only has to iterate over the thing once.
+// Should return 6 cloned lines
+int test = 123;
+int test = 321;
+int test = 4;
+int test = 0;
+int test = 32423423;
+int test = 1213;
+int test = 123;
+int test = 321;
+int test = 4;
+int test = 0;
+int test = 32423423;
+int test = 1213;
