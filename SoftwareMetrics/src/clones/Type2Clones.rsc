@@ -36,11 +36,12 @@ void CreateType2Output(loc InputFile, loc OutputFile)
   writeFile(OutputFile, JoinList(OutputLines));
 }
 
-str ReplaceNumbers(str Input) = RemoveNumbers ? Input : Input ;
+str ReplaceNumbers(str Input) = RemoveNumbers ? ReplaceNumbers(Input) : Input ;
 str ReplaceNames(str Input) = RemoveNames ? Input : Input ;
 str ReplaceTypes(str Input) = RemoveTypes ? StripTypes(Input) : Input ;
 
 str StripTypes(str Line) = ReplaceTypes(Line, TypesToReplace, TypeChar);
+
 
 // only replace one instance
 str ReplaceTypes(str Line, list[str] Types, str Replacement)
@@ -53,17 +54,27 @@ str ReplaceTypes(str Line, list[str] Types, str Replacement)
   return Line;
 }
 
-list[str] TypesToReplace = [
+void ResetTypes()
+{
+  TypesToReplace = [];
+}
+
+void AddType(str Filter)
+{
+  TypesToReplace += Filter;
+}
+
+void RemoveType(str Filter)
+{
+  TypesToReplace = RemoveFromList(Filter);
+}
+
+list[str] RemoveFromList(str Filter) = [Type | Type <- TypesToReplace, Filter != Type];
+
+
+public list[str] TypesToReplace = [
                              // Earlier notation = higher priority!
                              "private int ",
-                             "public int ",
-                             "protected int ",
-                             "int ",
-                             "private boolean ",
-                             "private String ",
-                             "private Identity ",
-                             "private Expression ",
-                             "boolean ",
                              "String ",
                              "SSResultSet ",
                              "Expression ",
