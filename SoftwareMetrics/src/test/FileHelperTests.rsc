@@ -47,4 +47,11 @@ test bool TestSplittingContent()
 list[str] ResultFile() = readFileLines(SampleFile("Visu/VisuSampleResult.txt"));
 loc VisuInput = SampleFile("Visu/VisuSampleInput.txt");
 
+test bool TestExistingColor() = ExpectEqual("Red", GetColor("RedѬ"));
+test bool TestDefaultColor() = ExpectEqual("White", GetColor("IHaveNoColur,Return the default one!!!"));
+
+test bool TestSamplePath() = ExpectEqual("type1clones/BraceCase.txt", GetSamplePath(|project://SoftwareMetrics/sampleFiles/type1clones/BraceCase.txt|));
+
+
+
 test bool TestNormalizingFile() = ExpectEqual(ResultFile(), NormalizeIndexedFile(VisuInput), OutputFile("test/NormalizedOutput.txt"));

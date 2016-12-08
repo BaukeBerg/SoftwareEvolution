@@ -67,7 +67,7 @@ void SplitIndexedFile(loc FileToSplit, loc IndexFile, loc ContentFile)
 
 TIndexedLine SplitIndexedLine(str Input) = < StringToken(Input, "", LineSplitter), StringToken(Input, LineSplitter, "") >;
 
-list[str] IndexLines(loc FileToCheck) = IndexLines(readFileLines(FileToCheck), FileName(FileToCheck));
+list[str] IndexLines(loc FileToCheck) = IndexLines(readFileLines(FileToCheck), GetSamplePath(FileToCheck));
 list[str] IndexLines(list[str] InputLines, str FileName)
 {
   list[str] Results = [];
@@ -77,6 +77,8 @@ list[str] IndexLines(list[str] InputLines, str FileName)
   }
   return Results;
 }
+
+str GetSamplePath(loc FileToCheck) = StringToken(FileToCheck.path, "sampleFiles/", "");
 
 str GetColor(str indexLine) = contains(indexLine, ColorSplitter) ? StringToken(indexLine, "", ColorSplitter) : "White";
 
