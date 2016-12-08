@@ -35,24 +35,26 @@ int LineCount(str StringToCheck)
   return Lines;
 }
 
-list[tuple[str Find, str Replace]] Dictionary = [
-                                                  <"public", "Б">,
-                                                  <"private", "Ь">,
-                                                  <"protected", "Ы">,                                                    
-                                                  <"static", "Ж">,
-                                                  <"final", "Ъ">,
-                                                  <"String", "Д">,
-                                                  <"int", "Л">,
-                                                  <"Exception", "Я">,
-                                                  <"throw", "Ю">,
-                                                  <"Statement", "Э">,
-                                                  <"return", "Щ">,
-                                                  <"boolean", "Ф">
-                                                  
-                                                  
-                                                ];
+alias TDictionary = list[tuple[str Find, str Replace]];
+
+TDictionary Dictionary = [
+                          <"public", "Б">,
+                          <"private", "Ь">,
+                          <"protected", "Ы">,                                                    
+                          <"static", "Ж">,
+                          <"final", "Ъ">,
+                          <"String", "Д">,
+                          <"int", "Л">,
+                          <"Exception", "Я">,
+                          <"throw", "Ю">,
+                          <"Statement", "Э">,
+                          <"return", "Щ">,
+                          <"boolean", "Ф">
+                        ];
+                        
 // Use this to generate lighting fast string compares
-public str EncodeString(str StringToEncode)
+public str EncodeString(str StringToEncode) = EncodeString(StringToEncode, Dictionary);
+public str EncodeString(str StringToEncode, list[str] Dictionary)
 {
   for(Pair <- Dictionary)
   {
@@ -61,7 +63,8 @@ public str EncodeString(str StringToEncode)
   return StringToEncode;
 }
 
-public str DecodeString(str StringToDecode)
+public str DecodeString(str StringToDecode) = DecodeString(StringToDecode, Dictionary);
+public str DecodeString(str StringToDecode, list[str] Dictionary)
 {
   for(Pair <- Dictionary)
   {
