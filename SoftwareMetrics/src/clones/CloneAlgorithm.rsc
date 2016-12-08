@@ -8,6 +8,7 @@ import Quotes;
 import Set;
 import \metrics::SigScores;
 
+import \helpers::Debugging;
 import \helpers::ListHelpers;
 import \helpers::MathHelpers;
 import \helpers::StringHelpers;
@@ -156,9 +157,9 @@ TCloneList MergeClonesWithOverlap(TCloneList TotalClones)
       TClone SecondClone = TotalClones[Second];
       if(true == HasOverlap(FirstClone, SecondClone))
       {
-        println("<FirstClone> overlaps with <SecondClone>");
+        DebugPrint("<FirstClone> overlaps with <SecondClone>");
         TClone MergedClone = MergeClones(FirstClone, SecondClone);
-        println("Added this <MergedClone> to the list");
+        DebugPrint("Added this <MergedClone> to the list");
         MergedList += MergedClone;
         SkipIndexes += Second;
         WasMerged = true ;      
@@ -168,13 +169,13 @@ TCloneList MergeClonesWithOverlap(TCloneList TotalClones)
     // If the clone was not merged, is was no dupe, so retain it
     if(false == WasMerged)
     {
-      println("Added <FirstClone> to the list");
+      DebugPrint("Added <FirstClone> to the list");
       MergedList += FirstClone;
     }    
   }
   if(TotalClones != MergedList)
   {
-    println("Made some changes, go another iteration!");
+    DebugPrint("Made some changes, go another iteration!");
     MergedList = MergeClonesWithOverlap(MergedList);
   }  
   return MergedList;
