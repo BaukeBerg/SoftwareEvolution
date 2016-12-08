@@ -1,9 +1,9 @@
-SampleInput.txt۞1۩final class SQLParser {
-SampleInput.txt۞2۩
-SampleInput.txt۞3۩SSConnection con;
-SampleInput.txt۞4۩private char[] sql;
-SampleInput.txt۞5۩private List tokens;
-SampleInput.txt۞6۩private int tokenIdx;
-SampleInput.txt۞7۩
-SampleInput.txt۞8۩Command parse(SSConnection con, String sqlString) throws SQLException{
-SampleInput.txt۞9۩this.con = con;
+filehelpers/SampleInput.txt۞1۩final class SQLParser {
+filehelpers/SampleInput.txt۞2۩
+filehelpers/SampleInput.txt۞3۩SSConnection con;
+filehelpers/SampleInput.txt۞4۩private char[] sql;
+filehelpers/SampleInput.txt۞5۩private List tokens;
+filehelpers/SampleInput.txt۞6۩private int tokenIdx;
+filehelpers/SampleInput.txt۞7۩
+filehelpers/SampleInput.txt۞8۩Command parse(SSConnection con, String sqlString) throws SQLException{
+filehelpers/SampleInput.txt۞9۩this.con = con;
