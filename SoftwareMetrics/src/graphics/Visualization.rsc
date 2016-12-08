@@ -10,6 +10,7 @@ import vis::KeySym;
 
 import \helpers::FileHelpers;
 import \helpers::StringHelpers;
+import \clones::Type2Clones;
 import FileLocations;
 
 void Visualize()
@@ -134,7 +135,7 @@ void Comparer2()
 Figure GenerateBox(list[str] indexedLines)
 {
 	list[Figure] boxList = [];
-	list[str] inputLines = readFileLines(SampleFile("type1clones/<GetFilePath(indexedLines[0])>"));
+	list[str] inputLines = readFileLines(SampleFile(GetFilePath(indexedLines[0])));
 	//println("type1clones/<GetFilePath(indexedLines[0])>");
 	for(i <- [0 .. size(indexedLines)])
 	{
@@ -151,19 +152,14 @@ void RenderFigure(str caption, Figure fig) = render(caption, fig);
 public void btn() = render(vcat([button("btn", void(){Comparer2();})]));
 
 void ControlPanel()
-{
-	b1 = box(text("Control Panel", top()));
-	b2 = vcat([button("SmallSql", void(){Comparer2();})]);
-	b3 = vcat([button("HsqlDb", void(){Comparer2();})]);
-	b2n3 = vcat([b2, b3]); 
-	
+{	
 	tmap = treemap([box(vcat([button("SmallSql", void(){Comparer2();}),
 														button("HsqlDb", void(){Comparer2();})
 													])),
 									box(vcat([text("Options"),
 														ChoiceOptions()
 													])),
-									box(hcat([text("Types"),
+									box(hcat([text("Types", top()),
 														ComboTypes()
 													]))
 								]);
@@ -179,7 +175,7 @@ public Figure ChoiceOptions(){
 
 public Figure ComboTypes(){
   str state = "";
-  return vcat([ combo(["A","B","C","D"], void(str s){ state = s;}),
+  return vcat([ combo(TypesToReplace, void(str s){ state = s;}),
                 text(str(){return "Current state: " + state ;}, left())
               ]);
 }
