@@ -54,7 +54,7 @@ TDictionary Dictionary = [
                         
 // Use this to generate lighting fast string compares
 public str EncodeString(str StringToEncode) = EncodeString(StringToEncode, Dictionary);
-public str EncodeString(str StringToEncode, list[str] Dictionary)
+public str EncodeString(str StringToEncode, TDictionary Dictionary)
 {
   for(Pair <- Dictionary)
   {
@@ -64,7 +64,7 @@ public str EncodeString(str StringToEncode, list[str] Dictionary)
 }
 
 public str DecodeString(str StringToDecode) = DecodeString(StringToDecode, Dictionary);
-public str DecodeString(str StringToDecode, list[str] Dictionary)
+public str DecodeString(str StringToDecode, TDictionary Dictionary)
 {
   for(Pair <- Dictionary)
   {
