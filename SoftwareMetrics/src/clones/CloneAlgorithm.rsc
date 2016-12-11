@@ -50,8 +50,7 @@ TCloneClasses GetClonesClasses(THashInfo Information)
   for(LineNumber <- [0..size(Lines)], (Lines[LineNumber] != InvalidCloneStart))
   {
     PrintQuote(LineNumber, 250);    
-    CloneClasses += AddCloneClasses(Lines, LineNumber, CloneClasses);
-    //Lines = delete(Lines, LineNumber);
+    CloneClasses += AddCloneClasses(Lines, LineNumber, CloneClasses);    
   }
   Duration("Clone classes", Start);
   return CloneClasses;  
