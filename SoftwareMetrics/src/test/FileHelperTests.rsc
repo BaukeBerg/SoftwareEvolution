@@ -16,7 +16,8 @@ test bool CheckFindNameWithourDir() = ExpectEqual("Tests.java", FileName("Tests.
 
 test bool TestIndexLines() = ExpectEqualFiles(SampleFile("type1clones/SampleResult.txt"), IndexLines(SampleFile("type1clones/SampleInput.txt")));
 
-test bool TestStrippingIndexedInlineComments() = ExpectEqualFiles(SampleFile("type1clones/SampleResultInlineComments.txt"), StripAndIndexFile(SampleFile("type1clones/SampleInputInlineComments.txt")));
+test bool TestStrippingIndexedInlineComments() = ExpectEqualFiles(SampleFile("type1clones/SampleResultInlineComments.txt"), 
+                                                        StripAndIndexFile(SampleFile("type1clones/SampleInputInlineComments.txt")));
 
 test bool TestStrippingMultilineComments() = ExpectEqualFiles(SampleFile("type1clones/SampleResultMultilineComments.txt"), 
                                                         StripAndIndexFile(SampleFile("type1clones/SampleInputMultilineComments.txt")));
@@ -52,6 +53,8 @@ test bool TestDefaultColor() = ExpectEqual("White", GetColor("IHaveNoColur,Retur
 
 test bool TestSamplePath() = ExpectEqual("type1clones/BraceCase.txt", GetSamplePath(|project://SoftwareMetrics/sampleFiles/type1clones/BraceCase.txt|));
 
-
-
 test bool TestNormalizingFile() = ExpectEqual(ResultFile(), NormalizeIndexedFile(VisuInput), OutputFile("test/NormalizedOutput.txt"));
+
+test bool TestDefaultFilePath() = ExpectEqual("Not Found", GetFilePath(""));
+test bool TestFilePathWithColour() = ExpectEqual("TestPassed.java", GetFilePath("RedѬTestPassed.java۞65۩"));
+test bool TestFilePathWithoutColor() = ExpectEqual("TestPassed.java", GetFilePath("TestPassed.java۞65۩"));
