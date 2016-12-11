@@ -1,8 +1,10 @@
 module \test::CloneAlgorithmTest
 
-import \clones::CloneAlgorithm;
+import FileLocations;
 import IO;
 import String;
+
+import \clones::CloneAlgorithm;
 
 import \helpers::JavaHelpers;
 import \helpers::ListHelpers;
@@ -55,3 +57,9 @@ TCloneList MultipleExtractionInput = [<10,8>, <20,20>];
 TCloneClasses MultipleExtractionResult = [ [<1,8>, <10,8>], [<1,20>, <20,20>]];
 
 test bool TestExtractingMultipleClasses() = ExpectEqual(MultipleExtractionResult, ExtractCloneClasses(1, MultipleExtractionInput));
+
+TCloneClasses KnownClasses = [ [<1,8> , <10,8>] ];
+
+test bool TestRemovingDuplicates() = ExpectEqual( [], RemovePreviousDupes(KnownClasses, [12], 5)); // Both covered in known clones, don't evaluate 
+
+test bool TestGettingCloneClasses() = ExpectEqual([], GetClonesClasses(SampleFile("type2clones/SmallSqlContent.txt")));

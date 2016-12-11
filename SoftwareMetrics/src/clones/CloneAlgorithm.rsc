@@ -36,14 +36,12 @@ int GetClonesForFile(THashInfo Information) = ClonedLines(GetClonesList(Informat
 int ClonedLines([]) = 0;
 int ClonedLines(TCloneList Clones) = sum(Clones.Size);
 
-TCloneList GetClonesList(loc FileToCheck) = GetClonesList(HashFile(FileToCheck));
-TCloneClasses GetClonesClasses(loc FileToCheck) = GetClonesClasses(HashFile(FileToCheck));
-
 // Clone gathering information
 TStringMap Dictionary = ();
 THashMap Lines = (); 
 int InvalidCloneStart = -1; 
 
+TCloneClasses GetClonesClasses(loc FileToCheck) = GetClonesClasses(HashFile(FileToCheck));
 TCloneClasses GetClonesClasses(THashInfo Information)
 {
   Start = now();
@@ -60,12 +58,13 @@ TCloneClasses GetClonesClasses(THashInfo Information)
 
 TCloneClasses AddCloneClasses(THashMap Lines, int LineNumber, TCloneClasses CloneClasses)
 {
-  list[int] Dupes = GetCupe(Lines, LineNumber);
-  Dupes = RemovePreviousDupes(LineNumber, CloneClasses);
+  list[int] Dupes = GetDupes(Lines, LineNumber);
+  Dupes = RemovePreviousDupes(CloneClasses, Dupes, LineNumber);
   TCloneList Clones = GetClones(Lines, LineNumber, Dupes);
   return ExtractCloneClasses(LineNumber, Clones);  
 }
 
+TCloneClasses ExtractCloneClasses(int LineNumber, []) = [];
 TCloneClasses ExtractCloneClasses(int LineNumber, TCloneList Clones)
 {
   TCloneClasses ResultClasses = [];
@@ -90,15 +89,35 @@ bool HasClones(TCloneList Clones, int Size)
   return false;    
 }
 
-list[int] RemovePreviousDupes(int LineNumber, TCloneClasses CloneClasses)
+list[int] RemovePreviousDupes(TCloneClasses CloneClasses, list[int] Dupes, int LineNumber)
 {
-  list[int] NewDupes = [];
+  if(false == KnownLine(CloneClasses, LineNumber))
+  {
+    return Dupes;
+  }
+  
+  list[int] NewDupes = [];  
   for(Dupe <- Dupes)
   {
-    NewDupes += Dupe;
+    if((false == KnownLine(CloneClasses, Dupe))
+      || (false == KnownLine(CloneClasses, LineNumber)))
+    {
+      NewDupes += Dupe;
+    }
   }
+  return NewDupes;
 }
 
+bool KnownLine(TCloneClasses CloneClasses, int LineNumber)
+{
+  for(CloneClass <- CloneClasses, AlreadyPartOfClone(CloneClass, LineNumber))
+  {
+    return true;
+  }
+  return false;
+}
+
+TCloneList GetClonesList(loc FileToCheck) = GetClonesList(HashFile(FileToCheck));
 TCloneList GetClonesList(THashInfo Information)
 {
   Start = now();
