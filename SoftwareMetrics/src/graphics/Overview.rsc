@@ -20,7 +20,7 @@ void RenderFigure(str caption, Figure fig) = render(caption, fig);
 str GetClassName(loc FileToCheck) = substring(FileToCheck.path, findLast(FileToCheck.path, "/")+1);
 
 void Overview(loc indexedFile) = Overview(readFileLines(indexedLoc));
-void Overview(list[str] indexedlines)
+void Overview(list[str] indexedLines)
 {	
 	list[str] fileNames = [];
 	list[Figure] boxList = [];

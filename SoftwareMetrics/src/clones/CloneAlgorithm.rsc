@@ -51,6 +51,7 @@ TCloneClasses GetClonesClasses(THashInfo Information)
   {
     PrintQuote(LineNumber, 250);    
     CloneClasses += AddCloneClasses(Lines, LineNumber, CloneClasses);
+    //Lines = delete(Lines, LineNumber);
   }
   Duration("Clone classes", Start);
   return CloneClasses;  
@@ -127,7 +128,7 @@ TCloneList GetClonesList(THashInfo Information)
   for(LineNumber <- [0..size(Lines)], (Lines[LineNumber] != InvalidCloneStart))
   {
     PrintQuote(LineNumber, 250);
-    list[int] Dupes = GetDupes(Lines, LineNumber);    
+    list[int] Dupes = GetDupes(Lines, LineNumber);
     TCloneList CurrentClones = GetClones(Lines, LineNumber, Dupes);
     Clones = InsertNewClones(Clones, CurrentClones);
     Clones = MergeClonesWithEqualStart(Clones, CurrentClones);
