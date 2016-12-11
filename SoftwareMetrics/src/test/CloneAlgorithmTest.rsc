@@ -63,3 +63,4 @@ TCloneClasses KnownClasses = [ [<1,8> , <10,8>] ];
 test bool TestRemovingDuplicates() = ExpectEqual( [], RemovePreviousDupes(KnownClasses, [12], 5)); // Both covered in known clones, don't evaluate 
 
 test bool TestGettingCloneClasses() = ExpectEqual([], GetClonesClasses(SampleFile("type2clones/SmallSqlContent.txt")));
+TCloneClasses RunSmallSql() = GetClonesClasses(SampleFile("clones/SmallSqlContent.txt"));
