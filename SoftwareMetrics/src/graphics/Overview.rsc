@@ -17,17 +17,6 @@ void RenderFigure(str caption, Figure fig) = render(caption, fig);
 
 str GetClassName(loc FileToCheck) = substring(FileToCheck.path, findLast(FileToCheck.path, "/")+1);
 
-Figure GenerateBox(list[str] indexedLines)
-{
-	list[Figure] boxList = [];
-	list[str] inputLines = readFileLines(SampleFile(GetFilePath(indexedLines[0])));
-	for(i <- [0 .. size(indexedLines)])
-	{
-		boxList += GenerateBox("<i+1>: <inputLines[i]>", indexedLines[i]);
-	}	
-	return box(vcat(boxList));
-}
-
 void Overview()
 {	
 	loc indexedLoc = |project://SoftwareMetrics/sampleFiles/clones/SmallSqlIndexes.txt|;
@@ -48,7 +37,7 @@ void Overview()
 		{
 			if (vBox != [])
 			{
-				boxList += box(box(vcat(vBox), vresizable(false), top(), shrink(0.9)), vresizable(false), top());
+				boxList += box(box(vcat(vBox), top(), shrink(0.9)), resizable(false), top());
 			}
 			vBox = [];
 			vBox += box(text(GetClassName(toLocation(GetFilePath(indexedLines[i]))), fontSize(7), fontColor("blue")), vresizable(false), vsize(30), top(), fillColor("lightgray"));
@@ -59,7 +48,7 @@ void Overview()
 	
 	if (vBox != [])
 	{
-		boxList += box(box(vcat(vBox), vresizable(false), top(), shrink(0.9)), vresizable(false), top());
+		boxList += box(box(vcat(vBox), top(), shrink(0.9)), resizable(false), top());
 	}
 	
 	RenderFigure("Overview", hcat(boxList, hgap(3)));
