@@ -3,10 +3,10 @@ module \metrics::SigScores
 import List;
 import String;
 
+import \graphics::GraphGenerator;
 import \helpers::MathHelpers;
 import \util::Math;
 import analysis::statistics::Descriptive;
-import GraphGenerator;
 
 public int VolumeScore(int SLOC) = ReturnScore(SLOC, [66000,246000,655000,1310000]);
 public int UnitComplexityIndex(int Complexity) = ReturnScore(Complexity, [10,20,50]);
