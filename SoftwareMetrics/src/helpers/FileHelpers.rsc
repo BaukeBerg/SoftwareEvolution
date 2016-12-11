@@ -82,7 +82,7 @@ list[str] IndexLines(list[str] InputLines, str FileName)
 
 str GetSamplePath(loc FileToCheck) = StringToken(FileToCheck.path, "sampleFiles/", "");
 
-str GetFilePath(str indexLine) = contains(indexLine, FileSplitter) ? StringToken(indexLine, "", FileSplitter) : "Not Found";
+str GetFilePath(str indexLine) = contains(indexLine, FileSplitter) ? StringToken(StringToken(indexLine, ColorSplitter, ""), "", FileSplitter) : "Not Found";
 
 str GetColor(str indexLine) = contains(indexLine, ColorSplitter) ? StringToken(indexLine, "", ColorSplitter) : "White";
 
