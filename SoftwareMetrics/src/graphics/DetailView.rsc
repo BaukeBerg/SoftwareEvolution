@@ -23,14 +23,18 @@ FProperty renderFile(loc L)
 	});	
 }
 
-void GenerateDiff(loc indexedLoc, loc indexedCloneLoc)
+void GenerateDiff(loc FirstLoc, loc SecondLoc) = GenerateDiff([FirstLoc, SecondLoc]);
+
+void GenerateDiff(list[loc] Locations) = GenerateDiff([ readFileLines(Location) | Location <- Locations]);
+
+void GenerateDiff(list[list[str]] Clones)
 {
-	list[str] indexedLines = readFileLines(indexedLoc);
-	list[str] indexedCloneLines = readFileLines(indexedCloneLoc);
-	
-	b1 = GenerateBox(indexedLines);
-	b2 = GenerateBox(indexedCloneLines);
-	RenderFigure("Comparer", hcat([b1, b2], hgap(3)));
+	list[Figure] Boxes = [];
+	for(Clone <- Clones)
+	{
+    Boxes += GenerateBox(Clone);
+	}
+	RenderFigure("Comparer", hcat(Boxes, hgap(3)));
 }
 
 Figure GenerateBox(list[str] indexedLines)
