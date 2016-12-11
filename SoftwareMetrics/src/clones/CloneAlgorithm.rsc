@@ -16,9 +16,8 @@ import \util::Math;
 
 alias TCloneList = list[TClone];
 alias TClone = tuple[int Start, int Size];
+alias TCloneClass = list[TClone];
 alias TCloneClasses = list[TCloneClass];
-alias TCloneClass = tuple[int LineNumber, TCloneList CloneList];
-alias TCloneInfo = tuple[TCloneClasses CloneClasses, TCloneList CloneList];
 
 int GetClonesPercentage(loc FileToCheck)
 {
@@ -40,57 +39,123 @@ int ClonedLines(TCloneList Clones) = sum(Clones.Size);
 TCloneList GetClonesList(loc FileToCheck) = GetClonesList(HashFile(FileToCheck));
 TCloneClasses GetClonesClasses(loc FileToCheck) = GetClonesClasses(HashFile(FileToCheck));
 
-TCloneList GetClonesList(THashInfo Information) = GatherClones(Information).CloneList;
-TCloneClasses GetClonesClasses(THashInfo Information) = GatherClones(Information).CloneClasses;
+// Clone gathering information
+TStringMap Dictionary = ();
+THashMap Lines = (); 
+int InvalidCloneStart = -1; 
 
-TCloneInfo GatherClones(THashInfo Information)
+TCloneClasses GetClonesClasses(THashInfo Information)
 {
   Start = now();
-  TStringMap Dictionary = Information.StringMap;
-  THashMap Lines = Information.HashMap;
-  int FileSize = size(Lines);
-  println("File size: <FileSize> lines");
-  TCloneClasses AllClones = [];
-  TCloneList Clones = [];  
-  int LineNumber = 0;
-  int InValidCloneStart = GetKey(Dictionary, "}");
-  while(LineNumber < FileSize)
+  PrepareProcess(Information);
+  TCloneClasses CloneClasses = [];
+  for(LineNumber <- [0..size(Lines)], (Lines[LineNumber] != InvalidCloneStart))
+  {
+    PrintQuote(LineNumber, 250);    
+    CloneClasses += AddCloneClasses(Lines, LineNumber, CloneClasses);
+  }
+  Duration("Clone classes", Start);
+  return CloneClasses;  
+}
+
+TCloneClasses AddCloneClasses(THashMap Lines, int LineNumber, TCloneClasses CloneClasses)
+{
+  list[int] Dupes = GetCupe(Lines, LineNumber);
+  Dupes = RemovePreviousDupes(LineNumber, CloneClasses);
+  TCloneList Clones = GetClones(Lines, LineNumber, Dupes);
+  return ExtractCloneClasses(LineNumber, Clones);  
+}
+
+TCloneClasses ExtractCloneClasses(int LineNumber, TCloneList Clones)
+{
+  TCloneClasses ResultClasses = [];
+  for(Size <- [min(Clones.Size) ..  max(Clones.Size)+1], HasClones(Clones, Size))  
+  {
+    TCloneClass ThisClass = [<LineNumber, Size>];
+    for(Clone <- Clones, Size == Clone.Size)
+    {
+      ThisClass += Clone;
+    }
+    ResultClasses += [ThisClass];    
+  }
+  return ResultClasses;    
+}
+
+bool HasClones(TCloneList Clones, int Size)
+{
+  for(Clone <- Clones, Size == Clone.Size)
+  {
+    return true;
+  }
+  return false;    
+}
+
+list[int] RemovePreviousDupes(int LineNumber, TCloneClasses CloneClasses)
+{
+  list[int] NewDupes = [];
+  for(Dupe <- Dupes)
+  {
+    NewDupes += Dupe;
+  }
+}
+
+TCloneList GetClonesList(THashInfo Information)
+{
+  Start = now();
+  PrepareProcess(Information);  
+  TCloneList Clones = [];
+  
+  for(LineNumber <- [0..size(Lines)], (Lines[LineNumber] != InvalidCloneStart))
   {
     PrintQuote(LineNumber, 250);
-    if((Lines[LineNumber] != InValidCloneStart))
-    {
-      list[int] Dupes = GetDupes(Lines, LineNumber);
-      TCloneList CurrentClones = GetClones(Lines, LineNumber, Dupes);      
-      if([] != CurrentClones)
-      {
-        AllClones += <LineNumber, CurrentClones>; // Raw clone info
-      }
-      Clones = InsertNewClones(Clones, CurrentClones);
-      Clones = MergeClonesWithEqualStart(Clones, CurrentClones);       
-    }
-    LineNumber += 1;
+    list[int] Dupes = GetDupes(Lines, LineNumber);    
+    TCloneList CurrentClones = GetClones(Lines, LineNumber, Dupes);
+    Clones = InsertNewClones(Clones, CurrentClones);
+    Clones = MergeClonesWithEqualStart(Clones, CurrentClones);
   }
   Duration("Found all clones, now merging overlapping clones!", Start);
   Start = now();
   Clones = MergeClonesWithOverlap(Clones);  // Clones is a nicely organized    
   Duration("Merged all clones!", Start);
-  return <AllClones, Clones>;
+  return Clones;
 }
+
+void PrepareProcess(THashInfo Information)
+{
+  Lines = Information.HashMap;
+  Dictionary = Information.StringMap;
+  InvalidCloneStart = GetKey(Dictionary, "}");
+}
+
 
 int GetKey(TStringMap Dictionary, str Key)
 {
   try
   {
+    println("Invalid key: <Dictionary[Key]>");
     return Dictionary[Key];
   }
   catch:
   {
-    ;
+    println("Invalid key");
   }
   return -1;
 }
 
-bool ValidCloneStart(str CurrentLine) = "}" != CurrentLine ;
+int CloneSize = 6;
+
+TCloneList GetClones(THashMap Lines, int LineNumber, list[int] Dupes)
+{       
+  TCloneList Results = [];  
+  for(Dupe <- Dupes)
+  {
+    if(true == MinimumCloneSizeReached(Lines, LineNumber, Dupe))
+    {
+      Results += <Dupe, CalcCloneSize(Lines, LineNumber, Dupe)>;
+    }
+  }
+  return Results;
+}
 
 list[int] GetDupes(THashMap Lines, int LineNumber)
 {
@@ -101,21 +166,6 @@ list[int] GetDupes(THashMap Lines, int LineNumber)
     Dupes += n;
   }
   return Dupes;
-}
-
-int CloneSize = 6;
-
-TCloneList GetClones(THashMap Lines, int LineNumber, list[int] Dupes)
-{
-  TCloneList Results = [];
-  for(Dupe <- Dupes)
-  {
-    if(true == MinimumCloneSizeReached(Lines, LineNumber, Dupe))
-    {
-      Results += <Dupe, CalcCloneSize(Lines, LineNumber, Dupe)>;
-    }
-  }
-  return Results;
 }
 
 bool AlreadyPartOfClone(TCloneList Clones, int LineNumber)
@@ -239,17 +289,5 @@ list[str] RetrieveDuplicatesFromFile(loc FileToCheck)
 int LineIncrement([]) = 1;
 int LineIncrement(TCloneList Clones) = max(Clones.Size);
 
-bool EndOfCloneReached(THashMap Lines, int LineNumber, int CloneLine)
-{
-  try
-  {
-    return Lines[LineNumber] != Lines[CloneLine];
-  }
-  catch:
-  {
-    ;
-  }
-  return true;
-}
-
+bool EndOfCloneReached(THashMap Lines, int LineNumber, int CloneLine) = (CloneLine >= size(Lines)) || (Lines[LineNumber] != Lines[CloneLine]);
 bool CodeOverlapsClone(int Count, int Distance) = (Count >= Distance);
