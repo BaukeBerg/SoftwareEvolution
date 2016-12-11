@@ -8,8 +8,12 @@ import vis::Figure;
 import vis::Render;
 import vis::KeySym;
 
+import FileLocations;
+
 import \helpers::ListHelpers;
 import \helpers::FileHelpers;
+
+import \graphics::DetailView;
 
 
 Figure GenerateTitleBox(str indexedLine) = box(text(GetClassName(toLocation(GetFilePath(indexedLine))), fontSize(7), fontColor("blue")), vresizable(false), vsize(30), top(), fillColor("lightgray"));
@@ -19,7 +23,7 @@ void RenderFigure(str caption, Figure fig) = render(caption, fig);
 
 str GetClassName(loc FileToCheck) = substring(FileToCheck.path, findLast(FileToCheck.path, "/")+1);
 
-void Overview(loc indexedFile) = Overview(readFileLines(indexedLoc));
+void Overview(loc indexedLoc) = Overview(readFileLines(indexedLoc));
 void Overview(list[str] indexedLines)
 {	
 	list[str] fileNames = [];
@@ -52,8 +56,8 @@ FProperty RunCMDOnMouseDown(str indexedLine)
 	{
 		if(GetColor(indexedLine) == "Red")
 		{
-			// Call the right function here, then remove the following line!!!
-			println("Call the right function here, then remove this line!!!");
+			loc SampleLoc = SampleFile(GetFilePath(indexedLine));
+			GenerateDiff([SampleLoc]);
 		}
 		return true;
 	});	
