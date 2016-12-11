@@ -11,7 +11,7 @@ import \helpers::ListHelpers;
 import \helpers::FileHelpers;
 
 
-Figure GenerateBox(str indexedLine) = box(fillColor("red"), vresizable(false), vsize(15), bottom());
+Figure GenerateBox(str indexedLine) = box(fillColor(GetColor(indexedLine)), lineColor(GetColor(indexedLine)), vresizable(false), vsize(5), top());
 
 void RenderFigure(str caption, Figure fig) = render(caption, fig);
 
@@ -31,41 +31,36 @@ Figure GenerateBox(list[str] indexedLines)
 void Overview()
 {	
 	loc indexedLoc = |project://SoftwareMetrics/sampleFiles/clones/SmallSqlIndexes.txt|;
-	//loc indexedLoc = |project://SoftwareMetrics/sampleFiles/Visu/VisuSampleResult.txt|;
 	list[str] indexedLines = readFileLines(indexedLoc);	
 
 	list[str] fileNames = [];
 	list[Figure] boxList = [];
 	list[Figure] vBox = [];
-	
-	fileNames = GetFileNames(indexedLines);
+	str prevFile = "";
 
 	for(i <- [0 .. size(indexedLines)])
 	{
-		vBox += GenerateBox(indexedLines[i]);
-		
-		if(Contains(fileNames, GetFilePath(indexedLines[i])))
+		if(prevFile == GetFilePath(indexedLines[i]))
 		{
-			vBox += box(text(GetClassName(toLocation(GetFilePath(indexedLines[i]))), fontSize(7), fontColor("blue")), vresizable(false), vsize(30), bottom(), fillColor("lightgray"));
-
-			fileNames -= GetFilePath(indexedLines[i]);
-			boxList += vcat(vBox);
+			vBox += GenerateBox(indexedLines[i]);
+		}
+		else
+		{
+			if (vBox != [])
+			{
+				boxList += box(box(vcat(vBox), vresizable(false), top(), shrink(0.9)), vresizable(false), top());
+			}
 			vBox = [];
+			vBox += box(text(GetClassName(toLocation(GetFilePath(indexedLines[i]))), fontSize(7), fontColor("blue")), vresizable(false), vsize(30), top(), fillColor("lightgray"));
+			vBox += GenerateBox(indexedLines[i]);
+			prevFile = GetFilePath(indexedLines[i]);
 		}
 	}
-	RenderFigure("Overview", hcat(boxList, hgap(3)));
-}
-
-list[str] GetFileNames(list[str] indexedLines)
-{
-	list[str] fileNames = [];
-	for(i <- [0 .. size(indexedLines)])
+	
+	if (vBox != [])
 	{
-		str file =  GetFilePath(indexedLines[i]);
-		if(!Contains(fileNames, file))
-		{
-			fileNames += file;
-		}
+		boxList += box(box(vcat(vBox), vresizable(false), top(), shrink(0.9)), vresizable(false), top());
 	}
-	return fileNames;
+	
+	RenderFigure("Overview", hcat(boxList, hgap(3)));
 }
