@@ -1,7 +1,7 @@
 smallsql/database/Column.java۞33
-RedѬsmallsql/database/Column.java۞35
+smallsql/database/Column.java۞35
 smallsql/database/Column.java۞36
-RedѬsmallsql/database/Column.java۞37
+smallsql/database/Column.java۞37
 smallsql/database/Column.java۞39
 smallsql/database/Column.java۞42
 smallsql/database/Column.java۞45
