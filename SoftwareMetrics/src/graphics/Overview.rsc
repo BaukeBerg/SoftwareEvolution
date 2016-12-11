@@ -17,9 +17,8 @@ void RenderFigure(str caption, Figure fig) = render(caption, fig);
 
 str GetClassName(loc FileToCheck) = substring(FileToCheck.path, findLast(FileToCheck.path, "/")+1);
 
-void Overview()
+void Overview(loc indexedLoc)
 {	
-	loc indexedLoc = |project://SoftwareMetrics/sampleFiles/clones/SmallSqlIndexes.txt|;
 	list[str] indexedLines = readFileLines(indexedLoc);	
 
 	list[str] fileNames = [];
