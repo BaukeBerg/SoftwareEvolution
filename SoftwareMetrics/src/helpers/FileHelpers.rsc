@@ -86,12 +86,13 @@ str GetFilePath(str indexLine) = contains(indexLine, FileSplitter) ? StringToken
 
 str GetColor(str indexLine) = contains(indexLine, ColorSplitter) ? StringToken(indexLine, "", ColorSplitter) : "White";
 
-list[str] NormalizeIndexedFile(loc FileToNormalize)
+list[str] NormalizeIndexedFile(loc FileToNormalize) = NormalizeIndexes(readFileLines(FileToNormalize));
+list[str] NormalizeIndexes(list[str] IndexesToNormalize)
 {
   list[str] Results = [];
   int LastPos = 0;
   str CurrentColor = "";
-  for(Line <- readFileLines(FileToNormalize))
+  for(Line <- IndexesToNormalize)
   {
     int ThisLine = LineNumber(Line);
     int Gap = ThisLine - LastPos;
