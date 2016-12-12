@@ -48,12 +48,22 @@ test bool TestSplittingContent()
 list[str] ResultFile() = readFileLines(SampleFile("Visu/VisuSampleResult.txt"));
 loc VisuInput = SampleFile("Visu/VisuSampleInput.txt");
 
+list[str] ResultIndexes = ["smallsql/database/Column.java۞1",
+														"RedѬsmallsql/database/Column.java۞2",
+														"RedѬsmallsql/database/Column.java۞3",
+														"RedѬsmallsql/database/Column.java۞4"
+														];
+list[str] IndexesInput = ["RedѬsmallsql/database/Column.java۞2",
+														"RedѬsmallsql/database/Column.java۞4"
+														];
+
 test bool TestExistingColor() = ExpectEqual("Red", GetColor("RedѬ"));
 test bool TestDefaultColor() = ExpectEqual("White", GetColor("IHaveNoColur,Return the default one!!!"));
 
 test bool TestSamplePath() = ExpectEqual("type1clones/BraceCase.txt", GetSamplePath(|project://SoftwareMetrics/sampleFiles/type1clones/BraceCase.txt|));
 
 test bool TestNormalizingFile() = ExpectEqual(ResultFile(), NormalizeIndexedFile(VisuInput), OutputFile("test/NormalizedOutput.txt"));
+test bool TestNormalizingIndexes() = ExpectEqual(ResultIndexes, NormalizeIndexes(IndexesInput));
 
 test bool TestDefaultFilePath() = ExpectEqual("Not Found", GetFilePath(""));
 test bool TestFilePathWithColour() = ExpectEqual("TestPassed.java", GetFilePath("RedѬTestPassed.java۞65۩"));
