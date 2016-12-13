@@ -15,7 +15,7 @@ import \graphics::DetailView;
 
 
 Figure GenerateTitleBox(str IndexedLine) = box(text(GetClassName(toLocation(GetFilePath(IndexedLine))), fontSize(7), fontColor("Blue")), vresizable(false), vsize(30), top(), fillColor("Lightgray"));
-Figure GenerateBox(str IndexedLine, list[str] IndexedLines) = box(fillColor(GetColor(IndexedLine)), lineColor(GetColor(IndexedLine)), vresizable(false), vsize(5), top(), RunCMDOnMouseDown(IndexedLine, IndexedLines));
+Figure GenerateBox(str IndexedLine, list[str] IndexedLines) = box(fillColor(GetColor(IndexedLine)), lineColor(GetColor(IndexedLine)), vresizable(false), vsize(5), top(), ExecOnMouseDown(IndexedLine, IndexedLines), ExecOnMouseEnter(IndexedLine, IndexedLines));
 Figure GenerateVBox(list[Figure] VBox) = !isEmpty(VBox) ? box(box(vcat(VBox), top(), shrink(0.9)), resizable(false), top()) : box();
 void RenderFigure(str Caption, Figure Fig) = render(Caption, Fig);
 
@@ -49,18 +49,60 @@ void Overview(list[str] IndexedLines)
 	RenderFigure("Overview", hcat(BoxList, hgap(3)));
 }
 
-FProperty RunCMDOnMouseDown(str IndexedLine, list[str] IndexedLines)
+FProperty ExecOnMouseDown(str IndexedLine, list[str] IndexedLines)
 {
 	return onMouseDown(bool (int butnr, map[KeyModifier,bool] modifiers) 
 	{
 		if(GetColor(IndexedLine) == "Red")
 		{
-			list[str] SampleIndexes = GenerateSampleIndexesForClass(IndexedLine, IndexedLines);
-			list[str] NormalizedIndexes = NormalizeIndexes(SampleIndexes);
+			list[str] NormalizedIndexes = ExtractAndNormalizeIndexes(IndexedLine, IndexedLines);
 			GenerateDiff([NormalizedIndexes]);
 		}
 		return true;
 	});	
+}
+
+FProperty ExecOnMouseEnter(str IndexedLine, list[str] IndexedLines)
+{
+	Figure Tooltip = text("");
+	if(GetColor(IndexedLine) == "Red")
+	{
+		list[str] NormalizedIndexes = ExtractAndNormalizeIndexes(IndexedLine, IndexedLines);
+		Tooltip = GenerateTooltip(IndexedLine, NormalizedIndexes);
+  }
+  
+  return mouseOver(Tooltip);
+}
+
+Figure GenerateTooltip(str IndexedLine, list[str] IndexedLines)
+{
+	list[Figure] Texts = [];
+	list[str] inputLines = readFileLines(SampleFile(GetFilePath(IndexedLine)));
+	int LineNumber = LineNumber(IndexedLine);
+	int Min = ((LineNumber-5) > 0) ? (LineNumber-5) : 0;
+	int Max = ((LineNumber+10) < size(inputLines)) ? (LineNumber+10) : size(inputLines);
+	
+	Texts += text("...", fontItalic(true), fontBold(true), left());
+	for(i <- [Min .. Max])
+	{
+		if(GetColor(IndexedLines[i]) == "Red")
+		{
+			Texts += text("<i+1>: <inputLines[i]>", fontSize(7), fontColor("red"), fontItalic(true), fontBold(true), left());
+		}
+		else
+		{
+			Texts += text("<i+1>: <inputLines[i]>", fontSize(7), left());
+		}
+	}
+	Texts += text("...", fontItalic(true), fontBold(true), left());
+	return box(vcat(Texts), fillColor("lightyellow"), grow(1.2), resizable(false));
+}
+
+list[str] ExtractAndNormalizeIndexes(str IndexedLine, list[str] IndexedLines)
+{
+	list[str] SampleIndexes = GenerateSampleIndexesForClass(IndexedLine, IndexedLines);
+	list[str] NormalizedIndexes = NormalizeIndexes(SampleIndexes);
+	return NormalizedIndexes;
 }
 
 list[str] GenerateSampleIndexesForClass(str IndexedLine, list[str] IndexedLines)
