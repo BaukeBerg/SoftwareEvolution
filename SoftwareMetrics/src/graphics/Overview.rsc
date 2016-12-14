@@ -13,6 +13,8 @@ import \helpers::ListHelpers;
 import \helpers::FileHelpers;
 import \graphics::DetailView;
 
+import \util::Math;
+
 
 Figure GenerateTitleBox(str IndexedLine) = box(text(GetClassName(toLocation(GetFilePath(IndexedLine))), fontSize(7), fontColor("Blue")), vresizable(false), vsize(30), top(), fillColor("Lightgray"));
 Figure GenerateBox(str IndexedLine, list[str] IndexedLines) = box(fillColor(GetColor(IndexedLine)), lineColor(GetColor(IndexedLine)), vresizable(false), vsize(5), top(), ExecOnMouseDown(IndexedLine, IndexedLines), ExecOnMouseEnter(IndexedLine, IndexedLines));
