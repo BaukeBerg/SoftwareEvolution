@@ -44,5 +44,9 @@ public loc HsqlDbIntermediate = SampleFile("clones/IndexedHsqlDbFile.java");
 public loc HsqlDbIndexes = SampleFile("clones/HsqlDbIndexes.txt");
 public loc HsqlDbContent = SampleFile("clones/HsqlDbContent.txt");
 
+public loc SoftwareEvolutionIntermediate = SampleFile("clones/IndexedSoftwareEvolutionFile.java");
+public loc SoftwareEvolutionIndexes = SampleFile("clones/SoftwareEvolutionIndexes.txt");
+public loc SoftwareEvolutionContent = SampleFile("clones/SoftwareEvolutionContent.txt");
+
 public loc SmallSqlContent_Type2 = SampleFile("clones/SmallSqlContent_Type2.txt");
 public loc HsqlDbContent_Type2 = SampleFile("clones/HsqlDbContent_Type2.txt");

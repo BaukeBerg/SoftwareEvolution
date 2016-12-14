@@ -3,6 +3,7 @@ module \test::FileHelperTests
 import FileLocations;
 import IO;
 import List;
+import String;
 
 import \helpers::FileHelpers;
 import \helpers::ListHelpers;
@@ -61,6 +62,7 @@ test bool TestExistingColor() = ExpectEqual("Red", GetColor("RedѬ"));
 test bool TestDefaultColor() = ExpectEqual("White", GetColor("IHaveNoColur,Return the default one!!!"));
 
 test bool TestSamplePath() = ExpectEqual("type1clones/BraceCase.txt", GetSamplePath(|project://SoftwareMetrics/sampleFiles/type1clones/BraceCase.txt|));
+test bool TestSamplePathBack() = ExpectEqual("../src/RelativePath.txt", GetSamplePath(toLocation("project://SoftwareMetrics/src/RelativePath.txt")));
 
 test bool TestNormalizingFile() = ExpectEqual(ResultFile(), NormalizeIndexedFile(VisuInput), OutputFile("test/NormalizedOutput.txt"));
 test bool TestNormalizingIndexes() = ExpectEqual(ResultIndexes, NormalizeIndexes(IndexesInput));

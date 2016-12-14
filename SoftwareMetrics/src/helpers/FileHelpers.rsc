@@ -80,7 +80,16 @@ list[str] IndexLines(list[str] InputLines, str FileName)
   return Results;
 }
 
-str GetSamplePath(loc FileToCheck) = StringToken(FileToCheck.path, "sampleFiles/", "");
+str GetSamplePath(loc FileToCheck)
+{    
+  str Find = "sampleFiles/";
+  str Path = FileToCheck.path;
+  if(-1 == findFirst(Path, Find))
+  {
+    Path = "/sampleFiles/.." + replaceAll(Path, "project://SoftwareMetrics/", "");
+  }
+  return StringToken(Path, Find, "");
+}
 
 str GetFilePath(str indexLine) = contains(indexLine, FileSplitter) ? StringToken(StringToken(indexLine, ColorSplitter, ""), "", FileSplitter) : "Not Found";
 

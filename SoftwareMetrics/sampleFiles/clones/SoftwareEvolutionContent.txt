@@ -1,0 +1,2908 @@
+module CloneVisualization
+import FileLocations;
+import IO;
+import \clones::CloneAlgorithm;
+import \graphics::Overview;
+import \helpers::FileHelpers;
+loc SmallSqlSampleContent = SampleFile("type2clones/SmallSqlContent.txt");
+loc SmallSqlSampleIndexes = SampleFile("type2clones/SmallSqlIndexes.txt");
+public TCloneClasses CurrentClones = [];
+list[list[str]] GenerateClonesFor(TClone Clone)
+{
+;
+}
+void GenerateSmallSqlSample()
+{
+CurrentClones = GetClonesClasses(SmallSqlSampleContent);
+list[str] ColoredIndexes = ColorIndexes(SmallSqlSampleIndexes, CurrentClones);
+Overview(ColoredIndexes);
+}
+list[str] ColorIndexes(loc IndexedFileToColour, TCloneClasses CloneClasses)
+{
+list[str] AllIndexes = readFileLines(IndexedFileToColour);
+for(CloneClass <- CloneClasses)
+{
+for(Clone <- CloneClass)
+{
+for(n <- [Clone.Start .. (Clone.Start + Clone.Size)+1])
+{
+AllIndexes[n] = AddColor(AllIndexes[n], "Red");
+}
+}
+}
+return AllIndexes;
+}
+module FileLocations
+import String;
+private str ProjectRoot = "project:
+public str OutputDir = "<ProjectRoot>output/";
+public str SampleDir = "<ProjectRoot>sampleFiles/";
+private str BulkDir = "<OutputDir>bulk/";
+public str SourceDir = "<ProjectRoot>src/";
+public loc MonsterFile = toLocation("<BulkDir>MonsterFile.java");
+public loc TestDir = toLocation("<ProjectRoot>src/test/");
+public loc MethodLinesFile(str FilePrefix) = toLocation("<BulkDir><FilePrefix>MethodLines.java");
+public loc SmallSqlMethodLinesFile = toLocation("<BulkDir>SmallSqlMethodLines.java");
+public loc HSqlDbMethodLinesFile = toLocation("<BulkDir>HSqlDbMethodLines.java");
+public loc FailedMethodLinesFile = toLocation("<BulkDir>FailedMethodLines.java");
+public loc SmallSqlFile = toLocation("<BulkDir>bigsmallsql.java");
+public loc HsqlDbFile = toLocation("<BulkDir>bighsqldb.java");
+public loc ClonesFile(str ProjectName)
+{
+if("smallsql" == ProjectName)
+{
+return SmallSqlFile;
+}
+return HsqlDbFile;
+}
+public loc SanitizedSqlFolder(str ForFile) = toLocation("<OutputDir>sanitizedsql/<ForFile>");
+public loc HtmlDetailsFile(str ProjectName, str ForFile) = toLocation("<OutputDir><ProjectName>/details/<ForFile>");
+public loc SampleFile(str ForFile) = toLocation("<SampleDir><ForFile>");
+public loc OutputFile(str ForFile) = toLocation("<OutputDir><ForFile>");
+public loc SmallSqlIntermediate = SampleFile("clones/IndexedSmallSqlFile.java");
+public loc SmallSqlIndexes = SampleFile("clones/SmallSqlIndexes.txt");
+public loc SmallSqlContent = SampleFile("clones/SmallSqlContent.txt");
+public loc HsqlDbIntermediate = SampleFile("clones/IndexedHsqlDbFile.java");
+public loc HsqlDbIndexes = SampleFile("clones/HsqlDbIndexes.txt");
+public loc HsqlDbContent = SampleFile("clones/HsqlDbContent.txt");
+public loc SoftwareEvolutionIntermediate = SampleFile("clones/IndexedSoftwareEvolutionFile.java");
+public loc SoftwareEvolutionIndexes = SampleFile("clones/SoftwareEvolutionIndexes.txt");
+public loc SoftwareEvolutionContent = SampleFile("clones/SoftwareEvolutionContent.txt");
+public loc SmallSqlContent_Type2 = SampleFile("clones/SmallSqlContent_Type2.txt");
+public loc HsqlDbContent_Type2 = SampleFile("clones/HsqlDbContent_Type2.txt");
+module GettingStarted
+import FileHandler;
+import FileLocations;
+import IO;
+import SoftwareMetrics;
+void SetupEnvironment()
+{
+GenerateHtmlReporting("hsqldb");
+GenerateHtmlReporting("smallsql");
+CreateMonsterFile(SanitizedSqlFolder("hsqldb"), HsqlDbFile);
+CreateMonsterFile(SanitizedSqlFolder("smallsql"), SmallSqlFile);
+GenerateSanitizedCode("smallsql", SmallSqlMethodLinesFile);
+GenerateSanitizedCode("hsqldb", HSqlDbMethodLinesFile);
+}
+module MainTestModule
+import \test::AssumptionTests;
+import \test::CalculateCCTest;
+import \test::CloneAlgorithmTest;
+import \test::FileHelperTests;
+import \test::GraphGeneratorTest;
+import \test::JavaHelpersTests;
+import \test::ListHelperTests;
+import \test::MathHelpersTest;
+import \test::RiskProfileTest;
+import \test::SigScoresTester;
+import \test::SlocModuleTester;
+import \test::StringHelpersTester;
+import \test::TestHelpersTester;
+import \test::TestModule;
+import \test::Type1ClonesTest;
+test bool TryTestAssumeIntToNumConversion(){ try{ return CheckAndReport("AssumptionTests","TestAssumeIntToNumConversion()", TestAssumeIntToNumConversion());} catch: { CheckAndReport("AssumptionTests","!!! EXCEPTION IN TestAssumeIntToNumConversion() !!!", false); } return false; }
+test bool TryTestAssumeRounding(){ try{ return CheckAndReport("AssumptionTests","TestAssumeRounding()", TestAssumeRounding());} catch: { CheckAndReport("AssumptionTests","!!! EXCEPTION IN TestAssumeRounding() !!!", false); } return false; }
+test bool TryTestAssumeJoinList(){ try{ return CheckAndReport("AssumptionTests","TestAssumeJoinList()", TestAssumeJoinList());} catch: { CheckAndReport("AssumptionTests","!!! EXCEPTION IN TestAssumeJoinList() !!!", false); } return false; }
+test bool TryTestAssumeForLoop(){ try{ return CheckAndReport("AssumptionTests","TestAssumeForLoop()", TestAssumeForLoop());} catch: { CheckAndReport("AssumptionTests","!!! EXCEPTION IN TestAssumeForLoop() !!!", false); } return false; }
+test bool TryTestIntegerDivision(){ try{ return CheckAndReport("AssumptionTests","TestIntegerDivision()", TestIntegerDivision());} catch: { CheckAndReport("AssumptionTests","!!! EXCEPTION IN TestIntegerDivision() !!!", false); } return false; }
+test bool TryAssumeIteratorIncrementing(){ try{ return CheckAndReport("AssumptionTests","AssumeIteratorIncrementing()", AssumeIteratorIncrementing());} catch: { CheckAndReport("AssumptionTests","!!! EXCEPTION IN AssumeIteratorIncrementing() !!!", false); } return false; }
+test bool TryDoWithTry(){ try{ return CheckAndReport("AssumptionTests","DoWithTry()", DoWithTry());} catch: { CheckAndReport("AssumptionTests","!!! EXCEPTION IN DoWithTry() !!!", false); } return false; }
+test bool TryTestTernaryOperator(){ try{ return CheckAndReport("CalculateCCTest","TestTernaryOperator()", TestTernaryOperator());} catch: { CheckAndReport("CalculateCCTest","!!! EXCEPTION IN TestTernaryOperator() !!!", false); } return false; }
+test bool TryTestInfixOperatorAnd(){ try{ return CheckAndReport("CalculateCCTest","TestInfixOperatorAnd()", TestInfixOperatorAnd());} catch: { CheckAndReport("CalculateCCTest","!!! EXCEPTION IN TestInfixOperatorAnd() !!!", false); } return false; }
+test bool TryTestInfixOperatorOr(){ try{ return CheckAndReport("CalculateCCTest","TestInfixOperatorOr()", TestInfixOperatorOr());} catch: { CheckAndReport("CalculateCCTest","!!! EXCEPTION IN TestInfixOperatorOr() !!!", false); } return false; }
+test bool TryTestMergingOverlappedClones(){ try{ return CheckAndReport("CloneAlgorithmTest","TestMergingOverlappedClones()", TestMergingOverlappedClones());} catch: { CheckAndReport("CloneAlgorithmTest","!!! EXCEPTION IN TestMergingOverlappedClones() !!!", false); } return false; }
+test bool TryTestOverlapFunction(){ try{ return CheckAndReport("CloneAlgorithmTest","TestOverlapFunction()", TestOverlapFunction());} catch: { CheckAndReport("CloneAlgorithmTest","!!! EXCEPTION IN TestOverlapFunction() !!!", false); } return false; }
+test bool TryTestMergingClones(){ try{ return CheckAndReport("CloneAlgorithmTest","TestMergingClones()", TestMergingClones());} catch: { CheckAndReport("CloneAlgorithmTest","!!! EXCEPTION IN TestMergingClones() !!!", false); } return false; }
+test bool TryTestSingleClone(){ try{ return CheckAndReport("CloneAlgorithmTest","TestSingleClone()", TestSingleClone());} catch: { CheckAndReport("CloneAlgorithmTest","!!! EXCEPTION IN TestSingleClone() !!!", false); } return false; }
+test bool TryTestDoubleClone(){ try{ return CheckAndReport("CloneAlgorithmTest","TestDoubleClone()", TestDoubleClone());} catch: { CheckAndReport("CloneAlgorithmTest","!!! EXCEPTION IN TestDoubleClone() !!!", false); } return false; }
+test bool TryTestExtendedClone(){ try{ return CheckAndReport("CloneAlgorithmTest","TestExtendedClone()", TestExtendedClone());} catch: { CheckAndReport("CloneAlgorithmTest","!!! EXCEPTION IN TestExtendedClone() !!!", false); } return false; }
+test bool TryTestDualOffsetClone(){ try{ return CheckAndReport("CloneAlgorithmTest","TestDualOffsetClone()", TestDualOffsetClone());} catch: { CheckAndReport("CloneAlgorithmTest","!!! EXCEPTION IN TestDualOffsetClone() !!!", false); } return false; }
+test bool TryTestDualDifferentClone(){ try{ return CheckAndReport("CloneAlgorithmTest","TestDualDifferentClone()", TestDualDifferentClone());} catch: { CheckAndReport("CloneAlgorithmTest","!!! EXCEPTION IN TestDualDifferentClone() !!!", false); } return false; }
+test bool TryTestBraceCase(){ try{ return CheckAndReport("CloneAlgorithmTest","TestBraceCase()", TestBraceCase());} catch: { CheckAndReport("CloneAlgorithmTest","!!! EXCEPTION IN TestBraceCase() !!!", false); } return false; }
+test bool TryTestNoClone(){ try{ return CheckAndReport("CloneAlgorithmTest","TestNoClone()", TestNoClone());} catch: { CheckAndReport("CloneAlgorithmTest","!!! EXCEPTION IN TestNoClone() !!!", false); } return false; }
+test bool TryTestMaxOfList(){ try{ return CheckAndReport("CloneAlgorithmTest","TestMaxOfList()", TestMaxOfList());} catch: { CheckAndReport("CloneAlgorithmTest","!!! EXCEPTION IN TestMaxOfList() !!!", false); } return false; }
+test bool TryFindFilesInDirectory(){ try{ return CheckAndReport("FileHelperTests","FindFilesInDirectory()", FindFilesInDirectory());} catch: { CheckAndReport("FileHelperTests","!!! EXCEPTION IN FindFilesInDirectory() !!!", false); } return false; }
+test bool TryFindFilesInEmptyDir(){ try{ return CheckAndReport("FileHelperTests","FindFilesInEmptyDir()", FindFilesInEmptyDir());} catch: { CheckAndReport("FileHelperTests","!!! EXCEPTION IN FindFilesInEmptyDir() !!!", false); } return false; }
+test bool TryCheckFindNameInDir(){ try{ return CheckAndReport("FileHelperTests","CheckFindNameInDir()", CheckFindNameInDir());} catch: { CheckAndReport("FileHelperTests","!!! EXCEPTION IN CheckFindNameInDir() !!!", false); } return false; }
+test bool TryCheckFindNameWithourDir(){ try{ return CheckAndReport("FileHelperTests","CheckFindNameWithourDir()", CheckFindNameWithourDir());} catch: { CheckAndReport("FileHelperTests","!!! EXCEPTION IN CheckFindNameWithourDir() !!!", false); } return false; }
+test bool TryTestIndexLines(){ try{ return CheckAndReport("FileHelperTests","TestIndexLines()", TestIndexLines());} catch: { CheckAndReport("FileHelperTests","!!! EXCEPTION IN TestIndexLines() !!!", false); } return false; }
+test bool TryTestStrippingIndexedInlineComments(){ try{ return CheckAndReport("FileHelperTests","TestStrippingIndexedInlineComments()", TestStrippingIndexedInlineComments());} catch: { CheckAndReport("FileHelperTests","!!! EXCEPTION IN TestStrippingIndexedInlineComments() !!!", false); } return false; }
+test bool TryTestStrippingMultilineComments(){ try{ return CheckAndReport("FileHelperTests","TestStrippingMultilineComments()", TestStrippingMultilineComments());} catch: { CheckAndReport("FileHelperTests","!!! EXCEPTION IN TestStrippingMultilineComments() !!!", false); } return false; }
+test bool TryTestStrippingExtension(){ try{ return CheckAndReport("FileHelperTests","TestStrippingExtension()", TestStrippingExtension());} catch: { CheckAndReport("FileHelperTests","!!! EXCEPTION IN TestStrippingExtension() !!!", false); } return false; }
+test bool TryTestSplittingIndexes(){ try{ return CheckAndReport("FileHelperTests","TestSplittingIndexes()", TestSplittingIndexes());} catch: { CheckAndReport("FileHelperTests","!!! EXCEPTION IN TestSplittingIndexes() !!!", false); } return false; }
+test bool TryTestSplittingContent(){ try{ return CheckAndReport("FileHelperTests","TestSplittingContent()", TestSplittingContent());} catch: { CheckAndReport("FileHelperTests","!!! EXCEPTION IN TestSplittingContent() !!!", false); } return false; }
+test bool TryTestNormalizingFile(){ try{ return CheckAndReport("FileHelperTests","TestNormalizingFile()", TestNormalizingFile());} catch: { CheckAndReport("FileHelperTests","!!! EXCEPTION IN TestNormalizingFile() !!!", false); } return false; }
+test bool TryCheckRed(){ try{ return CheckAndReport("GraphGeneratorTest","CheckRed()", CheckRed());} catch: { CheckAndReport("GraphGeneratorTest","!!! EXCEPTION IN CheckRed() !!!", false); } return false; }
+test bool TryCheckGreen(){ try{ return CheckAndReport("GraphGeneratorTest","CheckGreen()", CheckGreen());} catch: { CheckAndReport("GraphGeneratorTest","!!! EXCEPTION IN CheckGreen() !!!", false); } return false; }
+test bool TryCheckYellow(){ try{ return CheckAndReport("GraphGeneratorTest","CheckYellow()", CheckYellow());} catch: { CheckAndReport("GraphGeneratorTest","!!! EXCEPTION IN CheckYellow() !!!", false); } return false; }
+test bool TryTestFullClassPath(){ try{ return CheckAndReport("JavaHelpersTests","TestFullClassPath()", TestFullClassPath());} catch: { CheckAndReport("JavaHelpersTests","!!! EXCEPTION IN TestFullClassPath() !!!", false); } return false; }
+test bool TryTestClassName(){ try{ return CheckAndReport("JavaHelpersTests","TestClassName()", TestClassName());} catch: { CheckAndReport("JavaHelpersTests","!!! EXCEPTION IN TestClassName() !!!", false); } return false; }
+test bool TryTestMethodSize(){ try{ return CheckAndReport("JavaHelpersTests","TestMethodSize()", TestMethodSize());} catch: { CheckAndReport("JavaHelpersTests","!!! EXCEPTION IN TestMethodSize() !!!", false); } return false; }
+test bool TryTestMethodBody(){ try{ return CheckAndReport("JavaHelpersTests","TestMethodBody()", TestMethodBody());} catch: { CheckAndReport("JavaHelpersTests","!!! EXCEPTION IN TestMethodBody() !!!", false); } return false; }
+test bool TryTestLineCountForFile(){ try{ return CheckAndReport("JavaHelpersTests","TestLineCountForFile()", TestLineCountForFile());} catch: { CheckAndReport("JavaHelpersTests","!!! EXCEPTION IN TestLineCountForFile() !!!", false); } return false; }
+test bool TryExpectSingleLineComment(){ try{ return CheckAndReport("JavaHelpersTests","ExpectSingleLineComment()", ExpectSingleLineComment());} catch: { CheckAndReport("JavaHelpersTests","!!! EXCEPTION IN ExpectSingleLineComment() !!!", false); } return false; }
+test bool TryExpectSingleLineStreamComment(){ try{ return CheckAndReport("JavaHelpersTests","ExpectSingleLineStreamComment()", ExpectSingleLineStreamComment());} catch: { CheckAndReport("JavaHelpersTests","!!! EXCEPTION IN ExpectSingleLineStreamComment() !!!", false); } return false; }
+test bool TryCheckBlockCommentRemoval(){ try{ return CheckAndReport("JavaHelpersTests","CheckBlockCommentRemoval()", CheckBlockCommentRemoval());} catch: { CheckAndReport("JavaHelpersTests","!!! EXCEPTION IN CheckBlockCommentRemoval() !!!", false); } return false; }
+test bool TryCheckBlockCommentMultiLine(){ try{ return CheckAndReport("JavaHelpersTests","CheckBlockCommentMultiLine()", CheckBlockCommentMultiLine());} catch: { CheckAndReport("JavaHelpersTests","!!! EXCEPTION IN CheckBlockCommentMultiLine() !!!", false); } return false; }
+test bool TryCheckAbstractMethodSize(){ try{ return CheckAndReport("JavaHelpersTests","CheckAbstractMethodSize()", CheckAbstractMethodSize());} catch: { CheckAndReport("JavaHelpersTests","!!! EXCEPTION IN CheckAbstractMethodSize() !!!", false); } return false; }
+test bool TryCheckValid(){ try{ return CheckAndReport("ListHelperTests","CheckValid()", CheckValid());} catch: { CheckAndReport("ListHelperTests","!!! EXCEPTION IN CheckValid() !!!", false); } return false; }
+test bool TryCheckLowBound(){ try{ return CheckAndReport("ListHelperTests","CheckLowBound()", CheckLowBound());} catch: { CheckAndReport("ListHelperTests","!!! EXCEPTION IN CheckLowBound() !!!", false); } return false; }
+test bool TryCheckTopBound(){ try{ return CheckAndReport("ListHelperTests","CheckTopBound()", CheckTopBound());} catch: { CheckAndReport("ListHelperTests","!!! EXCEPTION IN CheckTopBound() !!!", false); } return false; }
+test bool TryCheckCenterItem(){ try{ return CheckAndReport("ListHelperTests","CheckCenterItem()", CheckCenterItem());} catch: { CheckAndReport("ListHelperTests","!!! EXCEPTION IN CheckCenterItem() !!!", false); } return false; }
+test bool TryCheckListPrint(){ try{ return CheckAndReport("ListHelperTests","CheckListPrint()", CheckListPrint());} catch: { CheckAndReport("ListHelperTests","!!! EXCEPTION IN CheckListPrint() !!!", false); } return false; }
+test bool TryCheckEmptyListPrint(){ try{ return CheckAndReport("ListHelperTests","CheckEmptyListPrint()", CheckEmptyListPrint());} catch: { CheckAndReport("ListHelperTests","!!! EXCEPTION IN CheckEmptyListPrint() !!!", false); } return false; }
+test bool TryCheckBackAndForth(){ try{ return CheckAndReport("ListHelperTests","CheckBackAndForth()", CheckBackAndForth());} catch: { CheckAndReport("ListHelperTests","!!! EXCEPTION IN CheckBackAndForth() !!!", false); } return false; }
+test bool TryCheckClonesPrint(){ try{ return CheckAndReport("ListHelperTests","CheckClonesPrint()", CheckClonesPrint());} catch: { CheckAndReport("ListHelperTests","!!! EXCEPTION IN CheckClonesPrint() !!!", false); } return false; }
+test bool TryCheckClonesBackAndForth(){ try{ return CheckAndReport("ListHelperTests","CheckClonesBackAndForth()", CheckClonesBackAndForth());} catch: { CheckAndReport("ListHelperTests","!!! EXCEPTION IN CheckClonesBackAndForth() !!!", false); } return false; }
+test bool TryCheckListTrimming(){ try{ return CheckAndReport("ListHelperTests","CheckListTrimming()", CheckListTrimming());} catch: { CheckAndReport("ListHelperTests","!!! EXCEPTION IN CheckListTrimming() !!!", false); } return false; }
+test bool TryCheckListTrimmingRemoveEmptyLines(){ try{ return CheckAndReport("ListHelperTests","CheckListTrimmingRemoveEmptyLines()", CheckListTrimmingRemoveEmptyLines());} catch: { CheckAndReport("ListHelperTests","!!! EXCEPTION IN CheckListTrimmingRemoveEmptyLines() !!!", false); } return false; }
+test bool TryTestListJoin(){ try{ return CheckAndReport("ListHelperTests","TestListJoin()", TestListJoin());} catch: { CheckAndReport("ListHelperTests","!!! EXCEPTION IN TestListJoin() !!!", false); } return false; }
+test bool TryTestTokenizedListTrimming(){ try{ return CheckAndReport("ListHelperTests","TestTokenizedListTrimming()", TestTokenizedListTrimming());} catch: { CheckAndReport("ListHelperTests","!!! EXCEPTION IN TestTokenizedListTrimming() !!!", false); } return false; }
+test bool TryTestPadding(){ try{ return CheckAndReport("ListHelperTests","TestPadding()", TestPadding());} catch: { CheckAndReport("ListHelperTests","!!! EXCEPTION IN TestPadding() !!!", false); } return false; }
+test bool TryBelowLower(){ try{ return CheckAndReport("MathHelpersTest","BelowLower()", BelowLower());} catch: { CheckAndReport("MathHelpersTest","!!! EXCEPTION IN BelowLower() !!!", false); } return false; }
+test bool TryAboveUpper(){ try{ return CheckAndReport("MathHelpersTest","AboveUpper()", AboveUpper());} catch: { CheckAndReport("MathHelpersTest","!!! EXCEPTION IN AboveUpper() !!!", false); } return false; }
+test bool TryNormal(){ try{ return CheckAndReport("MathHelpersTest","Normal()", Normal());} catch: { CheckAndReport("MathHelpersTest","!!! EXCEPTION IN Normal() !!!", false); } return false; }
+test bool TryInLimitsBelow(){ try{ return CheckAndReport("MathHelpersTest","InLimitsBelow()", InLimitsBelow());} catch: { CheckAndReport("MathHelpersTest","!!! EXCEPTION IN InLimitsBelow() !!!", false); } return false; }
+test bool TryInLimitsAbove(){ try{ return CheckAndReport("MathHelpersTest","InLimitsAbove()", InLimitsAbove());} catch: { CheckAndReport("MathHelpersTest","!!! EXCEPTION IN InLimitsAbove() !!!", false); } return false; }
+test bool TryInLimitsOk(){ try{ return CheckAndReport("MathHelpersTest","InLimitsOk()", InLimitsOk());} catch: { CheckAndReport("MathHelpersTest","!!! EXCEPTION IN InLimitsOk() !!!", false); } return false; }
+test bool TryDistributionOk(){ try{ return CheckAndReport("MathHelpersTest","DistributionOk()", DistributionOk());} catch: { CheckAndReport("MathHelpersTest","!!! EXCEPTION IN DistributionOk() !!!", false); } return false; }
+test bool TryDistributionRounding(){ try{ return CheckAndReport("MathHelpersTest","DistributionRounding()", DistributionRounding());} catch: { CheckAndReport("MathHelpersTest","!!! EXCEPTION IN DistributionRounding() !!!", false); } return false; }
+test bool TryFractionTest(){ try{ return CheckAndReport("MathHelpersTest","FractionTest()", FractionTest());} catch: { CheckAndReport("MathHelpersTest","!!! EXCEPTION IN FractionTest() !!!", false); } return false; }
+test bool TryPercentageTest(){ try{ return CheckAndReport("MathHelpersTest","PercentageTest()", PercentageTest());} catch: { CheckAndReport("MathHelpersTest","!!! EXCEPTION IN PercentageTest() !!!", false); } return false; }
+test bool TryTestVolumePlusPlus(){ try{ return CheckAndReport("SigScoresTester","TestVolumePlusPlus()", TestVolumePlusPlus());} catch: { CheckAndReport("SigScoresTester","!!! EXCEPTION IN TestVolumePlusPlus() !!!", false); } return false; }
+test bool TryTestVolumePlus(){ try{ return CheckAndReport("SigScoresTester","TestVolumePlus()", TestVolumePlus());} catch: { CheckAndReport("SigScoresTester","!!! EXCEPTION IN TestVolumePlus() !!!", false); } return false; }
+test bool TryTestVolumeNeutral(){ try{ return CheckAndReport("SigScoresTester","TestVolumeNeutral()", TestVolumeNeutral());} catch: { CheckAndReport("SigScoresTester","!!! EXCEPTION IN TestVolumeNeutral() !!!", false); } return false; }
+test bool TryTestVolumeMinus(){ try{ return CheckAndReport("SigScoresTester","TestVolumeMinus()", TestVolumeMinus());} catch: { CheckAndReport("SigScoresTester","!!! EXCEPTION IN TestVolumeMinus() !!!", false); } return false; }
+test bool TryTestVolumeMinusMinus(){ try{ return CheckAndReport("SigScoresTester","TestVolumeMinusMinus()", TestVolumeMinusMinus());} catch: { CheckAndReport("SigScoresTester","!!! EXCEPTION IN TestVolumeMinusMinus() !!!", false); } return false; }
+test bool TryTestVeryHigh(){ try{ return CheckAndReport("SigScoresTester","TestVeryHigh()", TestVeryHigh());} catch: { CheckAndReport("SigScoresTester","!!! EXCEPTION IN TestVeryHigh() !!!", false); } return false; }
+test bool TryTestHigh(){ try{ return CheckAndReport("SigScoresTester","TestHigh()", TestHigh());} catch: { CheckAndReport("SigScoresTester","!!! EXCEPTION IN TestHigh() !!!", false); } return false; }
+test bool TryTestMedium(){ try{ return CheckAndReport("SigScoresTester","TestMedium()", TestMedium());} catch: { CheckAndReport("SigScoresTester","!!! EXCEPTION IN TestMedium() !!!", false); } return false; }
+test bool TryTestLow(){ try{ return CheckAndReport("SigScoresTester","TestLow()", TestLow());} catch: { CheckAndReport("SigScoresTester","!!! EXCEPTION IN TestLow() !!!", false); } return false; }
+test bool TryTestDistributionPlusPlus(){ try{ return CheckAndReport("SigScoresTester","TestDistributionPlusPlus()", TestDistributionPlusPlus());} catch: { CheckAndReport("SigScoresTester","!!! EXCEPTION IN TestDistributionPlusPlus() !!!", false); } return false; }
+test bool TryTestDistributionPlus(){ try{ return CheckAndReport("SigScoresTester","TestDistributionPlus()", TestDistributionPlus());} catch: { CheckAndReport("SigScoresTester","!!! EXCEPTION IN TestDistributionPlus() !!!", false); } return false; }
+test bool TryTestDistributionNeutral(){ try{ return CheckAndReport("SigScoresTester","TestDistributionNeutral()", TestDistributionNeutral());} catch: { CheckAndReport("SigScoresTester","!!! EXCEPTION IN TestDistributionNeutral() !!!", false); } return false; }
+test bool TryTestDistributionMinus(){ try{ return CheckAndReport("SigScoresTester","TestDistributionMinus()", TestDistributionMinus());} catch: { CheckAndReport("SigScoresTester","!!! EXCEPTION IN TestDistributionMinus() !!!", false); } return false; }
+test bool TryTestDistributionMinusMinus(){ try{ return CheckAndReport("SigScoresTester","TestDistributionMinusMinus()", TestDistributionMinusMinus());} catch: { CheckAndReport("SigScoresTester","!!! EXCEPTION IN TestDistributionMinusMinus() !!!", false); } return false; }
+test bool TryTestSigRatingPlusPlus(){ try{ return CheckAndReport("SigScoresTester","TestSigRatingPlusPlus()", TestSigRatingPlusPlus());} catch: { CheckAndReport("SigScoresTester","!!! EXCEPTION IN TestSigRatingPlusPlus() !!!", false); } return false; }
+test bool TryTestSigRatingPlus(){ try{ return CheckAndReport("SigScoresTester","TestSigRatingPlus()", TestSigRatingPlus());} catch: { CheckAndReport("SigScoresTester","!!! EXCEPTION IN TestSigRatingPlus() !!!", false); } return false; }
+test bool TryTestSigRatingNeutral(){ try{ return CheckAndReport("SigScoresTester","TestSigRatingNeutral()", TestSigRatingNeutral());} catch: { CheckAndReport("SigScoresTester","!!! EXCEPTION IN TestSigRatingNeutral() !!!", false); } return false; }
+test bool TryTestSigRatingMinus(){ try{ return CheckAndReport("SigScoresTester","TestSigRatingMinus()", TestSigRatingMinus());} catch: { CheckAndReport("SigScoresTester","!!! EXCEPTION IN TestSigRatingMinus() !!!", false); } return false; }
+test bool TryTestSigRatingMinusMinus(){ try{ return CheckAndReport("SigScoresTester","TestSigRatingMinusMinus()", TestSigRatingMinusMinus());} catch: { CheckAndReport("SigScoresTester","!!! EXCEPTION IN TestSigRatingMinusMinus() !!!", false); } return false; }
+test bool TryScanColumnJava(){ try{ return CheckAndReport("SlocModuleTester","ScanColumnJava()", ScanColumnJava());} catch: { CheckAndReport("SlocModuleTester","!!! EXCEPTION IN ScanColumnJava() !!!", false); } return false; }
+test bool TryScanWhiteLineJavaFile(){ try{ return CheckAndReport("SlocModuleTester","ScanWhiteLineJavaFile()", ScanWhiteLineJavaFile());} catch: { CheckAndReport("SlocModuleTester","!!! EXCEPTION IN ScanWhiteLineJavaFile() !!!", false); } return false; }
+test bool TryScanSourceCodeLines(){ try{ return CheckAndReport("SlocModuleTester","ScanSourceCodeLines()", ScanSourceCodeLines());} catch: { CheckAndReport("SlocModuleTester","!!! EXCEPTION IN ScanSourceCodeLines() !!!", false); } return false; }
+test bool TryIndentTester(){ try{ return CheckAndReport("StringHelpersTester","IndentTester()", IndentTester());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN IndentTester() !!!", false); } return false; }
+test bool TryTabIndent(){ try{ return CheckAndReport("StringHelpersTester","TabIndent()", TabIndent());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN TabIndent() !!!", false); } return false; }
+test bool TryLineCountOfTwo(){ try{ return CheckAndReport("StringHelpersTester","LineCountOfTwo()", LineCountOfTwo());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN LineCountOfTwo() !!!", false); } return false; }
+test bool TryLineCountOfThree(){ try{ return CheckAndReport("StringHelpersTester","LineCountOfThree()", LineCountOfThree());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN LineCountOfThree() !!!", false); } return false; }
+test bool TryTestEncoding(){ try{ return CheckAndReport("StringHelpersTester","TestEncoding()", TestEncoding());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN TestEncoding() !!!", false); } return false; }
+test bool TryTestDecoding(){ try{ return CheckAndReport("StringHelpersTester","TestDecoding()", TestDecoding());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN TestDecoding() !!!", false); } return false; }
+test bool TryTestTrimAssumption(){ try{ return CheckAndReport("StringHelpersTester","TestTrimAssumption()", TestTrimAssumption());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN TestTrimAssumption() !!!", false); } return false; }
+test bool TryTestStringTokenFirst(){ try{ return CheckAndReport("StringHelpersTester","TestStringTokenFirst()", TestStringTokenFirst());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN TestStringTokenFirst() !!!", false); } return false; }
+test bool TryTestStringTokenLast(){ try{ return CheckAndReport("StringHelpersTester","TestStringTokenLast()", TestStringTokenLast());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN TestStringTokenLast() !!!", false); } return false; }
+test bool TryTestStringToken(){ try{ return CheckAndReport("StringHelpersTester","TestStringToken()", TestStringToken());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN TestStringToken() !!!", false); } return false; }
+test bool TryTestStringTokenOverLoad(){ try{ return CheckAndReport("StringHelpersTester","TestStringTokenOverLoad()", TestStringTokenOverLoad());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN TestStringTokenOverLoad() !!!", false); } return false; }
+test bool TryTestStringTokenOverLoad(){ try{ return CheckAndReport("StringHelpersTester","TestStringTokenOverLoad()", TestStringTokenOverLoad());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN TestStringTokenOverLoad() !!!", false); } return false; }
+test bool TryTestLargerStringToken(){ try{ return CheckAndReport("StringHelpersTester","TestLargerStringToken()", TestLargerStringToken());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN TestLargerStringToken() !!!", false); } return false; }
+test bool TryTestSubStringEquivalence(){ try{ return CheckAndReport("StringHelpersTester","TestSubStringEquivalence()", TestSubStringEquivalence());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN TestSubStringEquivalence() !!!", false); } return false; }
+test bool TryTestSubStringInt(){ try{ return CheckAndReport("StringHelpersTester","TestSubStringInt()", TestSubStringInt());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN TestSubStringInt() !!!", false); } return false; }
+test bool TryTestClipString(){ try{ return CheckAndReport("StringHelpersTester","TestClipString()", TestClipString());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN TestClipString() !!!", false); } return false; }
+test bool TryTestClipStringWithSplit(){ try{ return CheckAndReport("StringHelpersTester","TestClipStringWithSplit()", TestClipStringWithSplit());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN TestClipStringWithSplit() !!!", false); } return false; }
+test bool TryExpectEqualIntTest(){ try{ return CheckAndReport("TestHelpersTester","ExpectEqualIntTest()", ExpectEqualIntTest());} catch: { CheckAndReport("TestHelpersTester","!!! EXCEPTION IN ExpectEqualIntTest() !!!", false); } return false; }
+test bool TryExpectFalseIsEqualIntTest(){ try{ return CheckAndReport("TestHelpersTester","ExpectFalseIsEqualIntTest()", ExpectFalseIsEqualIntTest());} catch: { CheckAndReport("TestHelpersTester","!!! EXCEPTION IN ExpectFalseIsEqualIntTest() !!!", false); } return false; }
+test bool TryExpectNotEqualintTest(){ try{ return CheckAndReport("TestHelpersTester","ExpectNotEqualintTest()", ExpectNotEqualintTest());} catch: { CheckAndReport("TestHelpersTester","!!! EXCEPTION IN ExpectNotEqualintTest() !!!", false); } return false; }
+test bool TryExpectFalseIsNotEqualintTest(){ try{ return CheckAndReport("TestHelpersTester","ExpectFalseIsNotEqualintTest()", ExpectFalseIsNotEqualintTest());} catch: { CheckAndReport("TestHelpersTester","!!! EXCEPTION IN ExpectFalseIsNotEqualintTest() !!!", false); } return false; }
+test bool TryShowMeARedCell(){ try{ return CheckAndReport("TestHelpersTester","ShowMeARedCell()", ShowMeARedCell());} catch: { CheckAndReport("TestHelpersTester","!!! EXCEPTION IN ShowMeARedCell() !!!", false); } return false; }
+test bool TryShowMeAGreenCell(){ try{ return CheckAndReport("TestHelpersTester","ShowMeAGreenCell()", ShowMeAGreenCell());} catch: { CheckAndReport("TestHelpersTester","!!! EXCEPTION IN ShowMeAGreenCell() !!!", false); } return false; }
+test bool TryCheckColourCompare(){ try{ return CheckAndReport("TestHelpersTester","CheckColourCompare()", CheckColourCompare());} catch: { CheckAndReport("TestHelpersTester","!!! EXCEPTION IN CheckColourCompare() !!!", false); } return false; }
+test bool TryExpectTrueTestTrue(){ try{ return CheckAndReport("TestHelpersTester","ExpectTrueTestTrue()", ExpectTrueTestTrue());} catch: { CheckAndReport("TestHelpersTester","!!! EXCEPTION IN ExpectTrueTestTrue() !!!", false); } return false; }
+test bool TryExpectTrueTestFalse(){ try{ return CheckAndReport("TestHelpersTester","ExpectTrueTestFalse()", ExpectTrueTestFalse());} catch: { CheckAndReport("TestHelpersTester","!!! EXCEPTION IN ExpectTrueTestFalse() !!!", false); } return false; }
+test bool TryExpectFalseTestTrue(){ try{ return CheckAndReport("TestHelpersTester","ExpectFalseTestTrue()", ExpectFalseTestTrue());} catch: { CheckAndReport("TestHelpersTester","!!! EXCEPTION IN ExpectFalseTestTrue() !!!", false); } return false; }
+test bool TryExpectFalseTestTrue(){ try{ return CheckAndReport("TestHelpersTester","ExpectFalseTestTrue()", ExpectFalseTestTrue());} catch: { CheckAndReport("TestHelpersTester","!!! EXCEPTION IN ExpectFalseTestTrue() !!!", false); } return false; }
+test bool TryTestEqualFiles(){ try{ return CheckAndReport("TestHelpersTester","TestEqualFiles()", TestEqualFiles());} catch: { CheckAndReport("TestHelpersTester","!!! EXCEPTION IN TestEqualFiles() !!!", false); } return false; }
+test bool TryTestEqualFiles(){ try{ return CheckAndReport("TestHelpersTester","TestEqualFiles()", TestEqualFiles());} catch: { CheckAndReport("TestHelpersTester","!!! EXCEPTION IN TestEqualFiles() !!!", false); } return false; }
+test bool TryTestUnEqualFiles(){ try{ return CheckAndReport("TestHelpersTester","TestUnEqualFiles()", TestUnEqualFiles());} catch: { CheckAndReport("TestHelpersTester","!!! EXCEPTION IN TestUnEqualFiles() !!!", false); } return false; }
+bool RunAllTests()
+{
+InitializeTestReport();
+bool Result = true;
+if(false == TryTestAssumeIntToNumConversion()){ Result = false;}
+if(false == TryTestAssumeRounding()){ Result = false;}
+if(false == TryTestAssumeJoinList()){ Result = false;}
+if(false == TryTestAssumeForLoop()){ Result = false;}
+if(false == TryTestIntegerDivision()){ Result = false;}
+if(false == TryAssumeIteratorIncrementing()){ Result = false;}
+if(false == TryDoWithTry()){ Result = false;}
+if(false == TryTestTernaryOperator()){ Result = false;}
+if(false == TryTestInfixOperatorAnd()){ Result = false;}
+if(false == TryTestInfixOperatorOr()){ Result = false;}
+if(false == TryTestMergingOverlappedClones()){ Result = false;}
+if(false == TryTestOverlapFunction()){ Result = false;}
+if(false == TryTestMergingClones()){ Result = false;}
+if(false == TryTestSingleClone()){ Result = false;}
+if(false == TryTestDoubleClone()){ Result = false;}
+if(false == TryTestExtendedClone()){ Result = false;}
+if(false == TryTestDualOffsetClone()){ Result = false;}
+if(false == TryTestDualDifferentClone()){ Result = false;}
+if(false == TryTestBraceCase()){ Result = false;}
+if(false == TryTestNoClone()){ Result = false;}
+if(false == TryTestMaxOfList()){ Result = false;}
+if(false == TryFindFilesInDirectory()){ Result = false;}
+if(false == TryFindFilesInEmptyDir()){ Result = false;}
+if(false == TryCheckFindNameInDir()){ Result = false;}
+if(false == TryCheckFindNameWithourDir()){ Result = false;}
+if(false == TryTestIndexLines()){ Result = false;}
+if(false == TryTestStrippingIndexedInlineComments()){ Result = false;}
+if(false == TryTestStrippingMultilineComments()){ Result = false;}
+if(false == TryTestStrippingExtension()){ Result = false;}
+if(false == TryTestSplittingIndexes()){ Result = false;}
+if(false == TryTestSplittingContent()){ Result = false;}
+if(false == TryTestNormalizingFile()){ Result = false;}
+if(false == TryCheckRed()){ Result = false;}
+if(false == TryCheckGreen()){ Result = false;}
+if(false == TryCheckYellow()){ Result = false;}
+if(false == TryTestFullClassPath()){ Result = false;}
+if(false == TryTestClassName()){ Result = false;}
+if(false == TryTestMethodSize()){ Result = false;}
+if(false == TryTestMethodBody()){ Result = false;}
+if(false == TryTestLineCountForFile()){ Result = false;}
+if(false == TryExpectSingleLineComment()){ Result = false;}
+if(false == TryExpectSingleLineStreamComment()){ Result = false;}
+if(false == TryCheckBlockCommentRemoval()){ Result = false;}
+if(false == TryCheckBlockCommentMultiLine()){ Result = false;}
+if(false == TryCheckAbstractMethodSize()){ Result = false;}
+if(false == TryCheckValid()){ Result = false;}
+if(false == TryCheckLowBound()){ Result = false;}
+if(false == TryCheckTopBound()){ Result = false;}
+if(false == TryCheckCenterItem()){ Result = false;}
+if(false == TryCheckListPrint()){ Result = false;}
+if(false == TryCheckEmptyListPrint()){ Result = false;}
+if(false == TryCheckBackAndForth()){ Result = false;}
+if(false == TryCheckClonesPrint()){ Result = false;}
+if(false == TryCheckClonesBackAndForth()){ Result = false;}
+if(false == TryCheckListTrimming()){ Result = false;}
+if(false == TryCheckListTrimmingRemoveEmptyLines()){ Result = false;}
+if(false == TryTestListJoin()){ Result = false;}
+if(false == TryTestTokenizedListTrimming()){ Result = false;}
+if(false == TryTestPadding()){ Result = false;}
+if(false == TryBelowLower()){ Result = false;}
+if(false == TryAboveUpper()){ Result = false;}
+if(false == TryNormal()){ Result = false;}
+if(false == TryInLimitsBelow()){ Result = false;}
+if(false == TryInLimitsAbove()){ Result = false;}
+if(false == TryInLimitsOk()){ Result = false;}
+if(false == TryDistributionOk()){ Result = false;}
+if(false == TryDistributionRounding()){ Result = false;}
+if(false == TryFractionTest()){ Result = false;}
+if(false == TryPercentageTest()){ Result = false;}
+if(false == TryTestVolumePlusPlus()){ Result = false;}
+if(false == TryTestVolumePlus()){ Result = false;}
+if(false == TryTestVolumeNeutral()){ Result = false;}
+if(false == TryTestVolumeMinus()){ Result = false;}
+if(false == TryTestVolumeMinusMinus()){ Result = false;}
+if(false == TryTestVeryHigh()){ Result = false;}
+if(false == TryTestHigh()){ Result = false;}
+if(false == TryTestMedium()){ Result = false;}
+if(false == TryTestLow()){ Result = false;}
+if(false == TryTestDistributionPlusPlus()){ Result = false;}
+if(false == TryTestDistributionPlus()){ Result = false;}
+if(false == TryTestDistributionNeutral()){ Result = false;}
+if(false == TryTestDistributionMinus()){ Result = false;}
+if(false == TryTestDistributionMinusMinus()){ Result = false;}
+if(false == TryTestSigRatingPlusPlus()){ Result = false;}
+if(false == TryTestSigRatingPlus()){ Result = false;}
+if(false == TryTestSigRatingNeutral()){ Result = false;}
+if(false == TryTestSigRatingMinus()){ Result = false;}
+if(false == TryTestSigRatingMinusMinus()){ Result = false;}
+if(false == TryScanColumnJava()){ Result = false;}
+if(false == TryScanWhiteLineJavaFile()){ Result = false;}
+if(false == TryScanSourceCodeLines()){ Result = false;}
+if(false == TryIndentTester()){ Result = false;}
+if(false == TryTabIndent()){ Result = false;}
+if(false == TryLineCountOfTwo()){ Result = false;}
+if(false == TryLineCountOfThree()){ Result = false;}
+if(false == TryTestEncoding()){ Result = false;}
+if(false == TryTestDecoding()){ Result = false;}
+if(false == TryTestTrimAssumption()){ Result = false;}
+if(false == TryTestStringTokenFirst()){ Result = false;}
+if(false == TryTestStringTokenLast()){ Result = false;}
+if(false == TryTestStringToken()){ Result = false;}
+if(false == TryTestStringTokenOverLoad()){ Result = false;}
+if(false == TryTestStringTokenOverLoad()){ Result = false;}
+if(false == TryTestLargerStringToken()){ Result = false;}
+if(false == TryTestSubStringEquivalence()){ Result = false;}
+if(false == TryTestSubStringInt()){ Result = false;}
+if(false == TryTestClipString()){ Result = false;}
+if(false == TryTestClipStringWithSplit()){ Result = false;}
+if(false == TryExpectEqualIntTest()){ Result = false;}
+if(false == TryExpectFalseIsEqualIntTest()){ Result = false;}
+if(false == TryExpectNotEqualintTest()){ Result = false;}
+if(false == TryExpectFalseIsNotEqualintTest()){ Result = false;}
+if(false == TryShowMeARedCell()){ Result = false;}
+if(false == TryShowMeAGreenCell()){ Result = false;}
+if(false == TryCheckColourCompare()){ Result = false;}
+if(false == TryExpectTrueTestTrue()){ Result = false;}
+if(false == TryExpectTrueTestFalse()){ Result = false;}
+if(false == TryExpectFalseTestTrue()){ Result = false;}
+if(false == TryExpectFalseTestTrue()){ Result = false;}
+if(false == TryTestEqualFiles()){ Result = false;}
+if(false == TryTestEqualFiles()){ Result = false;}
+if(false == TryTestUnEqualFiles()){ Result = false;}
+FinalizeTestReport();
+return Result;
+}
+module Quotes
+import IO;
+import List;
+import \util::Math;
+public list[str] WaitingQuotes = [
+"If A equals success, then the formula is A equals X plus Y plus Z. X is work. Y is play. Z is keep your mouth shut.",
+"No amount of experimentation can ever prove me right; a single experiment can prove me wrong.",
+"Of all the communities available to us there is not one I would want to devote myself to, except for the society of the true searchers, which has very few living members at any time.",
+"The wirless telegraph is not difficult to understand. The ordinary telegraph is like a very long cat. You pull the tail in New York, and it meows in Los Angeles. The wireless is the same, only without the cat.",
+"I do not believe in the immortality of the individual, and I consider ethics to be an exclusively human concern without any superhuman authority behind it.",
+"If I had only known, I would have been a locksmith.",
+"So long as there are men there will be wars.",
+"Technological progress is like an axe in the hands of a pathological criminal.",
+"Truth is what stands the test of experience.",
+"Two things are infinite: the universe and human stupidity; and I\'m not sure about the universe.",
+"He who can no longer pause to wonder and stand rapt in awe, is as good as dead his eyes are closed.",
+"How I wish that somewhere there existed an island for those who are wise and of goodwill In such a place even I would be an ardent patriot.",
+"The American lives even more for his goals, for the future, than the European. Life for him is always becoming, never being.",
+"The point is to develop the childlike inclination for play and the childlike desire for recognition and to guide the child over to important fields for society. Such a school demands from the teacher that he be a kind of artist in his province.",
+"There are only two ways to live your life. One is as though nothing is a miracle. The other is as though everything is a miracle.",
+"We still do not know one-thousandth of one percent of what nature has revealed to us.",
+"We [Jews] have no other means of self-defense than our solidarity",
+"Education is what remains after one has forgotten everything one learned in school.",
+"He who joyfully marches to music in rank and file has already earned my contempt. He has been given a large brain by mistake, since for him the spinal cord would fully suffice. This disgrace to civilization should be done away with at once. Heroism at command, senseless brutality, and all the loathsome nonsense that goes by the name of patriotism, how violently I hate all this, how despicable and ignoble war is I would rather be torn to shreds than be part of so base an action It is my conviction that killing under the cloak of war is nothing but an act of murder.",
+"Why is it that nobody understands me and everybody likes me",
+"Common sense is that layer of prejudices which we acquire before we are sixteen.",
+"Gravitation cannot be held responsible for people falling in love.",
+"Generations to come will scarce believe that such a one as this ever in flesh and blood walked upon this earth. (said of Mahatma Gandhi)",
+"Never regard study as a duty but as an enviable opportunity to learn to know the liberating influence of beauty in the realm of the spirit for your own personal joy and to the profit of the community to which your later works belong.",
+"To know that what is impenetrable to us really exists, manifesting itself as the highest wisdom and the most radiant beauty, which our dull facilities can comprehend only in the most primitive forms--this knowledge, this feeling, is at the center of true religiousness. In this sense, and in this sense only, I belong to the ranks of the devoutly religious men.",
+"Try not to become a man of success but rather try to become a man of value.",
+"The strength of the Constitution lies entirely in the determination of each citizen to defend it. Only if every single citizen feels duty bound to do his share in this defense are the constitutional rights secure.",
+"If most of us are ashamed of shabby clothes and shoddy furniture, let us be more ashamed of shabby ideas and shoddy philosophies.",
+"The secret to creativity is knowing how to hide your sources.",
+"The human mind is not capable of grasping the Universe. We are like a little child entering a huge library. The walls are covered to the ceilings with books in many different tongues. The child knows that someone must have written these books. It does not know who or how. It does not understand the languages in which they are written. But the child notes a definite plan in the arrangement of the books - a mysterious order which it does not comprehend, but only dimly suspects.",
+"Concern for man himself and his fate must always form the chief interest of all technical endeavors, concern for the great unsolved problems of the organization of labor and the distribution of goods--in order that the creations of our mind shall be a blessing and not a curse to mankind. Never forget this in the midst of your diagrams and equations.",
+"Great spirits have always encountered violent opposition from mediocre minds.",
+"My life is a simple thing that would interest no one. It is a known fact that I was born and that is all that is necessary.",
+"I don\'t know how man will fight World War III, but I do know how they will fight World War IV with sticks and stones.",
+"Ego = 1/ Knowledge: More the knowledge lesser the ego, lesser the knowledge more the ego.",
+"As long as there are sovereign nations possessing great power, war is inevitable.",
+"God does not care about our mathematical difficulties. He integrates empirically.",
+"If a cluttered desk signs a cluttered mind, of what, then, is an empty desk a sign",
+"I like neither new clothes nor new kinds of food.",
+"I never came upon any of my discoveries through the process of rational thinking.",
+"If people are good only because they fear punishment, and hope for reward, then we are a sorry lot indeed.",
+"At any rate, I am convinced that He God does not play dice.",
+"Before God we are all equally wise - and equally foolish.",
+"Generations to come will find it difficult to believe that a man such as Gandhi ever walked the face of this earth.",
+"More and more I come to value charity and love of one\'s fellow being above everything else... All our lauded technological progress--our very civilization--is like the axe in the hand of the pathological criminal.",
+"No problem can be solved from the same level of consciousness that created it.",
+"Now he has departed from this strange world a little ahead of me. That means nothing. People like us, who believe in physics, know that the distinction between past, present, and future is only a stubbornly persistent illusion.",
+"What really interests me is whether God had any choice in the creation of the world.",
+"When you are courting a nice girl an hour seems like a second. When you sit on a red-hot cinder a second seems like an hour. That\'s relativity.",
+"You cannot simultaneously prevent and prepare for war.",
+"I fear the day when technology overlaps with our humanity. The world will have a generation of idiots”.",
+"If you want to live a happy life, tie it to a goal. Not to people or things.",
+"Try not to become a man of success, but rather try to become a man of value.",
+"It has become appallingly obvious that our technology has exceeded our humanity.",
+"The most beautiful thing we can experience is the mysterious.",
+"We cannot solve our problems with the same thinking we used when we created them.",
+"Do not worry about your difficulties in Mathematics. I can assure you mine are still greater.",
+"Never regard study as a duty, but as the enviable opportunity to learn to know the liberating influence of beauty in the realm of the spirit for your own personal joy and to the profit of the community to which your later work belongs.",
+"Reality is merely an illusion, albeit a very persistent one.",
+"Make everything as simple as possible, but not simpler.",
+"Only a life lived for others is a life worthwhile.",
+"Common sense is the collection of prejudices acquired by age eighteen.",
+"Science without religion is lame, religion without science is blind.",
+"Only one who devotes himself to a cause with his whole strength and soul can be a true master. For this reason mastery demands all of a person.",
+"Emc (Energy equals mass times the square of the speed of light.) Original statement If a body gives off the energy L in the form of radiation, its mass diminshes by Lc.",
+"Creating a new theory is not like destroying an old barn and erecting a skyscraper in its place. It is rather like climbing a mountain, gaining new and wider views, discovering unexpected connections between our starting points and its rich environment. But the point from which we started out still exists and can be seen, although it appears smaller and forms a tiny part of our broad view gained by the mastery of the obstacles on our adventurous way up.",
+"If A is success in life, then A equals x plus y plus z. Work is x y is play and z is keeping your mouth shut.",
+"If my theory of relativity proves to be correct, Germany will claim me a German, and France will claim me a citizen of the world. However, if it proves wrong, France will say I\'m a German, and Germany will say that I\'m a jew.",
+"Imagination is more important than knowledge.",
+"Make everything as simple as possible, but not simpler. A man should look for what is, and not for what he thinks should be. We cannot solve our problems with the same thinking we used when we created them. A question that sometimes drives me hazy: am I or are the others crazy? Any intelligent fool can make things bigger and more complex... It takes a touch of genius - and a lot of courage to move in the opposite direction. All religions, arts and sciences are branches of the same tree. It\'s not that I\'m so smart, it\'s just that I stay with problems longer.",
+"A hundred times every day I remind myself that my inner and outer life depends on the labors of other men, living and dead, and that I must exert myself in order to give in the measure as I have received and am still receiving.",
+"I am absolutely convinced that no wealth in the world can help humanity forward, even in the hands of the most devoted worker. The example of great and pure individuals is the only thing that can lead us to noble thoughts and deeds. Money only appeals to selfishness and irresistibly invites abuse. Can anyone imagine Moses, Jesus or Ghandi armed with the money-bags of Carnegie",
+"Put your hand on a hot stove for a minute, and it seems like an hour. Sit with a pretty girl for an hour, and it seems like a minute. THAT\'S relativity.",
+"The most beautiful experience we can have is the mysterious - the fundamental emotion which stands at the cradle of true art and true science.",
+"The most beautiful and most profound emotion we can experience is the sensation of the mystical. It is the sower of all true science. So to whom this emotion is a stranger, who can no longer wonder and stand rapt in awe, is as good as dead. To know that which is impenetretrable to us really exists, manifesting itself as the highest wisdom and the most radiant beauty which our dull faculties can comprehend only in their primitive forms-this knowledge, this feeling is at the center of true religiousness.",
+"I don\'t know what kind of weapons will be used in the third world war, assuming there will be a third world war. But I can tell you what the fourth world war will be fought with -- stone clubs.",
+"In the middle of difficulty lies opportunity.",
+"The difference between stupidity and genius is that genius has its limits.",
+"The only real valuable thing is intuition.",
+"Gravitation can not be held responsible for people falling in love.",
+"If the facts don\'t fit the theory, change the facts.",
+"It is characteristic of the military mentality that nonhuman factors (atom bombs, strategic bases, weapons of all sorts, the possession of raw materials, etc) are held essential, while the human being, his desires, and thoughts - in short, the psychological factors - are considered as unimportant and secondary...The individual is degraded...to \"human materiel\".",
+"There comes a time when the mind takes a higher plane of knowledge but can never prove how it got there.",
+"You see, wire telegraph is a kind of a very, very long cat. You pull his tail in New York and his head is meowing in Los Angeles. Do you understand this And radio operates exactly the same way you send signals here, they receive them there. The only difference is that there is no cat.",
+"If my theory of relativity is proven successful, Germany will claim me as a German and France will declare that I am a citizen of the world.",
+"A theory can be proved by experiment but no path leads from experiment to the birth of a theory.",
+"After a certain high level of technical skill is achieved, science and art tend to coalesce in esthetics, plasticity, and form. The greatest sceintists are always artists as well.",
+"God may be subtle, but He isn\'t mean.",
+"My religion consists of a humble admiration of the unlimitable superior who reveals Himself in the slight details we are able to perceive with our frail and feeble minds. That deeply emotional conviction of the presence of a superior reasoning power, which is revealed in the incomprehensible universe, forms my idea of God",
+"Of what significance is one\'s one existence, one is basically unaware. What does a fish know about the water in which he swims all his life The bitter and the sweet come from outside. The hard from within, from one\'s own efforts. For the most part I do what my own nature drives me to do. It is embarrassing to earn such respect and love for it.",
+"The first and most important necessity is the creation of a modus vivendi with the Arab people.",
+"The ideals which have always shone before me and filled me with the joy of living are goodness, beauty, and truth.",
+"The most incomprehensible thing about the world is that it is comprehensible.",
+"The tragedy of life is what dies in the hearts and souls of people while they live.",
+"When I examine myself and my methods of thought, I come to the conclusion that the gift of fantasy has meant more to me than any talent for abstract, positive thinking.",
+"Only two things are infinite, the universe and human stupidity, and I\'m not sure about the former.",
+"Imagination is more important than knowledge...",
+"Computers are incredibly fast, accurate, and stupid. Human beings are incredibly slow, inaccurate, and brilliant. Together they are powerful beyond imagination.",
+"The problems that exist in the world today cannot be solved by the level of thinking that created them.",
+"The true measure of a man is the degree to which he has managed to subjugate his ego.",
+"...One of the strongest motives that lead men to art and science is escape from everyday life with its painful crudity and hopeless dreariness, from the fetters of one\'s own ever-shifting desires. A finely tempered nature longs to escape from the personal life into the world of objective perception and thought.",
+"A storm broke loose in my mind.",
+"Few are those who see with their own eyes and feel with their own hearts.",
+"I have become rather like King Midas, except that everything turns not into gold but into a circus.",
+"The aim (of education) must be the training of independently acting and thinking individuals who, however, can see in the service to the community their highest life achievement.",
+"We still do not know one thousandth of one percent of what nature has revealed to us.",
+"Intellectual growth should commence at birth and cease only at death.",
+"A human being is part of a whole, called by us the \'Universe,\' a part limited in time and space. He experiences himself, his thoughts and feelings, as something separated from the rest--a kind of optical delusion of his consciousness. This delusion is a kind of prison for us, restricting us to our personal desires and to affection for a few persons nearest us. Our task must be to free ourselves from this prison by widening our circles of compassion to embrace all living creatures and the whole of nature in its beauty.",
+"A human being is part of a whole, called by us the Universe, a part limited in time and space. He experiences himself, his thoughts and feelings, as something separated from the rest--a kind of optical delusion of his consciousness. This delusion is a kind of prison for us, restricting us to our personal desires and to affection for a few persons nearest us. Our task must be to free ourselves from this prison by widening our circles of compassion to embrace all living creatures and the whole of nature in its beauty.",
+"A photograph never grows old. You and I change, people change all through the months and years, but a photograph always remains the same. How nice to look at a photograph of mother or father taken many years ago. You see them as you remember them. But as people live on, they change completely. That is why I think a photograph can be kind.",
+"An empty stomach is not a good political advisor.",
+"Any intelligent fool can make things bigger and more complex ... it takes a touch of genius -- and a lot of courage -- to move in the opposite direction.",
+"Insanity doing the same thing over and over again and expecting different results.",
+"Life is like riding a bicycle. To keep your balance you must keep moving.",
+"One had to cram all this stuff into one\'s mind for the examinations, whether one liked it or not. This coercion had such a deterring effect on me that, after I had passed the final examination, I found the consideration of any scientific problems distasteful to me for an entire year.",
+"The difference between what the most and the least learned people know is inexpressibly trivial in relation to that which is unknown.",
+"The fanatical atheists...are like slaves who are still feeling the weight of their chains which they have thrown off after hard struggle. They are creatures who—in their grudge against the traditional \'opium of the people\'—cannot bear the music of the spheres.",
+"The ideals which have lighted my way, and time after time have given me new courage to face life cheerfully, have been Kindness, Beauty, and Truth. The trite subjects of human efforts, possessions, outward success, luxury have always seemed to me contemptible.",
+"The Lord God is subtle, but malicious He is not.",
+"The only thing that interferes with my learning is my education.",
+"Wisdom is not a product of schooling, but of the life- long attempt to acquire it.",
+"Anyone who has never made a mistake has never tried anything new.",
+"The significant problems we face cannot be solved at the same level of thinking we were at when we created them.",
+"The important thing is not to stop questioning. Curiosity has its own reason for existing.",
+"If you can\'t explain it simply, you don\'t understand it well enough.",
+"All our thoughts and concepts are called up by sense-experiences and have a meaning only in reference to these sense-experiences. On the other hand, however, they are products of the spontaneous activity of our minds they are thus in no wise logical consequences of the contents of these sense-experiences. If, therefore, we wish to grasp the essence of a complex of abstract notions we must for the one part investigate the mutual relationships between the concepts and the assertions made about them for the other, we must investigate how they are related to the experiences.",
+"Any power must be an enemy of mankind which enslaves the individual by terror and force, whether it arises under the Fascist or the Communist flag. All that is valuable in human society depends upon the opportunity for development accorded to the individual.",
+"I have reached an age when, if someone tells me to wear socks, I don\'t have to.",
+"Imagination is more important than knowledge. Knowledge is limited. Imagination encircles the world.",
+"It is the supreme art of the teacher to awaken joy in creative expression and knowledge.",
+"It would be a sad situation if the wrapper were better than the meat wrapped inside it. (referring to clothing)",
+"What is the meaning of human life, or of organic life altogether To answer this question at all implies a religion. Is there any sense then, you ask, in putting it I answer, the man who regards his own life and that of his fellow creatures as meaningless is not merely unfortunate but almost disqualified for life.",
+"The only reason for time is so that everything doesn\'t happen at once.",
+"Everything should be made as simple as possible, but not simpler.",
+"I don\'t know what will be used in the next world war, but the 4th will be fought with stones.",
+"The mere formulation of a problem is far more essential than its solution, which may be merely a matter of mathematical or experimental skills. To raise new questions, new possibilities, to regard old problems from a new angle requires creative imagination and marks real advances in science.",
+"The most beautiful thing we can experience is the mysterious. It is the source of all true art and all science. He to whom this emotion is a stranger, who can no longer pause to wonder and stand rapt in awe, is as good as dead his eyes are closed.",
+"The world is a dangerous place to live, not because of the people who are evil, but because of the people who don\'t do anything about it.",
+"Bias against the Negro is the worst disease from which the society of our nation suffers.",
+"The most incomprehensible thing about the world is that it is at all comprehensible.",
+"Where the world ceases to be the scene of our personal hopes and wishes, where we face it as free beings admiring, asking and observing, there we enter the realm of Art and Science.",
+"Too many of us look upon Americans as dollar chasers. This is a cruel libel, even if it is reiterated thoughtlessly by the Americans themselves.",
+"I want to know Gods thoughts.... all the rest are just details",
+"A man\'s ethical behavior should be based effectually on sympathy, education, and social ties no religious basis is necessary. Man would indeed be in a poor way if he had to be restrained by fear of punishment and hope of reward after death.",
+"God reveals himself in the orderly harmony of what exists.",
+"He who joyfully marches in rank and file has already earned my contempt. He has been given a large brain by mistake, since for him the spinal cord would suffice.",
+"He who joyfully marches to music rank and file, has already earned my contempt. He has been given a large brain by mistake, since for him the spinal cord would surely suffice. This disgrace to civilization should be done away with at once. Heroism at command, how violently I hate all this, how despicable and ignoble war is; I would rather be torn to shreds than be a part of so base an action. It is my conviction that killing under the cloak of war is nothing but an act of murder.",
+"In order to form an immaculate member of a flock of sheep one must, above all, be a sheep.",
+"Intellectuals solve problems geniuses prevent them.",
+"It is in fact nothing short of a miracle that the modern methods of instruction have not yet entirely strangled the holy curiosity of inquiry for what this delicate little plant needs more than anything, besides stimulation, is freedom. It is a very grave mistake to think that the enjoyment of seeing and searching can be promoted by means of coercion and a sense of duty.",
+"The crippling of individuals I consider the worst evil of capitalism. Our whole educational system suffers from this evil. An exaggerated competitive attitude is inculcated into the student, who is trained to worship acquisitive success as a perparation for his future career.",
+"The hardest thing to understand in the world is the income tax.",
+"The woman who follows the crowd will usually go no further than the crowd. The woman who walks alone is likely to find herself in places no one has ever been before.",
+"There are two ways to live your life: one as though nothing is a miracle and the other as though everything is a miracle.",
+"Weakness of attitude becomes weakness of character.",
+"When all think alike, no one thinks very much.",
+"When I examine myself and my methods of thought, I come to the conclusion that the gift of fantasy has meant more to me than my talent for absorbing positive knowledge.",
+"Yes, we have to divide up our time like that, between our politics and our equations. But to me our equations are far more important, for politics are only a matter of present concern. A mathematical equation stands forever.",
+"I never think of the future. It comes soon enough.",
+"I think and think for months and years. Ninety-nine times, the conclusion is false. The hundredth time I am right.",
+"Not everything that can be counted counts, and not everything that counts can be counted.",
+"A person starts to live when he can live outside himself.",
+"There are only two ways to live your life. One is as though nothing is a miracle. The other is as though everything is.",
+"Try not to become a man of success but rather to become a man of value.",
+"As long as Nazi violence was unleashed only, or mainly, against the Jews, the rest of the world looked on passively and even treaties and agreements were made with the patently criminal government of the Third Reich.... The doors of Palestine were closed to Jewish immigrants, and no country could be found that would admit those forsaken people. They were left to perish like their brothers and sisters in the occupied countries. We shall never forget the heroic efforts of the small countries, of the Scandinavian, the Dutch, the Swiss nations, and of individuals in the occupied part of Europe who did all in their power to protect Jewish lives.",
+"It is not the fruits of scientific research that elevate man and enrich his nature. but the urge to understand, the intellectual work, creative or receptive.",
+"To punish me for my contempt for authority, fate made me an authority myself.",
+"Great spirits have always found violent opposition from mediocrities. The latter cannot understand it when a man does not thoughtlessly submit to hereditary prejudices but honestly and courageously uses his intelligence.",
+"The state exists for man, not man for the state. The same may be said of science. These are old phrases, coined by people who saw in human individuality the highest human value. I would hesitate to repeat them, were it not for the ever recurring danger that they may be forgotten, especially in these days of organization and stereotypes.",
+"Human beings are not condemned, because of their biological constitution, to annihilate each other or to be at the mercy of a cruel, self-inflicted fate.",
+"I believe that whoever tries to think things through honestly will soon recognize how unworthy and even fatal is the traditional bias against Negroes. What can the man of good will do to combat this deeply rooted prejudice He must have the courage to set an example by words and deed, and must watch lest his children become influenced by racial bias.",
+"Nationalism is an infantile disease. It is the measles of mankind.",
+"Not until we dare to regard ourselves as a nation, not until we respect ourselves, can we gain the esteem of others, or rather only then will it come of its own accord.",
+"Physical concepts are free creations of the human mind, and are not, however it may seem, uniquely determined by the external world.",
+"Those people have seen something. What it is I do not know and I can not care to know. (on flying saucers)",
+"We scientists, whose tragic destiny it has been to make the methods of annihilation ever more gruesome and more effective, must consider it our solemn and transcendent duty to do all in our power in preventing these weapons from being used for the brutal purpose for which they were invented.",
+"All of us who are concerned for peace and triumph of reason and justice must be keenly aware how small an influence reason and honest good will exert upon events in the political field.",
+"Anger dwells only in the bosom of fools.",
+"Any fool can know. The point is to understand.",
+"Too much agreement kills a chat.",
+"Nothing is impossible, the word itself says \"I\'m possible\"",
+"Any intelligent fool can make things bigger, more complex, and more violent. It takes a touch of genius -- and a lot of courage -- to move in the opposite direction.",
+"As far as the laws of mathematics refer to reality, they are not certain and as far as they are certain, they do not refer to reality.",
+"As far as the laws of mathematics refer to reality, they are not certain, and as far as they are certain, they do not refer to reality.",
+"As far as the laws of mathematics refer to reality, they are not certain; and as far as they are certain, they do not refer to reality.",
+"both of them to be important and be either priority by your without knowladge it cant add more imaginationbut imagination always be theres without knowladge",
+"By academic freedom I understand the right to search for truth and to publish and teach what one holds to be true. This right implies also a duty one must not conceal any part of what on has recognized to be true. It is evident that any restriction on academic freedom acts in such a way as to hamper the dissemination of knowledge among the people and thereby impedes national judgment and action.",
+"Concern for man himself and his fate must always form the chief interest of all technical endeavor. Never forget this in the midst of your diagrams and equations.",
+"Do not worry about your problems in mathematics. I assure you, my problems with mathematics are much greater than yours.",
+"Each of us visits this Earth involuntarily, and without an invitation. For me, it is enough to wonder at the secrets.",
+"Ethical axioms are found and tested not very differently from the axioms of science. Truth is what stands the test of experience.",
+"Every kind of peaceful cooperation among men is primarily based on mutual trust and only secondarily on institutions such as courts of justice and police.",
+"Everything is determined, the beginning as well as the end, by forces over which we have no control. It is determined for insects as well as for the stars. Human beings, vegetables or cosmic dust, we all dance to a mysterious tune, intoned in the distance by an invisible piper.",
+"Everything should be made as simple as possible, but not one bit simpler.",
+"Everything that is really great and inspiring is created by the individual who can labor in freedom.",
+"Few people are capable of expressing with equanimity opinions which differ from the prejudices of their social environment. Most People are even incapable of forming such opinions.",
+"Few people are capable of expressing with equanimity opinions which differ from the prejudices of their social environment. Most people are not even capable of forming such opinions.",
+"Great spirits have always encountered violent opposition from mediocre minds.",
+"He who cherishes the values of culture cannot fail to be a pacifist.",
+"He who joyfully marches to music in rank and file has already earned my contempt. He has been given a large brain by mistake, since for him the spinal cord would fully suffice. This disgrace to civilization should be done away with at once. Heroism at command, senseless brutality, deplorable patriotism, how violently I hate all this, how despicable and ignoble war is; I would rather be torn to shreds than be part of so base an action! It is my conviction that killing under the cloak of war is nothing but an act of murder.",
+"Heroism on command, senseless violence, and all the loathsome nonsense that goes by the name of patriotism -- how passionately I hate them!",
+"Heroism on command, senseless violence, and all the loathsome nonsense that goes by the name of patriotism -how passionately I hate them",
+"How strange is the lot of us mortals Each of us is here for a brief sojourn for what purpose he knows not, though he senses it. But without deeper reflection one knows from daily life that one exists for other people.",
+"I am enough of an artist to draw freely upon my imagination. Imagination is more important than knowledge. Knowledge is limited. Imagination encircles the world.",
+"I believe that whoever tries to think things through honestly will soon recognize how unworthy and even fatal is the traditional bias against Negroes. What can the man of good will do to combat this deeply rooted prejudice? He must have the courage to set an example by words and deed, and must watch lest his children become influenced by racial bias.",
+"I do not believe that civilization will be wiped out in a war fought with the atomic bomb. Perhaps two-thirds of the people of the Earth might be killed, but enough men capable of thinking, and enough books, would be left to start again, and civilization could be restored.",
+"I feel that you are justified in looking into the future with true assurance, because you have a mode of living in which we find the joy of life and the joy of work harmoniously combined. Added to this is the spirit of ambition which pervades your very being, and seems to make the day\'s work like a happy child at play. (referring to America)",
+"I have deep faith that the principle of the universe will be beautiful and simple.",
+"I know not with what weapons World War III will be fought, but World War IV will be fought with sticks and stones.",
+"I live in that solitude which is painful in youth, but delicious in the years of maturity.",
+"I never think of the future - it comes soon enough.",
+"I want to know how God created this world. I am not interested in this or that phenomenon, in the spectrum of this or that element. I want to know His thoughts the rest are details.",
+"If I were to start taking care of my grooming, I would no longer be my own self ... so the hell with it ... I will continue to be unconcerned about it, which surely has the advantage that I\'m left in peace by many a fop who would otherwise come to see me.",
+"If men as individuals surrender to the call of their elementary instincts, avoiding pain and seeking satisfaction only for their own selves, the result for them all taken together must be a state of insecurity, of fear, and of promiscuous misery.",
+"If we knew what it was we were doing, it would not be called research, would it",
+"If we knew what it was we were doing, it would not be called research, would it?",
+"If you are out to describe the truth, leave elegance to the tailor.",
+"Imagination is more powerful than knowledge.",
+"In light of knowledge attained, the happy achievement seems almost a matter of course, and any intelligent student can grasp it without too much trouble. But the years of anxious searching in the dark, with their intense longing, their alterations of confidence and exhaustion and the final emergence into the light -- only those who have experienced it can understand it.",
+"In view of such harmony in the cosmos which I, with my limited human mind, am able to recognize, there are yet people who say there is no God. But what really makes me angry is that they quote me for the support of such views.",
+"Innumerable voices have been asserting for some time now that human society is passing through a crisis, that its stability has been gravely shattered. It is characteristic of such a situation that individuals feel indifferent or even hostile toward the group, small or large, to which they belong. In order to illustrate my meaning, let me record here a personal experience. I recently discussed with an intelligent and well-disposed man the threat of another war, which in my opinion would seriously endanger the existence of mankind, and I remarked that only a supranational organization would offer protection from that danger. Thereupon my visitor, very calmly and coolly, said to me Why are you so deeply opposed to the disappearance of the human race",
+"Isn’t it strange that I who have written only unpopular books should be such a popular fellow. Chirology may be one of the vital sciences of the future. ~ Albert Einstein (“Seeing into the Future” ~ Harvey Day) I hate crowds and making speeches. I hate facing cameras and having to answer to a crossfire of questions. Why popular fancy should seize upon me, a scientist, dealing in abstract things and happy if left alone, is a manifestation of mass psychology that is beyond me. I am neither especially clever nor especially gifted. I am only very, very curious. The ideals that have lighted my way and time after time have given me new courage to face life cheerfully, have been Kindness, Beauty and Truth. The intuitive mind is a sacred gift and the rational mind is a faithful servant. We have created a society that honors the servant and has forgotten the gift. When his wife asked him to change clothes to meet the German Ambassador: “they want to see me, here I am. If they want to see my clothes, open my closet and show them my suits.",
+"It is in fact nothing short of a miracle that the modern methods of instruction have not yet entirely strangled the holy curious of inquiry. It is a very grave mistake to think that the enjoyment of seeing and searching can be promoted by means of coercion and a sense of duty.",
+"It is mathematics that offers the exact natural sciences a certain measure of security which, without mathematics, they could not attain.",
+"It is only to the individual that a soul is given.",
+"It is the duty of every citizen according to his best capacities to give validity to his convictions in political affairs.",
+"It is the theory that decides what we can observe.",
+"Laws alone can not secure freedom of expression in order that every man present his views without penalty there must be spirit of tolerance in the entire population.",
+"Laws alone can not secure freedom of expression; in order that every man present his views without penalty there must be spirit of tolerance in the entire population.",
+"Let every man be respected as an individual and no man idolized.",
+"Most of the fundamental ideas of science are essentially simple, and may, as a rule, be expressed in a language comprehensible to everyone.",
+"Most people go on living their everyday life half frightened, half indifferent, they behold the ghostly tragi-comedy that is being performed on the international stage before the eyes and ears of the world.",
+"My pacifism is an instinctive feeling, a feeling that possesses me because the murder of men is disgusting. My attitude is not derived from any intellectual theory but is based on my deepest antipathy to every kind of cruelty and hatred.",
+"My religion consists of a humble admiration of the illimitable superior spirit who reveals himself in the slight details we are able to perceive with our frail and feeble mind.",
+"My religion consists of a humble admiration of the unlimitable superior who reveals Himself in the slight details we are able to perceive with our frail and feeble minds. That deeply emotional conviction of the presence of a superior reasoning power, which is revealed in the incomprehensible universe, forms my idea of God.",
+"My sense of God is my sense of wonder about the Universe.",
+"No amount of experimentation can ever prove me right a single experiment can prove me wrong.",
+"No, this trick won\'t work...How on earth are you ever going to explain in terms of chemistry and physics so important a biological phenomenon as first love",
+"Not everything that counts can be counted, and not everything that can be counted counts.",
+"Nothing is more destructive of respect for the government and the law of the land than passing laws which cannot be enforced. It is an open secret that the dangerous increase of crime in this counrty is closely related with this.",
+"One should guard against preaching to young people success in the customary form as the main aim in life. The most important motive for work in school and in life is pleasure in work, pleasure in its result, and the knowledge of the value of the result to the community.",
+"Only a life lived for others is a life worth while.",
+"Only those who attempt the absurd can achieve the impossible.",
+"Our defense is not in our armaments, nor in science, nor in going underground. Our defense is in law and order.",
+"Peace cannot be kept by force. It can only be achieved by understanding.",
+"People like us, who believe in physics, know that the distinction between past, present, and future is only a stubbornly persistent illusion.",
+"Quantum mechanics is certainly imposing. But an inner voice tells me that it is not yet the real thing. The theory says a lot, but does not really bring us closer to the secret of the \'Old One.\' I, at any rate, am convinced that He is not playing at dice.",
+"Reading, after a certain age, diverts the mind too much from its creative pursuits. Any man who reads too much and uses his own brain too little falls into lazy habits of thinking.",
+"Relativity applies to physics, not ethics.",
+"Science is a wonderful thing if one does not have to earn one\'s living at it.",
+"Since I do not foresee that atomic energy is to be a great boon for a long time, I have to say that for the present it is a menace. Perhaps it is well that it should be. It may intimidate the human race into bringing order into its international affairs, which, without the pressure of fear, it would not do.",
+"Since that deluge of newspaper articles I have been so flooded with questions, invitations, suggestions, that I keep dreaming I am roasting in Hell, and the mailman is the devil eternally yelling at me, showering me with more bundles of letters at my head because I have not answered the old ones.",
+"Something deeply hidden had to be behind things.",
+"Sometimes one pays most for the things one gets for nothing.",
+"Strive not to be a success, but rather to be of value.",
+"Teaching should be such that what is offered is perceived as a valuable gift and not as a hard duty.",
+"Technological progress is like an ax in the hands of a pathological criminal.",
+"The attempt to combine wisdom and power has only rarely been successful and then only for a short while.",
+"The conscientious objector is a revoultionary. On deciding to disobey the law he sacrifices his personal interests to the most important cause of working for the betterment of society.",
+"The difference between stupidity and genius is that genius has it\'s limits.",
+"The eternal mystery of the world is its comprehensibility.",
+"The fear of death is the most unjustified of all fears, for there\'s no risk of accident for someone who\'s dead.",
+"The further the spiritual evolution of mankind advances, the more certain it seems to me that the path to genuine religiosity does not lie through the fear of life, and the fear of death, and blind faith, but through striving after rational knowledge.",
+"The grand aim of all science is to cover the greatest number of empirical facts by logical deduction from the smallest number of hypotheses or axioms.",
+"The hardest thing in the world to understand is the income tax.",
+"The highest destiny of the individual is to serve rather than to rule.",
+"The horizon of many people is a circle with zero radius which they call their point of view.",
+"The ideals which have always shone before me and filled me with the joy of living are goodness, beauty, and truth. To make a goal of comfort or happiness has never appealed to me; a system of ethics built on this basis would be sufficient only for a herd of cattle.",
+"The important thing is not to stop questioning.",
+"The important thing is not to stop questioning. Curiosity has its own reason for existing. One cannot help but be in awe when he contemplates the mysteries of eternity, of life, of the marvelous structure of reality. It is enough if one tries merely to comprehend a little of this mystery every day. Never lose a holy curiosity.",
+"The individual must not merely wait and criticize, he must defend the cause the best he can. The fate of the world will be such as the world deserves.",
+"The man who regards his own life and that of his fellow creatures as meaningless is not merely unhappy but hardly fit for life.",
+"The most beautiful thing we can experience is the mysterious. It is the source of all true art and all science. He to whom this emotion is a stranger, who can no longer pause to wonder and stand rapt in awe, is as good as dead: his eyes are closed.",
+"The most beautiful thing we can experience is the mysterious. It is the source of all true art and science.",
+"The most beautiful thing we can experience is the mysterious.",
+"It is the source of all art and science.",
+"The physicist cannot simply surrender to the philosopher the critical contemplation of the theoretical foundations for he himself knows best and feels most surely where the shoe pinches.... he must try to make clear in his own mind just how far the concepts which he uses are justified... The whole of science is nothing more than a refinement of everyday thinking.",
+"The process of scientific discovery is, in effect, a continual flight from wonder.",
+"The pursuit of truth and beauty is a sphere of activity in which we are permitted to remain children all our lives.",
+"The release of atomic energy has not created a new problem. It has merely made more urgent the necessity of solving an existing one.",
+"The unleashed power of the atom has changed everything save our modes of thinking and we thus drift toward unparalleled catastrophe.",
+"The value of a man resides in what he gives and not in what he is capable of receiving.",
+"Theories should be as simple as possible, but not simpler.",
+"There are two ways of resisting war: the legal way and the revolutionary way. The legal way involves the offer of alternatinve service not as a privilege for a few but as a right for all. The revolutionary view involves an uncompromising resistance, with a view to breaking the power of militarism in time of peace or the resources of the state in time of war.",
+"There has already been published by the bucketfuls such brazen lies and utter fictions about me that I would long since have gone to my grave if I had let myself pay attention to that.",
+"There is an atmosphere of well-sounding oratory that likes to attach itself to dress clothes. Away with it",
+"There was this huge world out there, independent of us human beings and standing before us like a great, eternal riddle, at least partly accessible to our inspection and thought. The contemplation of that world beckoned like a liberation.",
+"This is what the painter, the poet, the speculative philosopher, and the natural scientists do, each in his own fashion.",
+"To my mind to kill in war is not a whit better than to commit ordinary murder.",
+"To my mind, to kill in war is not a whit better than to commit ordinary murder.",
+"True art is characterized by an irresistible urge in the creative artist",
+"True art is characterized by an irresistible urge in the creative artist.",
+"Unthinking respect for authority is the greatest enemy of truth.",
+"We believe that an informed citizenry will act for life and not for death. (on atomic energy)",
+"We cannot dispair of humanity, since we are ourselves human beings.",
+"We should take care not to make the intellect our god it has, of course, powerful muscles, but no personality.",
+"We should take care not to make the intellect our god; it has, of course, powerful muscles, but no personality.",
+"What is inconceivable about the universe is that it is at all conceivable.",
+"When the Special Theory of Relativity began to germinate in me, I was visited by all sorts of nervous conflicts... I used to go away for weeks in a state of confusion.",
+"When you look at yourself from a universal standpoint, something inside always reminds or informs you that there are bigger and better things to worry about.",
+"Whoever is careless with the truth in small matters cannot be trusted with important matters.",
+"Whoever undertakes to set himself up as a judge of Truth and Knowledge is shipwrecked by the laughter of the Gods.",
+"Why does this magnificent applied science, which saves work and makes life easier, bring us little happiness The simple answer runs because we have not yet learned to make sensible use of it.",
+"Additional quotes from the news wire...",
+"Albert Einstein said the definition of insanity is doing the same thing over and again and expecting different results, they have a clear road map from those three efforts... this is an enormous waste of time, energy and money."
+];
+int GlobalCounter = 0;
+bool QuotesEnabled = false;
+void PrintQuote()
+{
+PrintQuote(GlobalCounter);
+GlobalCounter += 1;
+}
+void PrintQuote(int Counter) = PrintQuote(Counter, 50);
+void PrintQuote(int Counter, int QuoteInterval)
+{
+if((0 == Counter % QuoteInterval)
+&& (true == QuotesEnabled))
+{
+println(WaitingQuotes[arbInt(size(WaitingQuotes))]) ;
+}
+}
+module SoftwareMetrics
+import \clones::CloneAlgorithm;
+import DateTime;
+import \helpers::FileHelpers;
+import FileLocations;
+import IO;
+import List;
+import Quotes;
+import \metrics::SigScores;
+import String;
+import \helpers::HtmlHelpers;
+import \helpers::JavaHelpers;
+import \helpers::MathHelpers;
+import \graphics::RiskProfile;
+import \metrics::SlocModule;
+int QuoteInterval = 50;
+void GenerateSanitizedCode(str SampleFolder, loc OutputFile)
+{
+list[loc] FilesToParse = EnumerateDirFiles(SampleFolder);
+int Count = 0;
+for(File <- FilesToParse)
+{
+Count +=1;
+PrintQuote(Count, 25);
+MethodSize(readFile(File), OutputFile);
+}
+}
+void CalculateSmallSql()
+{
+GenerateHtmlReporting("smallsql");
+DetermineSoftwareMetrics("smallsql");
+}
+void CalculateHSqlDb()
+{
+GenerateHtmlReporting("hsqldb");
+DetermineSoftwareMetrics("hsqldb");
+}
+void DetermineSoftwareMetrics(str ProjectName)
+{
+StartTime = now();
+list[loc] FilesToParse = EnumerateDirFiles(ProjectName);
+list[int] UnitSizes = [0,0,0,0];
+list[int] UnitComplexity = [0,0,0,0];
+list[int] FieldLength = [0,0,0,0];
+int TotalSize = 0;
+ResetFile(MethodLinesFile(""));
+ResetFile(MethodLinesFile(ProjectName));
+ResetFile(FailedMethodLinesFile);
+int Files = 0;
+for(File <- FilesToParse)
+{
+Files += 1;
+PrintQuote(Files);
+TotalSize += ScanJavaFileSloc(File);
+list[int] FieldsPerFile = GetFields(File);
+FieldLength[0] += FieldsPerFile[0];
+FieldLength[1] += FieldsPerFile[1];
+FieldLength[2] += FieldsPerFile[2];
+FieldLength[3] += FieldsPerFile[3];
+for(tuple[int Length, int Complexity] JavaMethod <- ScanJavaFileMethodLengthAndComplexity(File))
+{
+UnitSizes[UnitSizeIndex(JavaMethod.Length)] += JavaMethod.Length;
+UnitComplexity[UnitComplexityIndex(JavaMethod.Complexity)] += JavaMethod.Length;
+}
+}
+int DupedPercentage = Percentage(GetClonesForFile(ClonesFile(ProjectName)), TotalSize);
+list[int] TotalResults = [VolumeScore(TotalSize), UnitSizeScore(UnitSizes), DuplicationScore(DupedPercentage), UnitComplexityScore(UnitComplexity)];
+println("Volume size: <TotalSize> Rating: <StarRating(TotalResults[0])>");
+println("Unit size distribution: <CreateDistribution(UnitSizes)> (<UnitSizes>), Rating: <StarRating(TotalResults[1])>");
+println("Unit duplication amount: <DupedPercentage>% , Rating: <StarRating(TotalResults[2])>");
+println("Unit complexity distribution: <CreateDistribution(UnitComplexity)> (<UnitComplexity>), Rating: <StarRating(TotalResults[3])>");
+println("Total SIG Maintainability score: <TotalResults>, Rating: <StarRating(TotalSigScore(TotalResults))>");
+println("Field length score <CreateDistribution(FieldLength)> (<FieldLength>), Rating: <StarRating(EvaluateDistribution(FieldLength))>");
+println("Duration: <createDuration(StartTime, now())>");
+RenderRisk("Unit sizes risk profile", UnitSizes);
+RenderRisk("Unit complexity risk profile", UnitComplexity);
+RenderRisk("Field name length", FieldLength);
+}
+void GenerateHtmlReporting(str SpecificName)
+{
+list[loc] FilesToParse = EnumerateDirFiles(SpecificName);
+str TotalHtml = OpenTable();
+TotalHtml += Caption("SoftwareMetrics");
+TotalHtml += TableColumns();
+int Counter = 0;
+for(File <- FilesToParse)
+{
+Counter += 1;
+PrintQuote(Counter, 100);
+TotalHtml += ScanJavaFileToHtml(File);
+DetailedReport = GenerateDetailedTable(File);
+writeFile(HtmlDetailsFile(SpecificName, "<toLowerCase(GetClassName(File))>.html"), DetailedReport);
+}
+TotalHtml += CloseTable();
+writeFile(toLocation("<OutputDir><SpecificName>/index.html"), TotalHtml);
+}
+module \clones::CloneAlgorithm
+import DateTime;
+import IO;
+import List;
+import Map;
+import Quotes;
+import Set;
+import \metrics::SigScores;
+import \helpers::Debugging;
+import \helpers::ListHelpers;
+import \helpers::MathHelpers;
+import \helpers::StringHelpers;
+import \util::Math;
+alias TCloneList = list[TClone];
+alias TClone = tuple[int Start, int Size];
+alias TCloneClass = list[TClone];
+alias TCloneClasses = list[TCloneClass];
+int GetClonesPercentage(loc FileToCheck)
+{
+list[str] Lines = readFileLines(FileToCheck);
+return Percentage(GetClonesForFile(FileToCheck), size(Lines));
+}
+int GetClonesForFile(loc FileToCheck)
+{
+int Result = GetClonesForFile(HashFile(FileToCheck));
+return Result;
+}
+int GetClonesForFile(THashInfo Information) = ClonedLines(GetClonesList(Information));
+int ClonedLines([]) = 0;
+int ClonedLines(TCloneList Clones) = sum(Clones.Size);
+TStringMap Dictionary = ();
+THashMap Lines = ();
+int InvalidCloneStart = -1;
+TCloneClasses GetClonesClasses(loc FileToCheck) = GetClonesClasses(HashFile(FileToCheck));
+TCloneClasses GetClonesClasses(THashInfo Information)
+{
+Start = now();
+PrepareProcess(Information);
+TCloneClasses CloneClasses = [];
+for(LineNumber <- [0..size(Lines)], (Lines[LineNumber] != InvalidCloneStart))
+{
+PrintQuote(LineNumber, 250);
+CloneClasses += AddCloneClasses(Lines, LineNumber, CloneClasses);
+}
+Duration("Clone classes", Start);
+return CloneClasses;
+}
+TCloneClasses AddCloneClasses(THashMap Lines, int LineNumber, TCloneClasses CloneClasses)
+{
+list[int] Dupes = GetDupes(Lines, LineNumber);
+Dupes = RemovePreviousDupes(CloneClasses, Dupes, LineNumber);
+TCloneList Clones = GetClones(Lines, LineNumber, Dupes);
+return ExtractCloneClasses(LineNumber, Clones);
+}
+TCloneClasses ExtractCloneClasses(int LineNumber, []) = [];
+TCloneClasses ExtractCloneClasses(int LineNumber, TCloneList Clones)
+{
+TCloneClasses ResultClasses = [];
+for(Size <- [min(Clones.Size) ..  max(Clones.Size)+1], HasClones(Clones, Size))
+{
+TCloneClass ThisClass = [<LineNumber, Size>];
+for(Clone <- Clones, Size == Clone.Size)
+{
+ThisClass += Clone;
+}
+ResultClasses += [ThisClass];
+}
+return ResultClasses;
+}
+bool HasClones(TCloneList Clones, int Size)
+{
+for(Clone <- Clones, Size == Clone.Size)
+{
+return true;
+}
+return false;
+}
+list[int] RemovePreviousDupes(TCloneClasses CloneClasses, list[int] Dupes, int LineNumber)
+{
+if(false == KnownLine(CloneClasses, LineNumber))
+{
+return Dupes;
+}
+list[int] NewDupes = [];
+for(Dupe <- Dupes)
+{
+if((false == KnownLine(CloneClasses, Dupe))
+|| (false == KnownLine(CloneClasses, LineNumber)))
+{
+NewDupes += Dupe;
+}
+}
+return NewDupes;
+}
+bool KnownLine(TCloneClasses CloneClasses, int LineNumber)
+{
+for(CloneClass <- CloneClasses, AlreadyPartOfClone(CloneClass, LineNumber))
+{
+return true;
+}
+return false;
+}
+TCloneList GetClonesList(loc FileToCheck) = GetClonesList(HashFile(FileToCheck));
+TCloneList GetClonesList(THashInfo Information)
+{
+Start = now();
+PrepareProcess(Information);
+TCloneList Clones = [];
+for(LineNumber <- [0..size(Lines)], (Lines[LineNumber] != InvalidCloneStart))
+{
+PrintQuote(LineNumber, 250);
+list[int] Dupes = GetDupes(Lines, LineNumber);
+TCloneList CurrentClones = GetClones(Lines, LineNumber, Dupes);
+Clones = InsertNewClones(Clones, CurrentClones);
+Clones = MergeClonesWithEqualStart(Clones, CurrentClones);
+}
+Duration("Found all clones, now merging overlapping clones!", Start);
+Start = now();
+Clones = MergeClonesWithOverlap(Clones);
+Duration("Merged all clones!", Start);
+return Clones;
+}
+void PrepareProcess(THashInfo Information)
+{
+Lines = Information.HashMap;
+Dictionary = Information.StringMap;
+InvalidCloneStart = GetKey(Dictionary, "}");
+}
+int GetKey(TStringMap Dictionary, str Key)
+{
+try
+{
+println("Invalid key: <Dictionary[Key]>");
+return Dictionary[Key];
+}
+catch:
+{
+println("Invalid key");
+}
+return -1;
+}
+int CloneSize = 6;
+TCloneList GetClones(THashMap Lines, int LineNumber, list[int] Dupes)
+{
+TCloneList Results = [];
+for(Dupe <- Dupes)
+{
+if(true == MinimumCloneSizeReached(Lines, LineNumber, Dupe))
+{
+Results += <Dupe, CalcCloneSize(Lines, LineNumber, Dupe)>;
+}
+}
+return Results;
+}
+list[int] GetDupes(THashMap Lines, int LineNumber)
+{
+int Find = Lines[LineNumber];
+list[int] Dupes = [];
+for(n <- [LineNumber+1 .. size(Lines)], Find == Lines[n])
+{
+Dupes += n;
+}
+return Dupes;
+}
+bool AlreadyPartOfClone(TCloneList Clones, int LineNumber)
+{
+for(Clone <- Clones, InLimits(Clone.Start, LineNumber, Clone.Start + Clone.Size))
+{
+return true;
+}
+return false;
+}
+TCloneList InsertNewClones(TCloneList TotalClones, TCloneList NewClones)
+{
+for(Clone <- NewClones, false == Contains(TotalClones.Start, Clone.Start))
+{
+TotalClones += Clone;
+}
+return TotalClones;
+}
+TCloneList MergeClonesWithEqualStart(TCloneList TotalClones, TCloneList NewClones)
+{
+TCloneList MergedList = [];
+for(Clone <- TotalClones)
+{
+MergedList += <Clone.Start, max(Clone.Size, RetrieveCloneSize(NewClones, Clone.Start))>;
+}
+return MergedList;
+}
+TCloneList MergeClonesWithOverlap(TCloneList TotalClones)
+{
+TCloneList MergedList = [];
+list[int] SkipIndexes = [];
+for(int First <- [0..size(TotalClones)], false == Contains(SkipIndexes, First))
+{
+TClone FirstClone = TotalClones[First];
+bool WasMerged = false;
+for(int Second <- [(First+1) .. size(TotalClones)])
+{
+TClone SecondClone = TotalClones[Second];
+if(true == HasOverlap(FirstClone, SecondClone))
+{
+DebugPrint("<FirstClone> overlaps with <SecondClone>");
+TClone MergedClone = MergeClones(FirstClone, SecondClone);
+DebugPrint("Added this <MergedClone> to the list");
+MergedList += MergedClone;
+SkipIndexes += Second;
+WasMerged = true ;
+}
+}
+if(false == WasMerged)
+{
+DebugPrint("Added <FirstClone> to the list");
+MergedList += FirstClone;
+}
+}
+if(TotalClones != MergedList)
+{
+DebugPrint("Made some changes, go another iteration!");
+MergedList = MergeClonesWithOverlap(MergedList);
+}
+return MergedList;
+}
+bool HasOverlap(TClone First, TClone Second) = InLimits(First.Start, Second.Start, LastLine(First));
+int LastLine(TClone Clone) = (Clone.Start + Clone.Size)-1;
+TClone MergeClones(TClone First, TClone Second)
+{
+int NewStart = min(First.Start, Second.Start);
+int LastLine = max(LastLine(First), LastLine(Second));
+return <NewStart, LastLine - NewStart + 1>;
+}
+int RetrieveCloneSize(TCloneList Clones, int Start)
+{
+for(Clone <- Clones, Clone.Start == Start)
+{
+return Clone.Size;
+}
+return 0;
+}
+bool MinimumCloneSizeReached(THashMap Lines, int LineNumber, int CloneLine)
+{
+int CloneDistance = CloneSize - 1;
+for(n <- [CloneDistance .. 0], EndOfCloneReached(Lines, LineNumber+n, CloneLine+n))
+{
+return false;
+}
+return true;
+}
+int CalcCloneSize(THashMap Lines, int LineNumber, int CloneLine)
+{
+int Distance = CloneLine - LineNumber;
+for(n <- [CloneSize .. size(Lines)], CodeOverlapsClone(n, Distance) || (EndOfCloneReached(Lines, LineNumber+n, CloneLine+n)))
+{
+println("<LineNumber>, \<<CloneLine>, <n>\>");
+return n;
+}
+return size(Lines);
+}
+list[str] RetrieveDuplicatesFromFile(loc FileToCheck)
+{
+list[str] Lines = readFileLines(FileToCheck);
+ScannedLines = {};
+return
+for(Line <- Lines, "}" != Line)
+if(Line in ScannedLines)
+append Line;
+else
+ScannedLines += Line;
+}
+int LineIncrement([]) = 1;
+int LineIncrement(TCloneList Clones) = max(Clones.Size);
+bool EndOfCloneReached(THashMap Lines, int LineNumber, int CloneLine) = (CloneLine >= size(Lines)) || (Lines[LineNumber] != Lines[CloneLine]);
+bool CodeOverlapsClone(int Count, int Distance) = (Count >= Distance);
+module \clones::Type1Clones
+import DateTime;
+import FileLocations;
+import IO;
+import ParseTree;
+import Quotes;
+import vis::ParseTree;
+import \clones::CloneAlgorithm;
+import \helpers::Debugging;
+import \helpers::FileHelpers;
+import \helpers::ListHelpers;
+import lang::java::\syntax::Java15;
+void CreateAllOutput()
+{
+CreateIntermediateOutput(EnumerateDirFiles(|project:
+CreateIntermediateOutput("smallsql", SmallSqlIntermediate, SmallSqlIndexes, SmallSqlContent);
+CreateIntermediateOutput("hsqldb", HsqlDbIntermediate, HsqlDbIndexes, HsqlDbContent);
+}
+void CreateIntermediateOutput(str ProjectName, loc ProjectIntermediate, loc ProjectFilesIndexes, loc ProjectFilesContent)
+= CreateIntermediateOutput(EnumerateDirFiles(SampleFile(ProjectName)), ProjectIntermediate, ProjectFilesIndexes, ProjectFilesContent);
+void CreateIntermediateOutput(list[loc] ProjectFiles, loc ProjectIntermediate, loc ProjectFilesIndexes, loc ProjectFilesContent)
+{
+Start = now();
+list[str] IndexedOutput = [];
+for(File <- ProjectFiles)
+{
+PrintQuote();
+IndexedOutput += StripAndIndexFile(File);
+}
+Duration("Created indexed output", Start);
+Start = now();
+writeFile(ProjectIntermediate, JoinList(IndexedOutput));
+Duration("Wrote intermediate file.", Start);
+Start = now();
+SplitIndexedFile(ProjectIntermediate, ProjectFilesIndexes, ProjectFilesContent);
+Duration("Done splitting indexed file.", Start);
+}
+TCloneList GetSmallSqlClones()
+{
+TCloneList Clones = GetClonesList(SmallSqlContent);
+return Clones;
+}
+TCloneClasses GetSmallSqlCloneClasses()
+{
+TCloneClasses CloneClasses = GetClonesClasses(SmallSqlContent);
+return CloneClasses;
+}
+module \clones::Type2Clones
+import FileLocations;
+import IO;
+import String;
+import \helpers::Debugging;
+import \helpers::ListHelpers;
+import \helpers::RegexHelpers;
+void CreateAllOutput()
+{
+Type2ClonesSmallSql();
+Type2ClonesHsqlDb();
+}
+void Type2ClonesSmallSql() = CreateType2Output(SmallSqlContent, SmallSqlContent_Type2);
+void Type2ClonesHsqlDb() = CreateType2Output(HsqlDbContent, HsqlDbContent_Type2);
+public bool RemoveNumbers = false;
+public bool RemoveNames = false;
+public bool RemoveTypes = false;
+private str TypeChar = "ﺝ" ;
+private str NumChar = "ﻝ";
+private str NameChar = "ﻷ";
+void CreateType2Output(loc InputFile, loc OutputFile)
+{
+list[str] OutputLines = [];
+for(Line <- readFileLines(InputFile))
+{
+Line = ReplaceNumbers(Line);
+Line = ReplaceNames(Line);
+Line = ReplaceTypes(Line);
+OutputLines += Line;
+}
+writeFile(OutputFile, replaceAll(JoinList(OutputLines), " ", ""));
+}
+str ReplaceNumbers(str Input) = RemoveNumbers ? DoReplacement(Input) : Input ;
+str ReplaceNames(str Input) = RemoveNames ? Input : Input ;
+str ReplaceTypes(str Input) = RemoveTypes ? StripTypes(Input) : Input ;
+str StripTypes(str Line) = ReplaceTypes(Line, TypesToReplace, TypeChar);
+str DoReplacement(str Line)
+{
+if(true == rexpMatch(Line, RegexForInts))
+{
+DebugPrint("removing numbers from <Line>");
+Line = replaceAll(Line, "0", NumChar);
+Line = replaceAll(Line, "1", NumChar);
+Line = replaceAll(Line, "2", NumChar);
+Line = replaceAll(Line, "3", NumChar);
+Line = replaceAll(Line, "4", NumChar);
+Line = replaceAll(Line, "5", NumChar);
+Line = replaceAll(Line, "6", NumChar);
+Line = replaceAll(Line, "7", NumChar);
+Line = replaceAll(Line, "8", NumChar);
+Line = replaceAll(Line, "9", NumChar);
+Line = RemoveDupes(Line, NumChar);
+DebugPrint("Done: <Line>");
+return Line;
+}
+DebugPrint("<Line> contains no numbers");
+return Line;
+}
+str RemoveDupes(str Line, str Token)
+{
+while(-1 != findFirst(Line, "<Token><Token>"))
+{
+Line = replaceAll(Line, "<Token><Token>", Token);
+}
+return Line;
+}
+str ReplaceTypes(str Line, list[str] Types, str Replacement)
+{
+for(Type <- Types, startsWith(Line, Type))
+{
+println("replaced <Type> in <Line>");
+return replaceAll(Line, Type, Replacement);
+}
+return Line;
+}
+void ResetTypes()
+{
+TypesToReplace = [];
+}
+void AddType(str Filter)
+{
+TypesToReplace += Filter;
+}
+void RemoveType(str Filter)
+{
+TypesToReplace = RemoveFromList(Filter);
+}
+list[str] RemoveFromList(str Filter) = [Type | Type <- TypesToReplace, Filter != Type];
+public list[str] TypesToReplace = [
+"private int ",
+"String ",
+"SSResultSet ",
+"Expression ",
+"ExpressionName ",
+"final void ",
+"final int ",
+"final bool ",
+"final String ",
+"bool "
+];
+module graphics::ControlPanel
+import vis::Figure;
+import vis::Render;
+import FileLocations;
+import \clones::Type2Clones;
+import \graphics::DetailView;
+void ControlPanel()
+{
+tmap = treemap([box(vcat([button("SmallSql", void(){DiffSmallSql();}),
+button("HsqlDb", void(){DiffHsqlDb();})
+])),
+box(vcat([text("Options"),
+ChoiceOptions()
+])),
+box(hcat([text("Types", top()),
+ComboTypes()
+]))
+]);
+render(tmap);
+}
+public Figure ChoiceOptions()
+{
+str state = "Type 1";
+return vcat([ choice(["Type 1","Type 2","Type 3","Type 4", "Priming Type"], void(str s){ state = s;}),
+text(str(){return "Current state: " + state ;}, left())
+]);
+}
+public Figure ComboTypes()
+{
+str state = "";
+return vcat([ combo(TypesToReplace, void(str s){ state = s;}),
+text(str(){return "Current state: " + state ;}, left())
+]);
+}
+void DiffSmallSql() = GenerateDiff(SampleFile("Visu/VisuSampleResult.txt"), SampleFile("Visu/VisuSampleResult2.txt"));
+void DiffHsqlDb() = GenerateDiff(SampleFile("Visu/VisuSampleResult.txt"), SampleFile("Visu/VisuSampleResult2.txt"));
+module \graphics::DetailView
+import IO;
+import String;
+import List;
+import vis::Figure;
+import vis::Render;
+import vis::KeySym;
+import \helpers::FileHelpers;
+import \helpers::JavaHelpers;
+import \helpers::StringHelpers;
+import FileLocations;
+FProperty renderFile(loc L)
+{
+return onMouseDown(bool (int butnr, map[KeyModifier,bool] modifiers)
+{
+println("<L>(2042,182,\<62,4\>,\<65,5\>)");
+return true;
+});
+}
+void GenerateDiff(loc FirstLoc, loc SecondLoc) = GenerateDiff([FirstLoc, SecondLoc]);
+void GenerateDiff(list[loc] Locations) = GenerateDiff([ readFileLines(Location) | Location <- Locations]);
+void GenerateDiff(list[list[str]] Clones)
+{
+list[Figure] Boxes = [];
+for(Clone <- Clones)
+{
+Boxes += GenerateBox(Clone);
+}
+RenderFigure("Comparer", hcat(Boxes, hgap(3)));
+}
+Figure GenerateBox(list[str] indexedLines)
+{
+list[Figure] boxList = [];
+list[str] inputLines = readFileLines(SampleFile(GetFilePath(indexedLines[0])));
+for(i <- [0 .. size(indexedLines)])
+{
+boxList += GenerateBox("<i+1>: <inputLines[i]>", indexedLines[i]);
+}
+return box(vcat(boxList));
+}
+Figure GenerateBox(Figure fig) = box(fig);
+Figure GenerateBox(str inputLine, str indexedLine) = box(text(inputLine, left()), fillColor(GetColor(indexedLine)), lineColor(GetColor(indexedLine)));
+void RenderFigure(str caption, Figure fig) = render(caption, fig);
+public void btn() = render(vcat([button("btn", void(){Comparer2();})]));
+module \graphics::GraphGenerator
+import vis::Figure;
+import vis::Render;
+import List;
+import util::Math;
+alias TBox = tuple[int Height, str Caption];
+alias TBoxPlot = list[TBox];
+public void PlotGraph(list[int] BoxPlots) = PlotGraph("GraphPlot", BoxPlots);
+public void PlotGraph(str Name, list[int] BoxPlots)
+{
+TBoxPlot Items = [];
+for(BoxPlot <- BoxPlots)
+{
+Items += <BoxPlot, "">;
+}
+PlotGraph(Name, Items);
+}
+public void PlotGraph(str Caption, TBoxPlot Plots) = PlotGraph(Caption, Plots, max(Plots.Height));
+public void PlotGraph(str Caption, TBoxPlot Plots, num Divider)
+{
+list[Figure] Boxes = [];
+for(Plot <- Plots)
+{
+num Height = 1.0 - (Plot.Height / Divider) * 0.8;
+Boxes += box(text(Plot.Caption, fontSize(20), fontColor("black")), vshrink(Height), fillColor(DetermineColour(Height)));
+}
+PlotGraph(Caption, Boxes);
+}
+public void PlotGraph(str Caption, list[Figure] Boxes)
+{
+render(Caption, hcat(Boxes,std(bottom())));
+}
+num Center = 0.6;
+public Color DetermineColour(num RelativeHeight)
+{
+int Distance = toInt((256 / (1.0 - Center)) * abs(RelativeHeight - Center));
+int Red = 255 ; int Green = 255;
+if(RelativeHeight < Center)
+{
+Green = 255 - Distance;
+}
+else
+{
+Red = 255 - Distance;
+}
+return rgb(Red, Green, 0);
+}
+module graphics::Overview
+import IO;
+import String;
+import List;
+import vis::Figure;
+import vis::Render;
+import vis::KeySym;
+import FileLocations;
+import \helpers::ListHelpers;
+import \helpers::FileHelpers;
+import \graphics::DetailView;
+Figure GenerateTitleBox(str IndexedLine) = box(text(GetClassName(toLocation(GetFilePath(IndexedLine))), fontSize(7), fontColor("Blue")), vresizable(false), vsize(30), top(), fillColor("Lightgray"));
+Figure GenerateBox(str IndexedLine, list[str] IndexedLines) = box(fillColor(GetColor(IndexedLine)), lineColor(GetColor(IndexedLine)), vresizable(false), vsize(5), top(), ExecOnMouseDown(IndexedLine, IndexedLines), ExecOnMouseEnter(IndexedLine, IndexedLines));
+Figure GenerateVBox(list[Figure] VBox) = !isEmpty(VBox) ? box(box(vcat(VBox), top(), shrink(0.9)), resizable(false), top()) : box();
+void RenderFigure(str Caption, Figure Fig) = render(Caption, Fig);
+str GetClassName(loc FileToCheck) = substring(FileToCheck.path, findLast(FileToCheck.path, "/")+1);
+void Overview(loc IndexedFile) = Overview(readFileLines(IndexedFile));
+void Overview(list[str] IndexedLines)
+{
+list[str] FileNames = [];
+list[Figure] BoxList = [];
+list[Figure] VBox = [];
+str PrevFile = "";
+for(i <- [0 .. size(IndexedLines)])
+{
+if(PrevFile == GetFilePath(IndexedLines[i]))
+{
+VBox += GenerateBox(IndexedLines[i], IndexedLines);
+}
+else
+{
+BoxList += GenerateVBox(VBox);
+VBox = [];
+VBox += GenerateTitleBox(IndexedLines[i]);
+VBox += GenerateBox(IndexedLines[i], IndexedLines);
+PrevFile = GetFilePath(IndexedLines[i]);
+}
+}
+BoxList += GenerateVBox(VBox);
+RenderFigure("Overview", hcat(BoxList, hgap(3)));
+}
+FProperty ExecOnMouseDown(str IndexedLine, list[str] IndexedLines)
+{
+return onMouseDown(bool (int butnr, map[KeyModifier,bool] modifiers)
+{
+if(GetColor(IndexedLine) == "Red")
+{
+list[str] NormalizedIndexes = ExtractAndNormalizeIndexes(IndexedLine, IndexedLines);
+GenerateDiff([NormalizedIndexes]);
+}
+return true;
+});
+}
+FProperty ExecOnMouseEnter(str IndexedLine, list[str] IndexedLines)
+{
+Figure Tooltip = text("");
+if(GetColor(IndexedLine) == "Red")
+{
+list[str] NormalizedIndexes = ExtractAndNormalizeIndexes(IndexedLine, IndexedLines);
+Tooltip = GenerateTooltip(IndexedLine, NormalizedIndexes);
+}
+return mouseOver(Tooltip);
+}
+Figure GenerateTooltip(str IndexedLine, list[str] IndexedLines)
+{
+list[Figure] Texts = [];
+list[str] inputLines = readFileLines(SampleFile(GetFilePath(IndexedLine)));
+int LineNumber = LineNumber(IndexedLine);
+int Min = ((LineNumber-5) > 0) ? (LineNumber-5) : 0;
+int Max = ((LineNumber+10) < size(inputLines)) ? (LineNumber+10) : size(inputLines);
+Texts += text("...", fontItalic(true), fontBold(true), left());
+for(i <- [Min .. Max])
+{
+if(GetColor(IndexedLines[i]) == "Red")
+{
+Texts += text("<i+1>: <inputLines[i]>", fontSize(7), fontColor("red"), fontItalic(true), fontBold(true), left());
+}
+else
+{
+Texts += text("<i+1>: <inputLines[i]>", fontSize(7), left());
+}
+}
+Texts += text("...", fontItalic(true), fontBold(true), left());
+return box(vcat(Texts), fillColor("lightyellow"), grow(1.2), resizable(false));
+}
+list[str] ExtractAndNormalizeIndexes(str IndexedLine, list[str] IndexedLines)
+{
+list[str] SampleIndexes = GenerateSampleIndexesForClass(IndexedLine, IndexedLines);
+list[str] NormalizedIndexes = NormalizeIndexes(SampleIndexes);
+return NormalizedIndexes;
+}
+list[str] GenerateSampleIndexesForClass(str IndexedLine, list[str] IndexedLines)
+{
+list[str] SampleIndexes = [];
+for(Line <- IndexedLines, GetFilePath(IndexedLine) == GetFilePath(Line))
+{
+SampleIndexes += Line;
+}
+return SampleIndexes;
+}
+module graphics::PopUp
+FProperty popup(loc S)
+{
+list[str] lst = readFileLines(S);
+list[str] subLst = slice(lst, (5-1), (8-(5-1)));
+str txt = "";
+for(s <- subLst)
+{
+txt += s +"\n";
+}
+str col = "(2042,182,\<62,4\>,\<65,5\>)";
+loc l = |project:
+t1 = text("Ik ben code 1\nIk ben code 2\nIk ben code 2\n", fontSize(7));
+t2 = text("Ik ben een clone\n", fontSize(7), fontColor("red"), fontItalic(true), fontBold(true));
+t3 = text("Ik ben code 4\nIk ben code 5\nIk ben code 6\n", fontSize(7));
+return mouseOver(box(vcat([t1, t2, t3]), fillColor("lightyellow"), grow(1.2), resizable(false)));
+}
+FProperty popup2(loc S)
+{
+list[str] lst = readFileLines(S);
+list[str] subLst = slice(lst, (5-1), (8-(5-1)));
+str txt = "";
+for(s <- subLst)
+{
+txt += s +"\n";
+}
+str col = "(2042,182,\<62,4\>,\<65,5\>)";
+loc l = |project:
+t1 = box(text("Ik ben code 1\nIk ben code 2\nIk ben code 2\n", fontSize(7)));
+t2 = box(text("Ik ben een clone\n", fontSize(7), fontColor("red"), fontItalic(true), fontBold(true)));
+t3 = box(text("Ik ben code 4\nIk ben code 5\nIk ben code 6\n", fontSize(7)));
+return mouseOver(box(vcat([t1, t2, t3]), fillColor("lightyellow"), grow(1.2), resizable(false)));
+}
+module \graphics::RiskProfile
+import vis::Figure;
+import vis::Render;
+import \helpers::MathHelpers;
+void RenderRisk(str Caption, list[int] Distribution)
+{
+Distribution = CreateDistribution(Distribution);
+int Remain = 100 - (Distribution[0] + Distribution[1] + Distribution[2]);
+b1 = box(text("<Distribution[0]>%", fontSize(20), fontColor("black")), vshrink(Distribution[0]/100.0), fillColor("Green"));
+b2 = box(text("<Distribution[1]>%", fontSize(20), fontColor("black")), vshrink(Distribution[1]/100.0), fillColor("Yellow"));
+b3 = box(text("<Distribution[2]>%", fontSize(20), fontColor("black")), vshrink(Distribution[2]/100.0), fillColor("Orange"));
+b4 = box(text("<Remain>%", fontSize(20), fontColor("black")), vshrink(Remain/100.0), fillColor("Red"));
+render(Caption,vcat([b4, b3,b2,b1]));
+}
+module \helpers::Debugging
+import DateTime;
+import IO;
+bool LoggingEnabled = false;
+public void DebugPrint(str TextToPrint)
+{
+if(true == LoggingEnabled)
+{
+println(TextToPrint);
+}
+}
+public void Duration(datetime StartTime) = Duration("", StartTime);
+public void Duration(str Prefix, datetime StartTime) = println("<Prefix> duration: <createDuration(StartTime, now())>");
+module \helpers::FileHelpers
+import FileLocations;
+import IO;
+import List;
+import Quotes;
+import String;
+import \helpers::JavaHelpers;
+import \helpers::ListHelpers;
+import \helpers::StringHelpers;
+list[loc] EnumerateDirFiles(str SampleSubDir) = EnumerateDirFiles(toLocation("<SampleDir><SampleSubDir>"));
+list[loc] EnumerateDirFiles(loc FolderLoc)
+{
+list [loc] LocationList = [];
+if(true == exists(FolderLoc))
+{
+list[loc] FilesFolders = FolderLoc.ls;
+for (int n <- [0 .. size(FilesFolders)])
+{
+if (true == IsDirectory(FilesFolders[n]))
+{
+LocationList += EnumerateDirFiles(FilesFolders[n]);
+}
+else
+{
+LocationList += FilesFolders[n];
+}
+}
+}
+return LocationList;
+}
+bool IsDirectory(loc Path) = (-1 == findLast(Path.path, "."));
+list[str] StripAndIndexFile(loc FileToStrip)
+{
+list[str] FileLines = readFileLines(FileToStrip);
+FileLines = IndexLines(FileLines, GetSamplePath(FileToStrip));
+FileLines = RemoveSingleLineComments(FileLines, LineSplitter);
+FileLines = RemoveBlockComments(FileLines);
+FileLines = TrimList(FileLines, LineSplitter);
+return FileLines;
+}
+private str ColorSplitter = "Ѭ";
+private str FileSplitter = "۞";
+private str LineSplitter = "۩";
+alias TIndexedLine = tuple[str Index, str Content];
+void SplitIndexedFile(loc FileToSplit, loc IndexFile, loc ContentFile)
+{
+list[str] AllLines = readFileLines(FileToSplit);
+list[str] Indexes = [];
+list[str] Contents = [];
+for(Line <- AllLines)
+{
+PrintQuote();
+TIndexedLine Split = SplitIndexedLine(Line);
+Indexes += Split.Index;
+Contents += Split.Content;
+}
+writeFile(IndexFile, JoinList(Indexes));
+writeFile(ContentFile, JoinList(Contents));
+}
+TIndexedLine SplitIndexedLine(str Input) = < StringToken(Input, "", LineSplitter), StringToken(Input, LineSplitter, "") >;
+list[str] IndexLines(loc FileToCheck) = IndexLines(readFileLines(FileToCheck), GetSamplePath(FileToCheck));
+list[str] IndexLines(list[str] InputLines, str FileName)
+{
+list[str] Results = [];
+for(int Line <- [0 .. size(InputLines)])
+{
+Results += "<FileName><FileSplitter><Line+1><LineSplitter><trim(InputLines[Line])>";
+}
+return Results;
+}
+str GetSamplePath(loc FileToCheck)
+{
+str Find = "sampleFiles/";
+str Path = FileToCheck.path;
+if(-1 == findFirst(Path, Find))
+{
+Path = "/sampleFiles/.." + replaceAll(Path, "project:
+}
+return StringToken(Path, Find, "");
+}
+str GetFilePath(str indexLine) = contains(indexLine, FileSplitter) ? StringToken(StringToken(indexLine, ColorSplitter, ""), "", FileSplitter) : "Not Found";
+str GetColor(str indexLine) = contains(indexLine, ColorSplitter) ? StringToken(indexLine, "", ColorSplitter) : "White";
+list[str] NormalizeIndexedFile(loc FileToNormalize) = NormalizeIndexes(readFileLines(FileToNormalize));
+list[str] NormalizeIndexes(list[str] IndexesToNormalize)
+{
+list[str] Results = [];
+int LastPos = 0;
+str CurrentColor = "";
+for(Line <- IndexesToNormalize)
+{
+int ThisLine = LineNumber(Line);
+int Gap = ThisLine - LastPos;
+for(n <- [1 .. Gap])
+{
+CurrentColor = UpdateColor(CurrentColor, GetColor(Line));
+Results += SetLineInfo(Line, CurrentColor, LastPos+n);
+}
+Results += Line;
+CurrentColor = GetColor(Line);
+LastPos = ThisLine;
+}
+return Results;
+}
+str UpdateColor(str Current, str New) = (Current == New) ? Current : "";
+int LineNumber(str LineToCheck) = toInt(StringToken(LineToCheck, FileSplitter, ""));
+str SetLineInfo(str LineToEdit, str Color, int PosToInsert)
+{
+LineToEdit = StripColor(LineToEdit);
+LineToEdit = AddColor(LineToEdit, Color);
+return "<StringToken(LineToEdit, "", FileSplitter)><FileSplitter><PosToInsert>";
+}
+str StripColor(LineToEdit) = (-1 == findFirst(LineToEdit, ColorSplitter)) ? LineToEdit : StringToken(LineToEdit, ColorSplitter, "");
+str AddColor(str Line, str Color) = "" == Color ? Line : "<Color><ColorSplitter><Line>";
+list[str] StripFileExtension(list[str] Files) = [ StripFileExtension(File) | File <- Files];
+str StripFileExtension(str File) = substring(File, 0, findLast(File, "."));
+list[str] FileName(list[loc] Files) = [ FileName(File.path) | File <- Files];
+list[str] FileName(list[str] Files) = [ FileName(Name) | Name <- Files] ;
+str FileName(loc FileToCheck) = FileName(FileToCheck.path);
+str FileName(str TotalPath)
+{
+int LastSlash = findLast(TotalPath, "/");
+if(-1 != LastSlash)
+{
+return substring(TotalPath, LastSlash+1);
+}
+return TotalPath;
+}
+list[str] CreateMonsterFile(loc FileFolder) = CreateMonsterFile(FileFolder, |project:
+list[str] CreateMonsterFile(loc FileFolder, loc OutputFile)
+{
+str lines = "";
+for(file <- EnumerateDirFiles(FileFolder)) {
+lines += readFile(file);
+}
+writeFile(OutputFile, lines);
+return readFileLines(OutputFile);
+}
+void ResetFile(loc File)
+{
+if(true == exists(File))
+{
+writeFile(File, "");
+}
+}
+void AppendToFile(loc File, str Text) = exists(File) ? appendToFile(File, Text) : writeFile(File, Text);
+module \helpers::HtmlHelpers
+import List;
+import String;
+public str OpenTable() = "\<Table border\>";
+public str Caption(str Caption) = "\<Caption\>" + Caption + "\</Caption\>";
+public str CloseTable() = "\</Table\>";
+public str OpenRow() = "\<tr\>";
+public str OpenColumn() = "\<td\>";
+public str CloseColumn() = "\</td\>";
+public str CloseRow() = "\</tr\>\r\n";
+public str HtmlPrint(str Input) = replaceAll(Input, "\r\n", "\<br\>");
+public str RowWithValue(str Name, str Value) = RowWithValues([Name, Value]);
+public str RowWithValues(list[str] Values)
+{
+TotalHtml = OpenRow();
+for(int n <- [0 .. size(Values)])
+{
+TotalHtml += TableCell(Values[n]);
+}
+TotalHtml += CloseRow();
+return TotalHtml;
+}
+public str TableCell(str Value) = OpenColumn() + Value + CloseColumn();
+public str TestRow(str ModuleName, str TestName, bool TestResult) = OpenRow() + TestCell(TestResult) + TableCell(ModuleName) + TableCell(TestName) + CloseRow();
+public str TestCell(bool TestPassed) = TestPassed ? GreenCell() : RedCell();
+public str GreenCell() = "\<td width=25 bgcolor=\"#00FF00\"\><CloseColumn()>";
+public str RedCell() = "\<td width=25 bgcolor=\"#FF0000\"\><CloseColumn()>";
+public str FileLink(str FileName) = CreateLink("/../.." + FileName);
+public str ClassLink(str ClassName) = CreateLink("/details/<ClassName>.html");
+public str CreateLink(str Path) = OpenLink(Path) + "\"\>" + Path + CloseLinkTag();
+public str OpenLink(str RelativePath) = "\<a href=\".<RelativePath>";
+public str CloseLinkTag() = "\</a\"";
+module \helpers::JavaHelpers
+import FileLocations;
+import IO;
+import List;
+import String;
+import Set;
+import lang::java::m3::Core;
+import lang::java::jdt::m3::Core;
+import \util::Math;
+import \helpers::StringHelpers;
+import \helpers::ListHelpers;
+import \helpers::FileHelpers;
+import \metrics::SigScores;
+private bool WriteMethodStatementsToFile = true;
+str GetFullClassPath(loc FileToCheck)
+{
+str TotalPath = FileToCheck.path;
+str subPath = substring(TotalPath, findFirst(TotalPath, "/")+1, findLast(TotalPath, "."));
+return substring(subPath, findFirst(subPath, "/")+1);
+}
+str GetClassName(loc FileToCheck) = GetClassName(GetFullClassPath(FileToCheck));
+str GetClassName(str TotalPath) = substring(TotalPath, findLast(TotalPath, "/")+1);
+str ExtractMethodDeclaration(loc FunctionBody)
+{
+str FunctionDefinition = readFile(FunctionBody);
+int AccolPos = findFirst(FunctionDefinition,"{");
+if(-1 == AccolPos)
+{
+AccolPos = findFirst(FunctionDefinition, ")");
+if(-1 == AccolPos)
+{
+return "Invalid function declaration...";
+}
+}
+return substring(readFile(FunctionBody), 0, AccolPos);
+}
+int MethodSize(str MethodToCheck) = MethodSize(MethodToCheck, "");
+int MethodSize(loc MethodToCheck) = MethodSize(readFile(MethodToCheck), "");
+int MethodSize(str MethodToCount, str Prefix) = MethodSize(MethodToCount, MethodLinesFile(Prefix));
+int MethodSize(str MethodToCount, loc OutputFile)
+{
+if(-1 == findFirst(MethodToCount, "{") || -1 == findFirst(MethodToCount, "}"))
+{
+return LineCount(MethodToCount);
+}
+list[str] Lines = TrimList(split("\r\n", MethodBody(MethodToCount)));
+Lines = RemoveSingleLineComments(Lines);
+Lines = RemoveBlockComments(Lines);
+if(true == WriteMethodStatementsToFile)
+{
+AppendToFile(OutputFile, JoinList(Lines));
+}
+return size(Lines);
+}
+str MethodBody(str InputData) = trim(StringToken(InputData, "{", "}"));
+list[str] RemoveSingleLineComments(list[str] Lines, str Split)
+{
+list[str] Results = [];
+for(int n <- [0 .. size(Lines)])
+{
+list[str] Tokens = split(Split, Lines[n]);
+if((1 < size(Tokens))
+&& (false == SingleLineComment(trim(Tokens[1]))))
+{
+Results += StripComment(Lines[n]);
+}
+}
+return Results;
+}
+list[str] RemoveSingleLineComments(list[str] Lines)
+{
+list[str] Results = [];
+for(Line <- Lines, (false == SingleLineComment(Line)))
+{
+Results += StripComment(Line);
+}
+return Results;
+}
+bool SingleLineComment(str LineToCheck) = ((true == startsWith(LineToCheck, "
+|| (true == startsWith(LineToCheck, ""))));
+str StripComment(str InputLine)
+{
+int CommentPos = findFirst(InputLine, "
+if(-1 == CommentPos)
+{
+return InputLine;
+}
+return trim(substring(InputLine, 0, CommentPos));
+}
+list[str] RemoveBlockComments(list[str] Lines)
+{
+str TotalData = JoinList(Lines);
+int StartOpen = 0;
+while(true)
+{
+int Open = CommentOpen(TotalData, StartOpen);
+int Close = CommentClose(TotalData, max(StartOpen,Open));
+if((-1 == Open) && (-1 == Close))
+{
+break;
+}
+else if((-1 != Open) && (-1 != Close))
+{
+TotalData = ClipString(TotalData, Open, Close+2, GetSplit(substring(TotalData, Open, Close)));
+}
+else
+{
+StartOpen = max(Open, Close)+1;
+}
+}
+return TrimList(split("\r\n", TotalData));
+}
+int CommentOpen(str Line, int StartPos) = HandleFind(Line, "
+int HandleFind(str Line, str Find, int StartPos)
+{
+Line = substring(Line, StartPos);
+int FoundPos = findFirst(Line, Find);
+if(-1 != FoundPos)
+{
+FoundPos += StartPos;
+}
+return FoundPos;
+}
+str GetSplit(str StringToken)  = HasMultipleLines(StringToken) ? "\r\n" : "" ;
+bool HasMultipleLines(str StringToken) = (-1 != findFirst(StringToken, "\r\n"));
+list[int] GetFields(loc FileLoc)
+{
+M3 Model = createM3FromEclipseFile(FileLoc);
+list[list[loc] Items] FieldsLoc = toList(NumberOfFieldsPerClass(Model).fieldsLoc);
+list[int] FieldLength = [0,0,0,0];
+try
+{
+for(f <- FieldsLoc[0])
+{
+str TotalPath = f.path;
+FieldLength[FieldLengthIndex(size(substring(TotalPath, findLast(TotalPath, "/")+1)))] += 1;
+}
+}
+catch:
+{
+;
+}
+return FieldLength;
+}
+map[loc class, list[loc] fieldsLoc] NumberOfFieldsPerClass(M3 myModel) = (cl:NumberOfFields(cl, myModel) | <cl,_> <- myModel@containment, isClass(cl));
+list[loc] NumberOfFields(loc cl, M3 model) = [ m | m <- model@containment[cl], isField(m)];
+module helpers::ListHelpers
+import String;
+import List;
+bool Contains(list[&T] Items, &T Item) = -1 != indexOf(Items, Item);
+str StoreClones(list[tuple[int SourceLine, list[int] Clones]] ListToStore)
+{
+str TotalText = "";
+for(Tuple <- ListToStore)
+{
+TotalText += "<Tuple.SourceLine>$<EncodeListContents(Tuple.Clones)>\r\n";
+}
+return TotalText;
+}
+str EncodeListContents(list[int] Items)
+{
+str Contents = "[";
+for(Item <- Items)
+{
+Contents += "<Item>,";
+}
+return replaceLast(Contents, ",", "") + "]";
+}
+list[tuple[int, list[int]]] LoadClones(str Input)
+{
+list[tuple[int Source, list[int] Clones]] Results = [];
+list[str] Tokens = split("\r\n", Input);
+for(Token <- Tokens)
+{
+list[str] SplittedToken = split("$", Token);
+Results += <toInt(SplittedToken[0]), DecodeListContents(SplittedToken[1])>;
+}
+return Results;
+}
+list[int] DecodeListContents(str ListToEncode)
+{
+str List = substring(ListToEncode, 1, size(ListToEncode)-1);
+list[str] Numbers = split(",", List);
+list[int] Result = [];
+for(Number <- Numbers)
+{
+Result += toInt(Number);
+}
+return Result;
+}
+list[str] TrimList(list[str] LinesToTrim, str TokenToSplit)
+{
+Results = [];
+for(Line <- LinesToTrim, 1 < size(split(TokenToSplit, Line)))
+{
+Results += Line;
+}
+return Results;
+}
+list[str] TrimList(list[str] LinesToTrim)
+{
+list[str] Results = [];
+for(Line <- LinesToTrim, "" != trim(Line))
+{
+Results += trim(Line);
+}
+return Results;
+}
+test bool TestSome() = ExpectEqual(1, 2);
+list[str] PadList(str Prefix, list[str] Lines, str Suffix) = ["<Prefix><Line><Suffix>" | Line <- Lines];
+str JoinList(list[str] Lines) = JoinList(Lines, "\r\n");
+str JoinList(list[str] Lines, str Token)
+{
+str Result = "";
+for(Line <- Lines)
+{
+Result += Line + Token;
+}
+return replaceLast(Result, Token, "");
+}
+module \helpers::MathHelpers
+import util::Math;
+import List;
+int Limit(int Min, int Actual, int Max) = min(Max, max(Min,Actual));
+bool InLimits(int Min, int Actual, int Max) = Actual == Limit(Min, Actual, Max);
+list[int] CreateDistribution(list[int] Numbers)
+{
+num TotalAmount = sum(Numbers);
+list[int] Distribution = [];
+for(Number <- Numbers)
+{
+Distribution += round((100 * Number) / TotalAmount);
+}
+return Distribution;
+}
+num Fraction(int Numerator, int Denominator)
+{
+num NumNumerator = Numerator;
+num NumDenominator = Denominator;
+return NumNumerator / NumDenominator;
+}
+int Percentage(int Amount, int Total) = toInt(100.0 * Fraction(Amount, Total));
+module helpers::RegexHelpers
+import String;
+public str RegexForInts = ".*[\\s=]+[0-9]+[\\s;\r\n)]+.*";
+module \helpers::StringHelpers
+import IO;
+import List;
+import Map;
+import Set;
+import String;
+int TypedChars(str StringToCheck) = size(StringToCheck) - Indent(StringToCheck);
+int Indent(str StringToCheck)
+{
+StringToCheck = replaceAll(StringToCheck, "\t", "  ");
+int TotalLength = size(StringToCheck);
+for(int n <- [0 .. TotalLength])
+{
+if(StringToCheck[n] != " ")
+{
+return n;
+}
+}
+return TotalLength;
+}
+int LineCount(str StringToCheck)
+{
+Lines = 1;
+for(n <- [0 .. size(trim(StringToCheck))], StringToCheck[n] == "\n")
+{
+Lines +=1;
+}
+return Lines;
+}
+alias TDictionary = list[tuple[str Find, str Replace]];
+TDictionary Dictionary = [
+<"public", "Б">,
+<"private", "Ь">,
+<"protected", "Ы">,
+<"static", "Ж">,
+<"final", "Ъ">,
+<"String", "Д">,
+<"int", "Л">,
+<"Exception", "Я">,
+<"throw", "Ю">,
+<"Statement", "Э">,
+<"return", "Щ">,
+<"boolean", "Ф">
+];
+public str EncodeString(str StringToEncode) = EncodeString(StringToEncode, Dictionary);
+public str EncodeString(str StringToEncode, TDictionary Dictionary)
+{
+for(Pair <- Dictionary)
+{
+StringToEncode = replaceAll(StringToEncode, Pair.Find, Pair.Replace);
+}
+return StringToEncode;
+}
+public str DecodeString(str StringToDecode) = DecodeString(StringToDecode, Dictionary);
+public str DecodeString(str StringToDecode, TDictionary Dictionary)
+{
+for(Pair <- Dictionary)
+{
+StringToDecode = replaceAll(StringToDecode, Pair.Replace, Pair.Find);
+}
+return StringToDecode;
+}
+public str StringToken(str StringToCheck, str FirstOccurrence, str LastOccurrence) = StringToken(StringToCheck, FirstOccurrence, findLast(StringToCheck, LastOccurrence));
+public str StringToken(str StringToCheck, int FirstPosition, str LastOccurrence) = StringToken(StringToCheck, FirstPosition, findLast(StringToCheck, LastOccurrence));
+public str StringToken(str StringToCheck, str FirstOccurrence, int LastPosition) = StringToken(StringToCheck, findFirst(StringToCheck, FirstOccurrence)+size(FirstOccurrence), LastPosition);
+public str StringToken(str StringToCheck, int FirstPosition, int LastPosition) = substring(StringToCheck, FirstPosition, LastPosition);
+public str ClipString(str StringToClip, str Start, str End) = ClipString(StringToClip, findFirst(StringToClip, Start), findFirst(StringToClip, End) + size(End), "");
+public str ClipString(str StringToClip, str Start, str End, str Split) = ClipString(StringToClip, findFirst(StringToClip, Start), findFirst(StringToClip, End) + size(End), Split);
+public str ClipString(str StringToClip, int StartPos, int EndPos) = ClipString(StringToClip, StartPos, EndPos, "");
+public str ClipString(str StringToClip, int StartPos, int EndPos, str Split) = substring(StringToClip, 0, StartPos) + Split + substring(StringToClip, EndPos);
+alias THashInfo = tuple[THashMap HashMap, TStringMap StringMap];
+alias THashMap = map[int,int];
+alias TStringMap = map[str Source, int Encoding];
+THashInfo HashFile(loc FileToHash) = HashFile(readFileLines(FileToHash));
+THashInfo HashFile(list[str] Lines)
+{
+set[str] FileLines = toSet(Lines);
+TStringMap StringMap = index(FileLines);
+THashMap FilesMap = ();
+for(n <- [0.. size(Lines)])
+{
+FilesMap[n] = StringMap[Lines[n]];
+}
+return <FilesMap, StringMap>;
+}
+module \helpers::TestHelpers
+import FileLocations;
+import IO;
+import vis::Figure;
+import \helpers::FileHelpers;
+import \helpers::ListHelpers;
+str ExtractColour(Color Actual)
+{
+int StartPoint = Actual + 16777216;
+int Blue = (StartPoint % 256);
+StartPoint -= Blue;
+int Green = (StartPoint % 65536) / 256;
+StartPoint -= Green;
+int Red = (StartPoint / 65536);
+return "rgb(<Red>,<Green>,<Blue>)";
+}
+bool ExpectEqualColors(Color Expected, Color Actual) = ExpectEqual(ExtractColour(Expected), ExtractColour(Actual));
+bool ExpectFalse(bool TestMe) = ExpectEqual(false, TestMe);
+bool ExpectTrue(bool TestMe) = ExpectEqual(true, TestMe);
+bool ExpectEqual(list[str] Expected, list[str] Actual, loc FileToStore)
+{
+bool Result = ExpectEqual(Expected, Actual);
+writeFile(FileToStore, JoinList(Actual));
+return Result;
+}
+bool ExpectEqual(&T Expected, &T Actual, loc FileToStore)
+{
+bool Result = ExpectEqual(Expected, Actual);
+writeFile(FileToStore, Actual);
+return result;
+}
+bool ExpectEqual(&T Expected, &T Actual)
+{
+if(Expected != Actual)
+{
+iprintln("Expected: <Expected>, but received <Actual>");
+return false;
+}
+return true;
+}
+bool ExpectNotEqual(&T Expected, &T Actual)
+{
+if(Expected == Actual)
+{
+iprintln("Equal values passed: <Expected>!");
+return false;
+}
+return true;
+}
+bool ExpectEqualFiles(loc ExpectedFile, loc ActualFile) = ExpectEqualFiles(ExpectedFile, readFileLines(ActualFile));
+bool ExpectEqualFiles(loc FileToScan, list[str] ContentToCompare)
+{
+if(false == ExpectEqual(readFileLines(FileToScan), ContentToCompare))
+{
+AppendToFile(OutputFile("test/FailedFileCompares.txt"), JoinList(ContentToCompare));
+return false;
+}
+return true;
+}
+module \metrics::CalculateCC
+import lang::java::\syntax::Java15;
+import IO;
+import ParseTree;
+import Prelude;
+lrel[loc MethodLocation, int CyclomaticComplexity] CyclomaticComplexity(loc file) = [<m@\loc, CalculateCyclomaticComplexity(m)> | m <- AllMethods(file)];
+set[MethodDec] AllMethods(loc file) = {m | /MethodDec m := parse(#start[CompilationUnit], file)};
+int CalculateCyclomaticComplexity(MethodDec m)
+{
+result = 1;
+visit (m)
+{
+case (Expr)`<Expr _> && <Expr _>` : result += 1;
+case (Expr)`<Expr _> || <Expr _>` : result += 1;
+case (CondMid)`? <Expr _> :` : result += 1;
+case (Stm)`do <Stm _> while (<Expr _>);`: result += 1;
+case (Stm)`while (<Expr _>) <Stm _>`: result += 1;
+case (Stm)`if (<Expr _>) <Stm _>`: result +=1;
+case (Stm)`if (<Expr _>) <Stm _> else <Stm _>`: result +=1;
+case (Stm)`for (<{Expr ","}* _>; <Expr? _>; <{Expr ","}*_>) <Stm _>` : result += 1;
+case (Stm)`for (<LocalVarDec _> ; <Expr? e> ; <{Expr ","}* _>) <Stm _>`: result += 1;
+case (Stm)`for (<FormalParam _> : <Expr _>) <Stm _>` : result += 1;
+case (Stm)`switch (<Expr _> ) <SwitchBlock _>`: result += 1;
+case (SwitchLabel)`case <Expr _> :` : result += 1;
+case (CatchClause)`catch (<FormalParam _>) <Block _>` : result += 1;
+}
+return result;
+}
+module \metrics::SigScores
+import List;
+import String;
+import \graphics::GraphGenerator;
+import \helpers::MathHelpers;
+import \util::Math;
+import analysis::statistics::Descriptive;
+public int VolumeScore(int SLOC) = ReturnScore(SLOC, [66000,246000,655000,1310000]);
+public int UnitComplexityIndex(int Complexity) = ReturnScore(Complexity, [10,20,50]);
+public int CoverageScore(int Coverage) = ReturnScore(Coverage, [20,60,80,95]);
+public int DuplicationScore(int Dupes) = ReturnScore(Dupes, [3,5,10,20]);
+public int UnitSizeIndex(int Size) = ReturnScore(Size, [10,50,100]);
+public int UnitSizeScore(list[int] Distribution) = EvaluateDistribution(Distribution);
+public int UnitComplexityScore(list[int] Distribution) = EvaluateDistribution(Distribution);
+public int FieldLengthIndex(int Length) = 4 - ReturnScore(Length, [2, 4, 6]);
+public int FieldLengthScore(list[int] Distribution) = EvaluateDistributionDistribution(Distribution);
+public int TotalSigScore(list[int] Scores)
+{
+int Volume = Scores[0];
+int Complexity = Scores[1];
+int Duplication = Scores[2];
+int UnitSize = Scores[3];
+int Analyzeability = round(mean([Volume, Duplication, UnitSize]));
+int Changeability = round(mean([Complexity, Duplication]));
+int Testability = round(mean([Complexity, UnitSize]));
+int TotalScore = round(mean([Analyzeability, Changeability, Testability]));
+TBoxPlot BoxPlot = [  <Volume, "Volume">,
+<Complexity, "Complexity">,
+<Duplication, "Duplication">,
+<UnitSize, "UnitSize">,
+<Analyzeability, "Analyzeability">,
+<Changeability, "Changeability">,
+<Testability, "Testability">,
+<TotalScore, "Maintainability">
+];
+PlotGraph("SIG Score", BoxPlot);
+return TotalScore;
+}
+int EvaluateDistribution(list[int] Distribution)
+{
+Distribution = CreateDistribution(Distribution);
+int VeryHighRisk = Distribution[3];
+int HighRisk = Distribution[2];
+int MediumRisk = Distribution[1];
+if((5 <= VeryHighRisk) || (15 <= HighRisk) || (50 <= MediumRisk))
+{
+return 4;
+}
+else if((0 != VeryHighRisk) || (10 <= HighRisk) || (40 <= MediumRisk))
+{
+return 3;
+}
+else if((5 <= HighRisk) || (30 <= MediumRisk))
+{
+return 2;
+}
+else if((0 != HighRisk) || (25 <= MediumRisk))
+{
+return 1;
+}
+return 0;
+}
+int ReturnScore(int Actual, list[int] Bounds)
+{
+int Amount = size(Bounds);
+for(n <- [0 .. Amount], Actual <= Bounds[n])
+{
+return n;
+}
+return Amount;
+}
+str StarRating(int Score)
+{
+str Rating = "★★★★★";
+Score = Limit(0, Score, 4);
+for(n <- [0 .. Score])
+{
+Rating = replaceLast(Rating, "★", "☆");
+}
+return Rating;
+}
+module \metrics::SlocModule
+import \metrics::CalculateCC;
+import \helpers::Debugging;
+import IO;
+import List;
+import String;
+import util::Math;
+import \helpers::HtmlHelpers;
+import \helpers::JavaHelpers;
+import \helpers::StringHelpers;
+import \helpers::FileHelpers;
+import FileLocations;
+alias TStaticMetrics =  tuple[str FileName,
+int TotalLines,
+int CodeLines,
+int WhiteSpaces,
+int LLOC,
+int Curlies,
+int Comments,
+int MaxIndent
+];
+TStaticMetrics Init() = <"UnknownFile", 0,0,0,0,0,0,0>;
+str TableColumns() = RowWithValues(["FileName","File lines","CodeLines","WhiteSpaces","LLOC","Curlies","Comments","MaxIndent","Details"]);
+str ScanJavaFileToHtml(str FileToCheck) = ScanJavaFileToHtml(toLocation(FileToCheck));
+int ScanJavaFileSloc(loc FileToCheck) = ScanJavaFile(FileToCheck).CodeLines;
+list[tuple[int,int]] ScanJavaFileMethodLengthAndComplexity(loc FileToCheck)
+{
+lrel[loc Location, int Complexity] Declarations = CyclomaticComplexity(FileToCheck);
+list[tuple[int,int]] Results = [];
+for(tuple[loc Location, int Complexity] Declaration <- Declarations)
+{
+str MethodDefinition = readFile(Declaration.Location);
+try
+{
+Results += <MethodSize(MethodDefinition, ""), Declaration.Complexity>;
+}
+catch:
+{
+println("Failed to Calculate\r\n <MethodDefinition>");
+AppendToFile(FailedMethodLinesFile, "\r\n----- Failed method ------\r\n<MethodDefinition>");
+}
+}
+return Results;
+}
+str ScanJavaFileToHtml(loc FileToCheck)
+{
+TStaticMetrics StaticMetrics = ScanJavaFile(FileToCheck);
+return RowWithValues([FileLink(StaticMetrics.FileName),
+"<StaticMetrics.TotalLines>",
+"<StaticMetrics.CodeLines>",
+"<StaticMetrics.WhiteSpaces>",
+"<StaticMetrics.LLOC>",
+"<StaticMetrics.Curlies>",
+"<StaticMetrics.Comments>",
+"<StaticMetrics.MaxIndent>",
+ClassLink(GetClassName(FileToCheck))]);
+}
+public TStaticMetrics ScanJavaFile(loc FileToCheck)
+{
+TStaticMetrics Metrics = Init();
+bool CommentActive = false;
+list[str] FileLines = readFileLines(FileToCheck);
+int TotalLines = size(FileLines);
+Metrics.TotalLines = TotalLines;
+Metrics.FileName = FileToCheck.path;
+int MaxIndent = 0;
+str SanitizedText = "";
+for(int n <- [0 .. TotalLines])
+{
+str CurrentLine = FileLines[n];
+int CurrentIndent = Indent(CurrentLine);
+CurrentLine = trim(CurrentLine);
+if((false == CommentActive)
+&& (true == contains(CurrentLine, "
+{
+continue;
+}
+}
+if((true == CommentActive)
+&& (true == contains(CurrentLine, "*/")))
+{
+CommentActive = false;
+Metrics.Comments += 1;
+if(true == endsWith(CurrentLine, "*/"))
+{
+continue;
+}
+}
+if(false == CommentActive)
+{
+MaxIndent = max(CurrentIndent, MaxIndent);
+if(true == startsWith(CurrentLine, "
+{
+Metrics.Comments += 1;
+continue ;
+}
+else
+{
+if(true == contains(CurrentLine, "
+{
+Metrics.Comments += 1;
+CurrentLine = substring(CurrentLine, 0, findFirst(CurrentLine, "
+}
+if(true == isEmpty(CurrentLine))
+{
+Metrics.WhiteSpaces += 1;
+continue;
+}
+else
+{
+bool IsCurly = ("{" == CurrentLine) || ("}" == CurrentLine);
+if(true == IsCurly)
+{
+Metrics.Curlies += 1;
+}
+else
+{
+DebugPrint(CurrentLine);
+Metrics.LLOC += 1;
+}
+SanitizedText += Sanitize(CurrentLine);
+Metrics.CodeLines += 1;
+}
+}
+}
+}
+Metrics.MaxIndent = MaxIndent;
+writeFile(SanitizedSqlFolder(EscapePath(Metrics.FileName)), replaceFirst(SanitizedText, "\r\n", "") +"\r\n");
+return Metrics;
+}
+str EscapePath(str InputPath) = replaceAll(InputPath, "/sampleFiles" ,"");
+str Sanitize(str StringToSanitize)
+{
+if((startsWith(StringToSanitize, "import "))
+|| (startsWith(StringToSanitize, "package ")))
+{
+return "";
+}
+return "\r\n" + StringToSanitize;
+}
+public list[int] GenerateGraphData(loc FileName)
+{
+list[int] Pivots = [];
+lrel[loc Location, int Complexity] Declarations = CyclomaticComplexity(FileName);
+for(n <- [0 .. size(Declarations)])
+{
+Pivots += Declarations[n].Complexity;
+}
+return Pivots;
+}
+str GenerateDetailedTable(loc FileName)
+{
+str TotalHtml = OpenTable();
+str ClassName = GetClassName(FileName);
+lrel[loc Location, int Complexity] Declarations = CyclomaticComplexity(FileName);
+TotalHtml += Caption(ClassName +" (<size(Declarations)> Methods)");
+TotalHtml += RowWithValues(["Method declaration", "Complexity", "Definition"]);
+for(int n <- [0 .. size(Declarations)])
+{
+str MethodName = ExtractMethodDeclaration(Declarations[n].Location);
+TotalHtml += RowWithValues([MethodName, "<Declarations[n].Complexity>", HtmlPrint(readFile(Declarations[n].Location))]);
+}
+TotalHtml += CloseTable();
+return TotalHtml;
+}
+list[str] ExtractFields(loc FileToCheck)
+{
+list[str] AllLines = readFileLines(FileToCheck);
+list[str] Results = [];
+for(Line <- AllLines)
+{
+if(-1 == findFirst(Line, ")"))
+{
+Line = replaceAll(Line, "public", "");
+if(-1 != findFirst(Line, " "))
+{
+str Identifier = substring(Line, 0, findFirst(Line, " "));
+switch(Identifier)
+{
+case /int/:
+Results += Line;
+case /String/:
+Results += Line;
+}
+}
+}
+}
+return Results;
+}
+module \test::AssumptionTests
+import List;
+import Set;
+import String;
+import analysis::statistics::Descriptive;
+import \util::Math;
+import \helpers::ListHelpers;
+import \helpers::TestHelpers;
+test bool TestAssumeIntToNumConversion() = ExpectEqual(2.5, mean([2, 3]));
+test bool TestAssumeRounding() = ExpectEqual(3, round(mean([2, 3])));
+list[str] TestList = ["Hello", "Goeie", "Goedendag"];
+test bool TestAssumeJoinList() = ExpectEqual("HelloGoeieGoedendag", JoinList(TestList, ""));
+test bool TestAssumeForLoop() = ExpectEqual("HelloGoeieGoedendag", ForLoopList(TestList));
+str ForLoopList(list[str] List)
+{
+str Result = "";
+for(n <- [0 .. size(List)])
+{
+Result += List[n];
+}
+return Result;
+}
+int Five = 5;
+int Two = 2;
+test bool TestIntegerDivision() = ExpectEqual(2, Five / Two);
+test bool AssumeIteratorIncrementing()
+{
+int Loops = 0;
+for(n <- [0 .. 10])
+{
+Loops += 1;
+n += 10;
+}
+return ExpectEqual(10, Loops);
+}
+public set[str] SimpleSet = {"aap", "noot", "mies"};
+public map[str Key, int Value] StringHash = index(SimpleSet);
+test bool DoWithTry()
+{
+try
+{
+return SubGetError();
+}
+catch:
+{
+;
+}
+return true;
+}
+bool SubGetError() = GetError();
+bool GetError()
+{
+list[bool] Empty = [];
+return Empty[100];
+}
+module \test::CalculateCCTest
+import \metrics::CalculateCC;
+import FileLocations;
+import String;
+import \helpers::TestHelpers;
+int SampleCC(str FileToCheck) = CyclomaticComplexity(toLocation("<SampleDir>cyclomaticcomplexity/<FileToCheck>"))[0].CyclomaticComplexity;
+test bool TestTernaryOperator() = ExpectEqual(2, SampleCC("TernaryOperator.java"));
+test bool TestInfixOperatorAnd() = ExpectEqual(2, SampleCC("InfixOperatorAnd.java"));
+test bool TestInfixOperatorOr() = ExpectEqual(2, SampleCC("InfixOperatorOr.java"));
+module \test::CloneAlgorithmTest
+import FileLocations;
+import IO;
+import String;
+import \clones::CloneAlgorithm;
+import \helpers::JavaHelpers;
+import \helpers::ListHelpers;
+import \helpers::TestHelpers;
+import \helpers::StringHelpers;
+str SamplePath = "project:
+int GetClonesForSampleFile(str FileName) = GetClonesForFile(PrepareFile(FileName));
+THashInfo PrepareFile(str FileName) = HashFile(TrimList(RemoveSingleLineComments(readFileLines(toLocation(SamplePath + FileName)))));
+TCloneList OverlappedClones = [ <6,6>,
+<14,14>,
+<20,6>
+];
+TCloneList ExpectedOverlap = [ <6,6>,
+<14,14>
+];
+test bool TestMergingOverlappedClones() = ExpectEqual(ExpectedOverlap, MergeClonesWithOverlap(OverlappedClones));
+test bool TestOverlapFunction() = ExpectTrue(HasOverlap(<14,14>, <20,6>));
+test bool TestMergingClones() = ExpectEqual(<14,14>, MergeClones(<14,14>, <20,6>));
+test bool TestSingleClone() = ExpectEqual(6, GetClonesForSampleFile("SingleClone.txt"));
+test bool TestDoubleClone() = ExpectEqual(12, GetClonesForSampleFile("DoubleClone.txt"));
+test bool TestExtendedClone() = ExpectEqual(14, GetClonesForSampleFile("DoubleExtendedClone.txt"));
+test bool TestDualOffsetClone() = ExpectEqual(12, GetClonesForSampleFile("DoubleOffsetClone.txt"));
+test bool TestDualDifferentClone() = ExpectEqual(20, GetClonesForSampleFile("DoubleDifferentClones.txt"));
+test bool TestBraceCase() = ExpectEqual(0, GetClonesForSampleFile("BraceCase.txt"));
+test bool TestNoClone() = ExpectEqual(0, GetClonesForSampleFile("NoClone.txt"));
+TCloneList SomeClones = [ <34,6>,
+<45,8>,
+<60,9>,
+<50,1>
+];
+test bool TestMaxOfList() = ExpectEqual(9, LineIncrement(SomeClones));
+TCloneList SingleExtractionInput = [<10,6>, <20,6>];
+TCloneClasses SingleExtractionResult = [[<1,6>, <10,6>, <20,6>]];
+test bool TestExtractSingleClass() = ExpectEqual(SingleExtractionResult, ExtractCloneClasses(1, SingleExtractionInput));
+TCloneList MultipleExtractionInput = [<10,8>, <20,20>];
+TCloneClasses MultipleExtractionResult = [ [<1,8>, <10,8>], [<1,20>, <20,20>]];
+test bool TestExtractingMultipleClasses() = ExpectEqual(MultipleExtractionResult, ExtractCloneClasses(1, MultipleExtractionInput));
+TCloneClasses KnownClasses = [ [<1,8> , <10,8>] ];
+test bool TestRemovingDuplicates() = ExpectEqual( [], RemovePreviousDupes(KnownClasses, [12], 5));
+test bool TestGettingCloneClasses() = ExpectEqual([], GetClonesClasses(SampleFile("type2clones/SmallSqlContent.txt")));
+TCloneClasses RunSmallSql() = GetClonesClasses(SampleFile("clones/SmallSqlContent.txt"));
+module \test::DetailViewTests
+import FileLocations;
+import \graphics::DetailView;
+loc FirstSampleResult = SampleFile("Visu/VisuSampleResult.txt");
+loc SecondSampleResult = SampleFile("Visu/VisuSampleResult2.txt");
+test bool SmallSqlDiff()
+{
+GenerateDiff(FirstSampleResult, SecondSampleResult);
+return true;
+}
+test bool SmallSqlBigDiff()
+{
+GenerateDiff([FirstSampleResult, FirstSampleResult, SecondSampleResult, SecondSampleResult]);
+return true;
+}
+module \test::FileHelperTests
+import FileLocations;
+import IO;
+import List;
+import String;
+import \helpers::FileHelpers;
+import \helpers::ListHelpers;
+import \helpers::TestHelpers;
+test bool FindFilesInDirectory() = ExpectEqual(186, size(EnumerateDirFiles("smallsql")));
+test bool FindFilesInEmptyDir() = ExpectEqual(0, size(EnumerateDirFiles("NonExistingDir")));
+test bool CheckFindNameInDir() = ExpectEqual("Columns.java", FileName(|project:
+test bool CheckFindNameWithourDir() = ExpectEqual("Tests.java", FileName("Tests.java"));
+test bool TestIndexLines() = ExpectEqualFiles(SampleFile("type1clones/SampleResult.txt"), IndexLines(SampleFile("type1clones/SampleInput.txt")));
+test bool TestStrippingIndexedInlineComments() = ExpectEqualFiles(SampleFile("type1clones/SampleResultInlineComments.txt"),
+StripAndIndexFile(SampleFile("type1clones/SampleInputInlineComments.txt")));
+test bool TestStrippingMultilineComments() = ExpectEqualFiles(SampleFile("type1clones/SampleResultMultilineComments.txt"),
+StripAndIndexFile(SampleFile("type1clones/SampleInputMultilineComments.txt")));
+test bool TestStrippingExtension() = ExpectEqual("Test", StripFileExtension("Test.txt"));
+loc SimpleSampleInput = SampleFile("filehelpers/SampleInput.txt");
+loc SimpleSampleIndexes = SampleFile("filehelpers/SampleIndexes.txt");
+loc SimpleSampleContent = SampleFile("filehelpers/SampleContent.txt");
+loc SimpleOutputIndexes = OutputFile("filehelpers/SimpleIndex.txt");
+loc SimpleOutputContent = OutputFile("filehelpers/SimpleContent.txt");
+void GenerateSplittedFiles() = SplitIndexedFile(SimpleSampleInput, SimpleOutputIndexes, SimpleOutputContent);
+test bool TestSplittingIndexes()
+{
+GenerateSplittedFiles();
+return ExpectEqualFiles(SimpleSampleIndexes, SimpleOutputIndexes);
+}
+test bool TestSplittingContent()
+{
+GenerateSplittedFiles();
+return ExpectEqualFiles(SimpleSampleContent, SimpleOutputContent);
+}
+list[str] ResultFile() = readFileLines(SampleFile("Visu/VisuSampleResult.txt"));
+loc VisuInput = SampleFile("Visu/VisuSampleInput.txt");
+list[str] ResultIndexes = ["smallsql/database/Column.java۞1",
+"RedѬsmallsql/database/Column.java۞2",
+"RedѬsmallsql/database/Column.java۞3",
+"RedѬsmallsql/database/Column.java۞4"
+];
+list[str] IndexesInput = ["RedѬsmallsql/database/Column.java۞2",
+"RedѬsmallsql/database/Column.java۞4"
+];
+test bool TestExistingColor() = ExpectEqual("Red", GetColor("RedѬ"));
+test bool TestDefaultColor() = ExpectEqual("White", GetColor("IHaveNoColur,Return the default one!!!"));
+test bool TestSamplePath() = ExpectEqual("type1clones/BraceCase.txt", GetSamplePath(|project:
+test bool TestSamplePathBack() = ExpectEqual("../src/RelativePath.txt", GetSamplePath(toLocation("project:
+test bool TestNormalizingFile() = ExpectEqual(ResultFile(), NormalizeIndexedFile(VisuInput), OutputFile("test/NormalizedOutput.txt"));
+test bool TestNormalizingIndexes() = ExpectEqual(ResultIndexes, NormalizeIndexes(IndexesInput));
+test bool TestDefaultFilePath() = ExpectEqual("Not Found", GetFilePath(""));
+test bool TestFilePathWithColour() = ExpectEqual("TestPassed.java", GetFilePath("RedѬTestPassed.java۞65۩"));
+test bool TestFilePathWithoutColor() = ExpectEqual("TestPassed.java", GetFilePath("TestPassed.java۞65۩"));
+module \test::GraphGeneratorTest
+import \graphics::GraphGenerator;
+import List;
+import util::Math;
+import vis::Figure;
+import \helpers::TestHelpers;
+void PlotGraphTest() = PlotGraphTest(10);
+void PlotGraphTest(int MaxInt) = PlotGraph([n | int n <- [0 .. MaxInt +1]]);
+test bool CheckRed() = ExpectEqualColors(rgb(255,0,0), DetermineColour(0.2));
+test bool CheckGreen() = ExpectEqualColors(rgb(0,255,0), DetermineColour(1.0));
+test bool CheckYellow() = ExpectEqualColors(rgb(255,255,0), DetermineColour(0.6));
+TBoxPlot BoxPlot = [  <10, "Ten">,
+<9, "Nine">,
+<8, "Eight">,
+<7, "Seven">,
+<6, "Six">,
+<5, "Five">
+];
+void PlotGraphWithCaption() = PlotGraph("NamedBoxes", BoxPlot, 10);
+TBoxPlot RedToGreen = [ <1, "Red">,
+<2, "Orange">,
+<3, "Yellow">,
+<4, "Yellow?">,
+<5, "Green">
+];
+void PlotSomeBoxes() = PlotGraph("Red to green", RedToGreen, 5);
+module \test::JavaHelpersTests
+import \helpers::JavaHelpers;
+import \helpers::TestHelpers;
+import \metrics::CalculateCC;
+test bool TestFullClassPath() = ExpectEqual("smallsql/database/Columns", GetFullClassPath(|project:
+test bool TestClassName() = ExpectEqual("Columns", GetClassName(|project:
+str SampleMethod =     "Command parse(SSConnection con, String sqlString) throws SQLException{\r\n"
++ "this.con = con;\r\n"
++ "Command cmd = parse( sqlString.toCharArray() );\r\n"
++ "SQLToken token = nextToken();\r\n"
++ "if(token != null){\r\n"
++ "throw createSyntaxError(token, Language.STXADD_ADDITIONAL_TOK);\r\n"
++ "}\r\n"
++ "return cmd;\r\n"
++ "}";
+str SampleBody = "this.con = con;\r\n"
++ "Command cmd = parse( sqlString.toCharArray() );\r\n"
++ "SQLToken token = nextToken();\r\n"
++ "if(token != null){\r\n"
++ "throw createSyntaxError(token, Language.STXADD_ADDITIONAL_TOK);\r\n"
++ "}\r\n"
++ "return cmd;";
+test bool TestMethodSize() = ExpectEqual(7, MethodSize(SampleMethod));
+test bool TestMethodBody() = ExpectEqual(SampleBody, MethodBody(SampleMethod));
+test bool TestLineCountForFile()
+{
+lrel[loc MethodLocation, int CyclomaticComplexity] FileComplexity = CyclomaticComplexity(|project:
+return ExpectEqual(7, MethodSize(FileComplexity[0].MethodLocation));
+}
+test bool ExpectSingleLineComment() = SingleLineComment("
+test bool ExpectSingleLineStreamComment() = SingleLineComment("");
+list[str] BlockCommentList = [""];
+list[str] MultiLineComment = ["Hello
+test bool CheckBlockCommentRemoval() = ExpectEqual([], RemoveBlockComments(BlockCommentList));
+test bool CheckBlockCommentMultiLine() = ExpectEqual(["Hello", "Goodbye"], RemoveBlockComments(MultiLineComment));
+test bool CheckAbstractMethodSize() = ExpectEqual(1, MethodSize("abstract void writeMagic(FileChannel raFile) throws Exception;"));
+module \test::ListHelperTests
+import \helpers::ListHelpers;
+import \helpers::TestHelpers;
+list[int] SampleCollection = [1,2,3,4,6];
+test bool CheckValid() = true == Contains(SampleCollection, 3);
+test bool CheckLowBound() = false == Contains(SampleCollection, 0);
+test bool CheckTopBound() = false == Contains(SampleCollection, 7);
+test bool CheckCenterItem() = false == Contains(SampleCollection, 5);
+test bool CheckListPrint() = ExpectEqual("[1,2,3,4,6]", EncodeListContents(SampleCollection));
+test bool CheckEmptyListPrint() = ExpectEqual("[]", EncodeListContents([]));
+test bool CheckBackAndForth() = ExpectEqual(SampleCollection, DecodeListContents(EncodeListContents(SampleCollection)));
+list[tuple[int, list[int]]] SampleClones = [
+< 1, [1,2,3] >,
+< 3, [4,6,5] >
+];
+test bool CheckClonesPrint() = ExpectEqual("1$[1,2,3]\r\n3$[4,6,5]\r\n", StoreClones(SampleClones));
+test bool CheckClonesBackAndForth() = ExpectEqual(SampleClones, LoadClones(StoreClones(SampleClones)));
+test bool CheckListTrimming() = ExpectEqual(["Hello", "Goodbye"], TrimList(["    \r\n   \t Hello", "Goodbye \n\r\t   "]));
+test bool CheckListTrimmingRemoveEmptyLines() = ExpectEqual(["Hello", "Goodbye"], TrimList(["    \r\n   \t Hello", "              ", "Goodbye \n\r\t   "]));
+test bool TestListJoin() = ExpectEqual("Hello\r\nGoodbye", JoinList(["Hello", "Goodbye"]));
+test bool TestTokenizedListTrimming() = ExpectEqual(["FilledLine$Hello", "FilledLineAsWell$GoodBye"], TrimList(["FilledLine$Hello", "EmptyLine$", "FilledLineAsWell$GoodBye"], "$"));
+list[str] ModuleNames = ["Package.rsc", "Package2.rsc"];
+test bool TestPadding() = ExpectEqual(["import Package.rsc;", "import Package2.rsc;"], PadList("import ", ModuleNames, ";"));
+module \test::MathHelpersTest
+import \helpers::MathHelpers;
+import \helpers::TestHelpers;
+test bool BelowLower() = ExpectEqual(5, Limit(5, -10, 20));
+test bool AboveUpper() = ExpectEqual(25, Limit(10, 50, 25));
+test bool Normal() = ExpectEqual(10, Limit(0, 10, 20));
+test bool InLimitsBelow() = false == InLimits(5, -10, 20);
+test bool InLimitsAbove() = false == InLimits(10, 50, 25);
+test bool InLimitsOk() = true == InLimits(0, 10, 20);
+test bool DistributionOk() = ExpectEqual([50,50], CreateDistribution([100,100]));
+test bool DistributionRounding() = ExpectEqual([33,33,33], CreateDistribution([100,100,100]));
+int Ten = 10;
+int Four = 4;
+test bool FractionTest() = ExpectEqual(2.5, Fraction(Ten, Four));
+test bool PercentageTest() = ExpectEqual(40, Percentage(4, 10));
+module \test::OverviewTests
+import FileLocations;
+import \graphics::Overview;
+import \helpers::TestHelpers;
+loc SampleSql = SampleFile("clones/SmallSqlIndexes.txt");
+test bool TestSampleSqlOverview()
+{
+Overview(SampleSql);
+return true;
+}
+list[str] ResultIndexes = ["smallsql/database/Column.java۞1",
+"RedѬsmallsql/database/Column.java۞2"
+];
+str IndexInput = "smallsql/database/Column.java۞1";
+list[str] IndexesInput = ["smallsql/database/Column.java۞1",
+"RedѬsmallsql/database/Column.java۞2",
+"RedѬsmallsql/database/Row.java۞3",
+"RedѬsmallsql/database/ColumnAndRow.java۞4"
+];
+test bool TestGenerationSampleIndexesForClass() = ExpectEqual(ResultIndexes, GenerateSampleIndexesForClass(IndexInput, IndexesInput));
+module \test::RegexHelpersTests
+import \helpers::TestHelpers;
+import \helpers::RegexHelpers;
+import String;
+test bool AssumeRegexTrue() = ExpectTrue(rexpMatch("String 88 ", RegexForInts));
+test bool AssumeRegexWithColon() = ExpectTrue(rexpMatch("String 88;", RegexForInts));
+test bool AssumeRegexWithEqual() = ExpectTrue(rexpMatch("String=88;", RegexForInts));
+test bool AssumeRegexNoLeadingSpace() = ExpectFalse(rexpMatch("String88 ", RegexForInts));
+test bool AssumeRegexNoTralingSpace() = ExpectFalse(rexpMatch("String 88", RegexForInts));
+module \test::RiskProfileTest
+import \graphics::RiskProfile;
+import \test::SigScoresTester;
+void PlotRiskProfile() = RenderRisk([32,49,14,5]);
+module \test::SigScoresTester
+import \metrics::SigScores;
+import \helpers::TestHelpers;
+test bool TestVolumePlusPlus() = ExpectEqual(0, VolumeScore(66000));
+test bool TestVolumePlus() = ExpectEqual(1, VolumeScore(246000));
+test bool TestVolumeNeutral() = ExpectEqual(2, VolumeScore(655000));
+test bool TestVolumeMinus() = ExpectEqual(3, VolumeScore(1310000));
+test bool TestVolumeMinusMinus() = ExpectEqual(4, VolumeScore(1310001));
+test bool TestVeryHigh() = ExpectEqual(0, UnitComplexityIndex(10));
+test bool TestHigh() = ExpectEqual(1, UnitComplexityIndex(20));
+test bool TestMedium() = ExpectEqual(2, UnitComplexityIndex(50));
+test bool TestLow() = ExpectEqual(3, UnitComplexityIndex(51));
+list[int] DistributionPlusPlus = [74, 24, 0, 0] ;
+list[int] DistributionPlus = [67, 29, 4, 0] ;
+list[int] DistributionNeutral = [52, 39, 9, 0] ;
+list[int] DistributionMinus = [33, 49, 14, 4] ;
+list[int] DistributionMinusMinus = [32,49,14,5];
+test bool TestDistributionPlusPlus() = ExpectEqual(0, UnitComplexityScore(DistributionPlusPlus));
+test bool TestDistributionPlus() = ExpectEqual(1, UnitComplexityScore(DistributionPlus));
+test bool TestDistributionNeutral() =ExpectEqual(2, UnitComplexityScore(DistributionNeutral));
+test bool TestDistributionMinus() = ExpectEqual(3, UnitComplexityScore(DistributionMinus));
+test bool TestDistributionMinusMinus() =ExpectEqual(4, UnitComplexityScore(DistributionMinusMinus));
+test bool TestSigRatingPlusPlus() = ExpectEqual("★★★★★", StarRating(0));
+test bool TestSigRatingPlus() = ExpectEqual("★★★★☆", StarRating(1));
+test bool TestSigRatingNeutral() = ExpectEqual("★★★☆☆", StarRating(2));
+test bool TestSigRatingMinus() = ExpectEqual("★★☆☆☆", StarRating(3));
+test bool TestSigRatingMinusMinus() = ExpectEqual("★☆☆☆☆", StarRating(4));
+module \test::SlocModuleTester
+import \metrics::SlocModule;
+import \helpers::TestHelpers;
+import IO;
+test bool ScanColumnJava() = StaticMetricsCheck
+(
+<"/sampleFiles/slocmodule/ColumnsSample.java", 161,48,14,35,13,7,16>,
+ScanJavaFile(|project:
+);
+test bool ScanWhiteLineJavaFile() = ExpectEqual(14, ScanJavaFile(|project:
+test bool ScanSourceCodeLines() = ExpectEqual(48, ScanJavaFile(|project:
+bool StaticMetricsCheck(TStaticMetrics Expected, TStaticMetrics Actual)
+{
+bool Equal = ((Expected.FileName == Actual.FileName)
+&& (Expected.TotalLines == Actual.TotalLines)
+&& (Expected.CodeLines == Actual.CodeLines)
+&& (Expected.WhiteSpaces == Actual.WhiteSpaces)
+&& (Expected.Comments == Actual.Comments)
+&& (Expected.LLOC == Actual.LLOC)
+&& (Expected.Curlies == Actual.Curlies)
+&& (Expected.MaxIndent == Actual.MaxIndent));
+if(false == Equal)
+{
+iprintln(Expected);
+iprintln(Actual);
+}
+return Equal;
+}
+module \test::StringHelpersTester
+import Map;
+import FileLocations;
+import String;
+import \helpers::StringHelpers;
+import \helpers::TestHelpers;
+test bool IndentTester() = ExpectEqual(2, Indent("  Hallo"));
+test bool TabIndent() = ExpectEqual(2, Indent("\tHallo"));
+test bool LineCountOfTwo() = ExpectEqual(2, LineCount("Hello\r\nGoodBye"));
+test bool LineCountOfThree() = ExpectEqual(2, LineCount("Hello\r\nGoodBye\r\n"));
+test bool TestEncoding() = ExpectEqual("БЖД", EncodeString("publicstaticString"));
+test bool TestDecoding() = ExpectEqual("publicstaticString", DecodeString("БЖД"));
+test bool TestTrimAssumption() = ExpectEqual("Hallo", trim("\n\r\t   Hallo\n\r\t"));
+str ColorString = "RedѬBlue";
+test bool TestStringTokenFirst() = ExpectEqual("Red", StringToken(ColorString, "", "Ѭ"));
+test bool TestStringTokenLast() = ExpectEqual("Blue", StringToken(ColorString, "Ѭ", ""));
+test bool TestStringToken() = ExpectEqual("Substring", StringToken("{Substring}", "{", "}"));
+test bool TestStringTokenOverLoad() = ExpectEqual("Substring", StringToken("{Substring}", "{", 10));
+test bool TestStringTokenOverLoad() = ExpectEqual("Substring", StringToken("bool Substring()", 5, "()"));
+test bool TestLargerStringToken() = ExpectEqual("Substring", StringToken("---\>Substring\<---", "---\>", "\<---"));
+test bool TestSubStringEquivalence() = ExpectEqual(substring("FailPass", 0,4), StringToken("FailPass", 0,4));
+test bool TestSubStringInt() = ExpectEqual("Pass", StringToken("FailPass", 4, ""));
+str InlineCommentString = "HelloGoodBye";
+test bool TestClipString() = ExpectEqual("HelloGoodBye", ClipString(InlineCommentString, ""));
+test bool TestClipStringWithSplit() = ExpectEqual("Hello\r\nGoodBye", ClipString(InlineCommentString, "", "\r\n"));
+module \test::TestHelpersTester
+import FileLocations;
+import IO;
+import \helpers::TestHelpers;
+import vis::Figure;
+test bool ExpectEqualIntTest() = ExpectEqual(5,5);
+test bool ExpectFalseIsEqualIntTest() = (false == ExpectEqual(4,5));
+test bool ExpectNotEqualintTest() = ExpectNotEqual(4,5);
+test bool ExpectFalseIsNotEqualintTest() = (false == ExpectNotEqual(5,5));
+test bool ShowMeARedCell() = ExpectEqual(1, 0);
+test bool ShowMeAGreenCell() = ExpectEqual("Green", "Green");
+test bool CheckColourCompare() = ExpectEqual("rgb(255,128,64)", ExtractColour(rgb(255,128,64)));
+test bool ExpectTrueTestTrue() = (true == ExpectTrue(true));
+test bool ExpectTrueTestFalse()= (false == ExpectTrue(false));
+test bool ExpectFalseTestTrue() = (true == ExpectFalse(false));
+test bool ExpectFalseTestTrue() = (false == ExpectFalse(true));
+loc SomeSampleFile = SampleFile("hsqldb/ColumnBase.java");
+loc SomeOtherSampleFile = SampleFile("hsqldb/Constraint.java");
+test bool TestEqualFiles() = ExpectEqualFiles(SomeSampleFile, readFileLines(SomeSampleFile));
+test bool TestEqualFiles() = ExpectEqualFiles(SomeSampleFile, SomeSampleFile);
+test bool TestUnEqualFiles() = (false == ExpectEqualFiles(SomeSampleFile, SomeOtherSampleFile));
+module \test::TestModule
+import FileLocations;
+import IO;
+import String;
+import \helpers::FileHelpers;
+import \helpers::HtmlHelpers;
+import \helpers::ListHelpers;
+import \helpers::StringHelpers;
+import MainTestModule;
+public void GenerateTestModule()
+{
+list[loc] TestFiles = EnumerateDirFiles(TestDir);
+list[str] FileNames = FileName(TestFiles);
+FileNames = StripFileExtension(FileNames);
+FileNames = PadList("import \\test::", FileNames, ";");
+FileNames += "\r\n";
+list [str] TestCalls = [];
+list[str] FunctionDefinitions = [];
+for(TestFile <- TestFiles)
+{
+for(Line <- readFileLines(TestFile))
+{
+if(startsWith(Line, "test bool "))
+{
+str TryCatchFunction = CreateTryCatchHarness(StripFileExtension(FileName(TestFile)), TestMethodName(Line));
+FunctionDefinitions += TryCatchFunction;
+TestCalls += TestMethodName(TryCatchFunction);
+}
+}
+}
+TestCalls = PadList("  if(false == ", TestCalls, "){ Result = false;}");
+CreateTestModule(FileNames + FunctionDefinitions, TestCalls);
+RemoveReport();
+}
+str TestMethodName(str MethodLine) = StringToken(MethodLine, "bool ", findFirst(MethodLine, "()"))+ "()";
+void CreateTestModule(list[str] Modules, list[str] TestCalls)
+{
+loc TestModule = toLocation("<SourceDir>MainTestModule.rsc");
+ResetFile(TestModule);
+AppendToFile(TestModule, "module MainTestModule\r\n\r\n<JoinList(Modules)>\r\n\r\n");
+AppendToFile(TestModule, "bool RunAllTests()\r\n{\r\n  InitializeTestReport();\r\n  bool Result = true;\r\n<JoinList(TestCalls, "\r\n")>\r\n  FinalizeTestReport();\r\n  return Result;\r\n}");
+}
+void PrintResult(bool Result) = Result ? print("true") : print("false");
+str CreateTryCatchHarness(str ModuleName, str MethodName) = "test bool Try<MethodName>{ try{ return <CreateTestCall(ModuleName, MethodName)>;} catch: { <FailTestCall(ModuleName, MethodName)>; } return false; }";
+str CreateTestCall(str ModuleName, str MethodName) = "CheckAndReport(\"<ModuleName>\",\"<MethodName>\", <MethodName>)";
+str FailTestCall(str ModuleName, str MethodName) = "CheckAndReport(\"<ModuleName>\",\"!!! EXCEPTION IN <MethodName> !!!\", false)";
+loc TestReport = OutputFile("TestReport.html");
+void RemoveReport() = remove(TestReport);
+bool CheckAndReport(str ModuleName, str MethodName, bool TestResult)
+{
+if(false == exists(TestReport))
+{
+InitializeTestReport();
+}
+AppendToFile(TestReport, TestRow(ModuleName, MethodName, TestResult));
+return TestResult;
+}
+void InitializeTestReport()
+{
+ResetFile(TestReport);
+AppendToFile(TestReport, OpenTable() + Caption("Test results"));
+}
+void FinalizeTestReport()
+{
+AppendToFile(TestReport, CloseTable());
+}
+module \test::Type1ClonesTest
+import FileLocations;
+import \clones::Type1Clones;
+import String;
+loc ColumnsFile = toLocation("<SampleDir>smallsql/database/Columns.java");
+start[CompilationUnit] ShowParseTreeColumns() = ShowParseTree(ColumnsFile);
+module \test::Type2ClonesTest
+import \clones::Type2Clones;
+import \clones::CloneAlgorithm;
+import \helpers::TestHelpers;
+import FileLocations;
+import IO;
+loc SmallSqlSampleFile = SampleFile("type2clones/SmallSqlContent.txt");
+loc TypeTwoFile = OutputFile("type2clones/LastCloneTest.txt");
+loc SingleCloneFile = SampleFile("type2clones/SingleClone.txt");
+loc NumericSampleFile = SampleFile("type2clones/NumericClones.txt");
+test bool SmallSqlSample() = ExpectEqual(0, GetClonedLinesDifference(SmallSqlSampleFile));
+test bool SingleCloneSample() = ExpectEqual(6, GetClonedLinesDifference(SingleCloneFile));
+test bool Type2NumericClones() = ExpectEqual(6, GetClonedLinesDifference(NumericSampleFile));
+int GetClonedLinesDifference(loc FileToCheck)
+{
+int Type1Clones = GetClonesForFile(FileToCheck);
+CreateType2Output(FileToCheck, TypeTwoFile);
+int Type2Clones =  GetClonesForFile(TypeTwoFile);
+println("Type 1: <Type1Clones>, Type2: <Type2Clones>");
+return Type2Clones - Type1Clones;
+}
+public list[str] AddedTypes = [
+"private int ",
+"String ",
+"SSResultSet ",
+"Expression ",
+"ExpressionName ",
+"final void ",
+"final int ",
+"final bool ",
+"final String ",
+"bool ",
+"test bool"
+];
+public list[str] RemovedTypes = [
+"private int ",
+"String ",
+"SSResultSet ",
+"Expression ",
+"ExpressionName ",
+"final void ",
+"final bool ",
+"final String ",
+"bool "
+];
+public list[str] LocalTypes = [];
+test bool ResetList()
+{
+SaveList();
+ResetTypes();
+bool TestResult = ExpectEqual([], TypesToReplace);
+RestoreList();
+return TestResult;
+}
+test bool AddList()
+{
+SaveList();
+AddType("test bool");
+bool Result = ExpectEqual(AddedTypes, TypesToReplace);
+RestoreList();
+return Result;
+}
+test bool RemoveType()
+{
+SaveList();
+RemoveType("final int ");
+bool Result = ExpectEqual(RemovedTypes, TypesToReplace);
+RestoreList();
+return Result;
+}
+void SaveList()
+{
+LocalTypes = TypesToReplace;
+}
+void RestoreList()
+{
+TypesToReplace = LocalTypes;
+}
