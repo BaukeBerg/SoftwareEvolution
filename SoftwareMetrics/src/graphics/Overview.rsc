@@ -80,7 +80,7 @@ Figure GenerateTooltip(str IndexedLine, list[str] IndexedLines)
 	list[str] inputLines = readFileLines(SampleFile(GetFilePath(IndexedLine)));
 	int LineNumber = LineNumber(IndexedLine);
 	int Min = max((LineNumber-5), 0);
-	int Max = min(LineNumber+10), size(inputLines)-1);
+	int Max = min((LineNumber+10), size(inputLines)-1);
 	
 	Texts += text("...", fontItalic(true), fontBold(true), left());
 	for(i <- [Min .. Max])
