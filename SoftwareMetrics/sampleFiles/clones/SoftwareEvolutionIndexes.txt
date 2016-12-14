@@ -1523,7 +1523,7 @@
 ../src/helpers/FileHelpers.rsc۞46
 ../src/helpers/FileHelpers.rsc۞48
 ../src/helpers/FileHelpers.rsc۞49
-../src/helpers/FileHelpers.rsc۞50۩private str LineSplitter = "
+../src/helpers/FileHelpers.rsc۞50
 ../src/helpers/FileHelpers.rsc۞52
 ../src/helpers/FileHelpers.rsc۞54
 ../src/helpers/FileHelpers.rsc۞55
@@ -2520,8 +2520,8 @@
 ../src/test/FileHelperTests.rsc۞67
 ../src/test/FileHelperTests.rsc۞68
 ../src/test/FileHelperTests.rsc۞70
-../src/test/FileHelperTests.rsc۞71۩test bool TestFilePathWithColour() = ExpectEqual("TestPassed.java", GetFilePath("RedѬTestPassed.java۞65
-../src/test/FileHelperTests.rsc۞72۩test bool TestFilePathWithoutColor() = ExpectEqual("TestPassed.java", GetFilePath("TestPassed.java۞65
+../src/test/FileHelperTests.rsc۞71
+../src/test/FileHelperTests.rsc۞72
 ../src/test/GraphGeneratorTest.rsc۞1
 ../src/test/GraphGeneratorTest.rsc۞3
 ../src/test/GraphGeneratorTest.rsc۞4

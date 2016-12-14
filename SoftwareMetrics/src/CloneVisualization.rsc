@@ -25,11 +25,14 @@ list[list[str]] GenerateClonesFor(TClone Clone)
   // pass in GenerateDiff
 }
 
-void GenerateSmallSqlSample()
-{
-  CurrentClones = GetClonesClasses(SmallSqlSampleContent);
-  list[str] ColoredIndexes = ColorIndexes(SmallSqlSampleIndexes, CurrentClones);
-  Overview(ColoredIndexes);  
+void GenerateSmallSqlSample() = HandleClones(SmallSqlSampleContent, SmallSqlSampleIndexes);
+void GenerateSoftwareEvolutionSample() = HandleClones(SampleFile("clones/SoftwareEvolutionContent.txt"), SampleFile("clones/SoftwareEvolutionIndexes.txt"));
+
+void HandleClones(loc ContentFile, loc IndexesFile)
+{ 
+  CurrentClones = GetClonesClasses(ContentFile);
+  list[str] ColoredIndexes = ColorIndexes(IndexesFile, CurrentClones);
+  Overview(ColoredIndexes);
 }
 
 list[str] ColorIndexes(loc IndexedFileToColour, TCloneClasses CloneClasses)
