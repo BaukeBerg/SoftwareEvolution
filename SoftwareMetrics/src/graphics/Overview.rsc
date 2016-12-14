@@ -23,7 +23,11 @@ void RenderFigure(str Caption, Figure Fig) = render(Caption, Fig);
 
 str GetClassName(loc FileToCheck) = substring(FileToCheck.path, findLast(FileToCheck.path, "/")+1);
 
-void Overview(loc IndexedFile) = Overview(readFileLines(IndexedFile));
+void Overview(loc IndexedFile)
+{
+  println("IndexedFile <IndexedFile>, path: <IndexedFile.path>");
+  Overview(readFileLines(IndexedFile));
+}
 
 void Overview(list[str] IndexedLines)
 {	
@@ -34,19 +38,25 @@ void Overview(list[str] IndexedLines)
 
 	for(i <- [0 .. size(IndexedLines)])
 	{
+		
 		if(PrevFile == GetFilePath(IndexedLines[i]))
 		{
 			VBox += GenerateBox(IndexedLines[i], IndexedLines);
+			println("adding box");
 		}
 		else
 		{
+			
 			BoxList += GenerateVBox(VBox);
 			VBox = [];
 			VBox += GenerateTitleBox(IndexedLines[i]);
 			VBox += GenerateBox(IndexedLines[i], IndexedLines);
 			PrevFile = GetFilePath(IndexedLines[i]);
+			println("<IndexedLines[i]>");
+			println("File path: <PrevFile>");
 		}
 	}
+	println("rendering figure");
 	BoxList += GenerateVBox(VBox);
 	RenderFigure("Overview", hcat(BoxList, hgap(3)));
 }
