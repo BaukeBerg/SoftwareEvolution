@@ -73,3 +73,26 @@ bool GetError()
   list[bool] Empty = [];
   return Empty[100];
 }
+
+test bool HowManyLoops()
+{
+  ExpectedInt = 3;
+  ActualInt = 0;
+  for(n <- [0 .. 3]) // zero TO 3 == EXCLUDING the end
+  {
+    ActualInt += 1;
+  }
+  return ExpectEqual(ExpectedInt, ActualInt);
+}
+
+test bool HowManyLoops2()
+{
+  ExpectedInt = 0;
+  ActualInt = 0 ;
+  for(n <- [0 .. 0]) // zero TO zero == EXCLUDING zero => not executed
+  {
+    ActualInt += 1;
+  }
+  return ExpectEqual(ExpectedInt, ActualInt);
+}
+    
