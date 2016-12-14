@@ -37,9 +37,9 @@ int ClonedLines([]) = 0;
 int ClonedLines(TCloneList Clones) = sum(Clones.Size);
 
 // Clone gathering information
-TStringMap Dictionary = ();
-THashMap Lines = (); 
-int InvalidCloneStart = -1; 
+public TStringMap Dictionary = ();
+public THashMap Lines = (); 
+public int InvalidCloneStart = -1; 
 
 TCloneClasses GetClonesClasses(loc FileToCheck) = GetClonesClasses(HashFile(FileToCheck));
 TCloneClasses GetClonesClasses(THashInfo Information)
@@ -310,3 +310,5 @@ int LineIncrement(TCloneList Clones) = max(Clones.Size);
 
 bool EndOfCloneReached(THashMap Lines, int LineNumber, int CloneLine) = (CloneLine >= size(Lines)) || (Lines[LineNumber] != Lines[CloneLine]);
 bool CodeOverlapsClone(int Count, int Distance) = (Count >= Distance);
+
+
