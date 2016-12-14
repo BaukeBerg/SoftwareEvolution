@@ -75,9 +75,19 @@ list[str] IndexLines(list[str] InputLines, str FileName)
   list[str] Results = [];
   for(int Line <- [0 .. size(InputLines)])
   {
-    Results += "<FileName><FileSplitter><Line+1><LineSplitter><trim(InputLines[Line])>";
+    Results += "<FileName><FileSplitter><Line+1><LineSplitter><Sanitize(trim(InputLines[Line]))>";
   }
   return Results;
+}
+
+str Sanitize(str Input)
+{
+  list[str] ForbiddenTokens = [FileSplitter, LineSplitter, ColorSplitter];
+  for(Token <- ForbiddenTokens)
+  {
+    Input = replaceAll(Input, Token, "xXx");
+  }
+  return Input;
 }
 
 str GetSamplePath(loc FileToCheck)
