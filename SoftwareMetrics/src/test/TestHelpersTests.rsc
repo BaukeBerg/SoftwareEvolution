@@ -1,4 +1,4 @@
-module \test::TestHelpersTester
+module \test::TestHelpersTests
 
 import FileLocations;
 import IO;

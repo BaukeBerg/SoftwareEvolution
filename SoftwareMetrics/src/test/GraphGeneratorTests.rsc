@@ -1,4 +1,4 @@
-module \test::GraphGeneratorTest
+module \test::GraphGeneratorTests
 
 import \graphics::GraphGenerator;
 import List;

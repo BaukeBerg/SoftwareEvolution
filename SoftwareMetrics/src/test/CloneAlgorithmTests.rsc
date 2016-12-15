@@ -1,4 +1,4 @@
-module \test::CloneAlgorithmTest
+module \test::CloneAlgorithmTests
 
 import FileLocations;
 import IO;

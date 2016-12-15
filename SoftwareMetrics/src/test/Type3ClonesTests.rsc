@@ -1,4 +1,4 @@
-module \test::Type3ClonesTest
+module \test::Type3ClonesTests
 
 import FileLocations;
 import IO;

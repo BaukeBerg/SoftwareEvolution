@@ -1,20 +1,26 @@
 module MainTestModule
 
 import \test::AssumptionTests;
-import \test::CalculateCCTest;
-import \test::CloneAlgorithmTest;
+import \test::CalculateCCTests;
+import \test::CloneAlgorithmTests;
+import \test::CloneHelpersTests;
+import \test::DetailViewTests;
 import \test::FileHelperTests;
-import \test::GraphGeneratorTest;
+import \test::GraphGeneratorTests;
 import \test::JavaHelpersTests;
 import \test::ListHelperTests;
-import \test::MathHelpersTest;
-import \test::RiskProfileTest;
-import \test::SigScoresTester;
-import \test::SlocModuleTester;
-import \test::StringHelpersTester;
-import \test::TestHelpersTester;
+import \test::MathHelpersTests;
+import \test::OverviewTests;
+import \test::RegexHelpersTests;
+import \test::RiskProfileTests;
+import \test::SigScoresTests;
+import \test::SlocModuleTests;
+import \test::StringHelpersTests;
+import \test::TestHelpersTests;
 import \test::TestModule;
-import \test::Type1ClonesTest;
+import \test::Type1ClonesTests;
+import \test::Type2ClonesTests;
+import \test::Type3ClonesTests;
 
 
 test bool TryTestAssumeIntToNumConversion(){ try{ return CheckAndReport("AssumptionTests","TestAssumeIntToNumConversion()", TestAssumeIntToNumConversion());} catch: { CheckAndReport("AssumptionTests","!!! EXCEPTION IN TestAssumeIntToNumConversion() !!!", false); } return false; }
@@ -24,20 +30,31 @@ test bool TryTestAssumeForLoop(){ try{ return CheckAndReport("AssumptionTests","
 test bool TryTestIntegerDivision(){ try{ return CheckAndReport("AssumptionTests","TestIntegerDivision()", TestIntegerDivision());} catch: { CheckAndReport("AssumptionTests","!!! EXCEPTION IN TestIntegerDivision() !!!", false); } return false; }
 test bool TryAssumeIteratorIncrementing(){ try{ return CheckAndReport("AssumptionTests","AssumeIteratorIncrementing()", AssumeIteratorIncrementing());} catch: { CheckAndReport("AssumptionTests","!!! EXCEPTION IN AssumeIteratorIncrementing() !!!", false); } return false; }
 test bool TryDoWithTry(){ try{ return CheckAndReport("AssumptionTests","DoWithTry()", DoWithTry());} catch: { CheckAndReport("AssumptionTests","!!! EXCEPTION IN DoWithTry() !!!", false); } return false; }
-test bool TryTestTernaryOperator(){ try{ return CheckAndReport("CalculateCCTest","TestTernaryOperator()", TestTernaryOperator());} catch: { CheckAndReport("CalculateCCTest","!!! EXCEPTION IN TestTernaryOperator() !!!", false); } return false; }
-test bool TryTestInfixOperatorAnd(){ try{ return CheckAndReport("CalculateCCTest","TestInfixOperatorAnd()", TestInfixOperatorAnd());} catch: { CheckAndReport("CalculateCCTest","!!! EXCEPTION IN TestInfixOperatorAnd() !!!", false); } return false; }
-test bool TryTestInfixOperatorOr(){ try{ return CheckAndReport("CalculateCCTest","TestInfixOperatorOr()", TestInfixOperatorOr());} catch: { CheckAndReport("CalculateCCTest","!!! EXCEPTION IN TestInfixOperatorOr() !!!", false); } return false; }
-test bool TryTestMergingOverlappedClones(){ try{ return CheckAndReport("CloneAlgorithmTest","TestMergingOverlappedClones()", TestMergingOverlappedClones());} catch: { CheckAndReport("CloneAlgorithmTest","!!! EXCEPTION IN TestMergingOverlappedClones() !!!", false); } return false; }
-test bool TryTestOverlapFunction(){ try{ return CheckAndReport("CloneAlgorithmTest","TestOverlapFunction()", TestOverlapFunction());} catch: { CheckAndReport("CloneAlgorithmTest","!!! EXCEPTION IN TestOverlapFunction() !!!", false); } return false; }
-test bool TryTestMergingClones(){ try{ return CheckAndReport("CloneAlgorithmTest","TestMergingClones()", TestMergingClones());} catch: { CheckAndReport("CloneAlgorithmTest","!!! EXCEPTION IN TestMergingClones() !!!", false); } return false; }
-test bool TryTestSingleClone(){ try{ return CheckAndReport("CloneAlgorithmTest","TestSingleClone()", TestSingleClone());} catch: { CheckAndReport("CloneAlgorithmTest","!!! EXCEPTION IN TestSingleClone() !!!", false); } return false; }
-test bool TryTestDoubleClone(){ try{ return CheckAndReport("CloneAlgorithmTest","TestDoubleClone()", TestDoubleClone());} catch: { CheckAndReport("CloneAlgorithmTest","!!! EXCEPTION IN TestDoubleClone() !!!", false); } return false; }
-test bool TryTestExtendedClone(){ try{ return CheckAndReport("CloneAlgorithmTest","TestExtendedClone()", TestExtendedClone());} catch: { CheckAndReport("CloneAlgorithmTest","!!! EXCEPTION IN TestExtendedClone() !!!", false); } return false; }
-test bool TryTestDualOffsetClone(){ try{ return CheckAndReport("CloneAlgorithmTest","TestDualOffsetClone()", TestDualOffsetClone());} catch: { CheckAndReport("CloneAlgorithmTest","!!! EXCEPTION IN TestDualOffsetClone() !!!", false); } return false; }
-test bool TryTestDualDifferentClone(){ try{ return CheckAndReport("CloneAlgorithmTest","TestDualDifferentClone()", TestDualDifferentClone());} catch: { CheckAndReport("CloneAlgorithmTest","!!! EXCEPTION IN TestDualDifferentClone() !!!", false); } return false; }
-test bool TryTestBraceCase(){ try{ return CheckAndReport("CloneAlgorithmTest","TestBraceCase()", TestBraceCase());} catch: { CheckAndReport("CloneAlgorithmTest","!!! EXCEPTION IN TestBraceCase() !!!", false); } return false; }
-test bool TryTestNoClone(){ try{ return CheckAndReport("CloneAlgorithmTest","TestNoClone()", TestNoClone());} catch: { CheckAndReport("CloneAlgorithmTest","!!! EXCEPTION IN TestNoClone() !!!", false); } return false; }
-test bool TryTestMaxOfList(){ try{ return CheckAndReport("CloneAlgorithmTest","TestMaxOfList()", TestMaxOfList());} catch: { CheckAndReport("CloneAlgorithmTest","!!! EXCEPTION IN TestMaxOfList() !!!", false); } return false; }
+test bool TryHowManyLoops(){ try{ return CheckAndReport("AssumptionTests","HowManyLoops()", HowManyLoops());} catch: { CheckAndReport("AssumptionTests","!!! EXCEPTION IN HowManyLoops() !!!", false); } return false; }
+test bool TryHowManyLoops2(){ try{ return CheckAndReport("AssumptionTests","HowManyLoops2()", HowManyLoops2());} catch: { CheckAndReport("AssumptionTests","!!! EXCEPTION IN HowManyLoops2() !!!", false); } return false; }
+test bool TryAssumeForCanhaveTonsOfConditions(){ try{ return CheckAndReport("AssumptionTests","AssumeForCanhaveTonsOfConditions()", AssumeForCanhaveTonsOfConditions());} catch: { CheckAndReport("AssumptionTests","!!! EXCEPTION IN AssumeForCanhaveTonsOfConditions() !!!", false); } return false; }
+test bool TryAssumeForConditionsAnd(){ try{ return CheckAndReport("AssumptionTests","AssumeForConditionsAnd()", AssumeForConditionsAnd());} catch: { CheckAndReport("AssumptionTests","!!! EXCEPTION IN AssumeForConditionsAnd() !!!", false); } return false; }
+test bool TryTestTernaryOperator(){ try{ return CheckAndReport("CalculateCCTests","TestTernaryOperator()", TestTernaryOperator());} catch: { CheckAndReport("CalculateCCTests","!!! EXCEPTION IN TestTernaryOperator() !!!", false); } return false; }
+test bool TryTestInfixOperatorAnd(){ try{ return CheckAndReport("CalculateCCTests","TestInfixOperatorAnd()", TestInfixOperatorAnd());} catch: { CheckAndReport("CalculateCCTests","!!! EXCEPTION IN TestInfixOperatorAnd() !!!", false); } return false; }
+test bool TryTestInfixOperatorOr(){ try{ return CheckAndReport("CalculateCCTests","TestInfixOperatorOr()", TestInfixOperatorOr());} catch: { CheckAndReport("CalculateCCTests","!!! EXCEPTION IN TestInfixOperatorOr() !!!", false); } return false; }
+test bool TryTestMergingOverlappedClones(){ try{ return CheckAndReport("CloneAlgorithmTests","TestMergingOverlappedClones()", TestMergingOverlappedClones());} catch: { CheckAndReport("CloneAlgorithmTests","!!! EXCEPTION IN TestMergingOverlappedClones() !!!", false); } return false; }
+test bool TryTestOverlapFunction(){ try{ return CheckAndReport("CloneAlgorithmTests","TestOverlapFunction()", TestOverlapFunction());} catch: { CheckAndReport("CloneAlgorithmTests","!!! EXCEPTION IN TestOverlapFunction() !!!", false); } return false; }
+test bool TryTestMergingClones(){ try{ return CheckAndReport("CloneAlgorithmTests","TestMergingClones()", TestMergingClones());} catch: { CheckAndReport("CloneAlgorithmTests","!!! EXCEPTION IN TestMergingClones() !!!", false); } return false; }
+test bool TryTestSingleClone(){ try{ return CheckAndReport("CloneAlgorithmTests","TestSingleClone()", TestSingleClone());} catch: { CheckAndReport("CloneAlgorithmTests","!!! EXCEPTION IN TestSingleClone() !!!", false); } return false; }
+test bool TryTestDoubleClone(){ try{ return CheckAndReport("CloneAlgorithmTests","TestDoubleClone()", TestDoubleClone());} catch: { CheckAndReport("CloneAlgorithmTests","!!! EXCEPTION IN TestDoubleClone() !!!", false); } return false; }
+test bool TryTestExtendedClone(){ try{ return CheckAndReport("CloneAlgorithmTests","TestExtendedClone()", TestExtendedClone());} catch: { CheckAndReport("CloneAlgorithmTests","!!! EXCEPTION IN TestExtendedClone() !!!", false); } return false; }
+test bool TryTestDualOffsetClone(){ try{ return CheckAndReport("CloneAlgorithmTests","TestDualOffsetClone()", TestDualOffsetClone());} catch: { CheckAndReport("CloneAlgorithmTests","!!! EXCEPTION IN TestDualOffsetClone() !!!", false); } return false; }
+test bool TryTestDualDifferentClone(){ try{ return CheckAndReport("CloneAlgorithmTests","TestDualDifferentClone()", TestDualDifferentClone());} catch: { CheckAndReport("CloneAlgorithmTests","!!! EXCEPTION IN TestDualDifferentClone() !!!", false); } return false; }
+test bool TryTestBraceCase(){ try{ return CheckAndReport("CloneAlgorithmTests","TestBraceCase()", TestBraceCase());} catch: { CheckAndReport("CloneAlgorithmTests","!!! EXCEPTION IN TestBraceCase() !!!", false); } return false; }
+test bool TryTestNoClone(){ try{ return CheckAndReport("CloneAlgorithmTests","TestNoClone()", TestNoClone());} catch: { CheckAndReport("CloneAlgorithmTests","!!! EXCEPTION IN TestNoClone() !!!", false); } return false; }
+test bool TryTestMaxOfList(){ try{ return CheckAndReport("CloneAlgorithmTests","TestMaxOfList()", TestMaxOfList());} catch: { CheckAndReport("CloneAlgorithmTests","!!! EXCEPTION IN TestMaxOfList() !!!", false); } return false; }
+test bool TryTestExtractSingleClass(){ try{ return CheckAndReport("CloneAlgorithmTests","TestExtractSingleClass()", TestExtractSingleClass());} catch: { CheckAndReport("CloneAlgorithmTests","!!! EXCEPTION IN TestExtractSingleClass() !!!", false); } return false; }
+test bool TryTestExtractingMultipleClasses(){ try{ return CheckAndReport("CloneAlgorithmTests","TestExtractingMultipleClasses()", TestExtractingMultipleClasses());} catch: { CheckAndReport("CloneAlgorithmTests","!!! EXCEPTION IN TestExtractingMultipleClasses() !!!", false); } return false; }
+test bool TryTestRemovingDuplicates(){ try{ return CheckAndReport("CloneAlgorithmTests","TestRemovingDuplicates()", TestRemovingDuplicates());} catch: { CheckAndReport("CloneAlgorithmTests","!!! EXCEPTION IN TestRemovingDuplicates() !!!", false); } return false; }
+test bool TryTestGettingCloneClasses(){ try{ return CheckAndReport("CloneAlgorithmTests","TestGettingCloneClasses()", TestGettingCloneClasses());} catch: { CheckAndReport("CloneAlgorithmTests","!!! EXCEPTION IN TestGettingCloneClasses() !!!", false); } return false; }
+test bool TryTestDupesList(){ try{ return CheckAndReport("CloneHelpersTests","TestDupesList()", TestDupesList());} catch: { CheckAndReport("CloneHelpersTests","!!! EXCEPTION IN TestDupesList() !!!", false); } return false; }
+test bool TrySmallSqlDiff(){ try{ return CheckAndReport("DetailViewTests","SmallSqlDiff()", SmallSqlDiff());} catch: { CheckAndReport("DetailViewTests","!!! EXCEPTION IN SmallSqlDiff() !!!", false); } return false; }
+test bool TrySmallSqlBigDiff(){ try{ return CheckAndReport("DetailViewTests","SmallSqlBigDiff()", SmallSqlBigDiff());} catch: { CheckAndReport("DetailViewTests","!!! EXCEPTION IN SmallSqlBigDiff() !!!", false); } return false; }
 test bool TryFindFilesInDirectory(){ try{ return CheckAndReport("FileHelperTests","FindFilesInDirectory()", FindFilesInDirectory());} catch: { CheckAndReport("FileHelperTests","!!! EXCEPTION IN FindFilesInDirectory() !!!", false); } return false; }
 test bool TryFindFilesInEmptyDir(){ try{ return CheckAndReport("FileHelperTests","FindFilesInEmptyDir()", FindFilesInEmptyDir());} catch: { CheckAndReport("FileHelperTests","!!! EXCEPTION IN FindFilesInEmptyDir() !!!", false); } return false; }
 test bool TryCheckFindNameInDir(){ try{ return CheckAndReport("FileHelperTests","CheckFindNameInDir()", CheckFindNameInDir());} catch: { CheckAndReport("FileHelperTests","!!! EXCEPTION IN CheckFindNameInDir() !!!", false); } return false; }
@@ -48,10 +65,18 @@ test bool TryTestStrippingMultilineComments(){ try{ return CheckAndReport("FileH
 test bool TryTestStrippingExtension(){ try{ return CheckAndReport("FileHelperTests","TestStrippingExtension()", TestStrippingExtension());} catch: { CheckAndReport("FileHelperTests","!!! EXCEPTION IN TestStrippingExtension() !!!", false); } return false; }
 test bool TryTestSplittingIndexes(){ try{ return CheckAndReport("FileHelperTests","TestSplittingIndexes()", TestSplittingIndexes());} catch: { CheckAndReport("FileHelperTests","!!! EXCEPTION IN TestSplittingIndexes() !!!", false); } return false; }
 test bool TryTestSplittingContent(){ try{ return CheckAndReport("FileHelperTests","TestSplittingContent()", TestSplittingContent());} catch: { CheckAndReport("FileHelperTests","!!! EXCEPTION IN TestSplittingContent() !!!", false); } return false; }
+test bool TryTestExistingColor(){ try{ return CheckAndReport("FileHelperTests","TestExistingColor()", TestExistingColor());} catch: { CheckAndReport("FileHelperTests","!!! EXCEPTION IN TestExistingColor() !!!", false); } return false; }
+test bool TryTestDefaultColor(){ try{ return CheckAndReport("FileHelperTests","TestDefaultColor()", TestDefaultColor());} catch: { CheckAndReport("FileHelperTests","!!! EXCEPTION IN TestDefaultColor() !!!", false); } return false; }
+test bool TryTestSamplePath(){ try{ return CheckAndReport("FileHelperTests","TestSamplePath()", TestSamplePath());} catch: { CheckAndReport("FileHelperTests","!!! EXCEPTION IN TestSamplePath() !!!", false); } return false; }
+test bool TryTestSamplePathBack(){ try{ return CheckAndReport("FileHelperTests","TestSamplePathBack()", TestSamplePathBack());} catch: { CheckAndReport("FileHelperTests","!!! EXCEPTION IN TestSamplePathBack() !!!", false); } return false; }
 test bool TryTestNormalizingFile(){ try{ return CheckAndReport("FileHelperTests","TestNormalizingFile()", TestNormalizingFile());} catch: { CheckAndReport("FileHelperTests","!!! EXCEPTION IN TestNormalizingFile() !!!", false); } return false; }
-test bool TryCheckRed(){ try{ return CheckAndReport("GraphGeneratorTest","CheckRed()", CheckRed());} catch: { CheckAndReport("GraphGeneratorTest","!!! EXCEPTION IN CheckRed() !!!", false); } return false; }
-test bool TryCheckGreen(){ try{ return CheckAndReport("GraphGeneratorTest","CheckGreen()", CheckGreen());} catch: { CheckAndReport("GraphGeneratorTest","!!! EXCEPTION IN CheckGreen() !!!", false); } return false; }
-test bool TryCheckYellow(){ try{ return CheckAndReport("GraphGeneratorTest","CheckYellow()", CheckYellow());} catch: { CheckAndReport("GraphGeneratorTest","!!! EXCEPTION IN CheckYellow() !!!", false); } return false; }
+test bool TryTestNormalizingIndexes(){ try{ return CheckAndReport("FileHelperTests","TestNormalizingIndexes()", TestNormalizingIndexes());} catch: { CheckAndReport("FileHelperTests","!!! EXCEPTION IN TestNormalizingIndexes() !!!", false); } return false; }
+test bool TryTestDefaultFilePath(){ try{ return CheckAndReport("FileHelperTests","TestDefaultFilePath()", TestDefaultFilePath());} catch: { CheckAndReport("FileHelperTests","!!! EXCEPTION IN TestDefaultFilePath() !!!", false); } return false; }
+test bool TryTestFilePathWithColour(){ try{ return CheckAndReport("FileHelperTests","TestFilePathWithColour()", TestFilePathWithColour());} catch: { CheckAndReport("FileHelperTests","!!! EXCEPTION IN TestFilePathWithColour() !!!", false); } return false; }
+test bool TryTestFilePathWithoutColor(){ try{ return CheckAndReport("FileHelperTests","TestFilePathWithoutColor()", TestFilePathWithoutColor());} catch: { CheckAndReport("FileHelperTests","!!! EXCEPTION IN TestFilePathWithoutColor() !!!", false); } return false; }
+test bool TryCheckRed(){ try{ return CheckAndReport("GraphGeneratorTests","CheckRed()", CheckRed());} catch: { CheckAndReport("GraphGeneratorTests","!!! EXCEPTION IN CheckRed() !!!", false); } return false; }
+test bool TryCheckGreen(){ try{ return CheckAndReport("GraphGeneratorTests","CheckGreen()", CheckGreen());} catch: { CheckAndReport("GraphGeneratorTests","!!! EXCEPTION IN CheckGreen() !!!", false); } return false; }
+test bool TryCheckYellow(){ try{ return CheckAndReport("GraphGeneratorTests","CheckYellow()", CheckYellow());} catch: { CheckAndReport("GraphGeneratorTests","!!! EXCEPTION IN CheckYellow() !!!", false); } return false; }
 test bool TryTestFullClassPath(){ try{ return CheckAndReport("JavaHelpersTests","TestFullClassPath()", TestFullClassPath());} catch: { CheckAndReport("JavaHelpersTests","!!! EXCEPTION IN TestFullClassPath() !!!", false); } return false; }
 test bool TryTestClassName(){ try{ return CheckAndReport("JavaHelpersTests","TestClassName()", TestClassName());} catch: { CheckAndReport("JavaHelpersTests","!!! EXCEPTION IN TestClassName() !!!", false); } return false; }
 test bool TryTestMethodSize(){ try{ return CheckAndReport("JavaHelpersTests","TestMethodSize()", TestMethodSize());} catch: { CheckAndReport("JavaHelpersTests","!!! EXCEPTION IN TestMethodSize() !!!", false); } return false; }
@@ -76,69 +101,96 @@ test bool TryCheckListTrimmingRemoveEmptyLines(){ try{ return CheckAndReport("Li
 test bool TryTestListJoin(){ try{ return CheckAndReport("ListHelperTests","TestListJoin()", TestListJoin());} catch: { CheckAndReport("ListHelperTests","!!! EXCEPTION IN TestListJoin() !!!", false); } return false; }
 test bool TryTestTokenizedListTrimming(){ try{ return CheckAndReport("ListHelperTests","TestTokenizedListTrimming()", TestTokenizedListTrimming());} catch: { CheckAndReport("ListHelperTests","!!! EXCEPTION IN TestTokenizedListTrimming() !!!", false); } return false; }
 test bool TryTestPadding(){ try{ return CheckAndReport("ListHelperTests","TestPadding()", TestPadding());} catch: { CheckAndReport("ListHelperTests","!!! EXCEPTION IN TestPadding() !!!", false); } return false; }
-test bool TryBelowLower(){ try{ return CheckAndReport("MathHelpersTest","BelowLower()", BelowLower());} catch: { CheckAndReport("MathHelpersTest","!!! EXCEPTION IN BelowLower() !!!", false); } return false; }
-test bool TryAboveUpper(){ try{ return CheckAndReport("MathHelpersTest","AboveUpper()", AboveUpper());} catch: { CheckAndReport("MathHelpersTest","!!! EXCEPTION IN AboveUpper() !!!", false); } return false; }
-test bool TryNormal(){ try{ return CheckAndReport("MathHelpersTest","Normal()", Normal());} catch: { CheckAndReport("MathHelpersTest","!!! EXCEPTION IN Normal() !!!", false); } return false; }
-test bool TryInLimitsBelow(){ try{ return CheckAndReport("MathHelpersTest","InLimitsBelow()", InLimitsBelow());} catch: { CheckAndReport("MathHelpersTest","!!! EXCEPTION IN InLimitsBelow() !!!", false); } return false; }
-test bool TryInLimitsAbove(){ try{ return CheckAndReport("MathHelpersTest","InLimitsAbove()", InLimitsAbove());} catch: { CheckAndReport("MathHelpersTest","!!! EXCEPTION IN InLimitsAbove() !!!", false); } return false; }
-test bool TryInLimitsOk(){ try{ return CheckAndReport("MathHelpersTest","InLimitsOk()", InLimitsOk());} catch: { CheckAndReport("MathHelpersTest","!!! EXCEPTION IN InLimitsOk() !!!", false); } return false; }
-test bool TryDistributionOk(){ try{ return CheckAndReport("MathHelpersTest","DistributionOk()", DistributionOk());} catch: { CheckAndReport("MathHelpersTest","!!! EXCEPTION IN DistributionOk() !!!", false); } return false; }
-test bool TryDistributionRounding(){ try{ return CheckAndReport("MathHelpersTest","DistributionRounding()", DistributionRounding());} catch: { CheckAndReport("MathHelpersTest","!!! EXCEPTION IN DistributionRounding() !!!", false); } return false; }
-test bool TryFractionTest(){ try{ return CheckAndReport("MathHelpersTest","FractionTest()", FractionTest());} catch: { CheckAndReport("MathHelpersTest","!!! EXCEPTION IN FractionTest() !!!", false); } return false; }
-test bool TryPercentageTest(){ try{ return CheckAndReport("MathHelpersTest","PercentageTest()", PercentageTest());} catch: { CheckAndReport("MathHelpersTest","!!! EXCEPTION IN PercentageTest() !!!", false); } return false; }
-test bool TryTestVolumePlusPlus(){ try{ return CheckAndReport("SigScoresTester","TestVolumePlusPlus()", TestVolumePlusPlus());} catch: { CheckAndReport("SigScoresTester","!!! EXCEPTION IN TestVolumePlusPlus() !!!", false); } return false; }
-test bool TryTestVolumePlus(){ try{ return CheckAndReport("SigScoresTester","TestVolumePlus()", TestVolumePlus());} catch: { CheckAndReport("SigScoresTester","!!! EXCEPTION IN TestVolumePlus() !!!", false); } return false; }
-test bool TryTestVolumeNeutral(){ try{ return CheckAndReport("SigScoresTester","TestVolumeNeutral()", TestVolumeNeutral());} catch: { CheckAndReport("SigScoresTester","!!! EXCEPTION IN TestVolumeNeutral() !!!", false); } return false; }
-test bool TryTestVolumeMinus(){ try{ return CheckAndReport("SigScoresTester","TestVolumeMinus()", TestVolumeMinus());} catch: { CheckAndReport("SigScoresTester","!!! EXCEPTION IN TestVolumeMinus() !!!", false); } return false; }
-test bool TryTestVolumeMinusMinus(){ try{ return CheckAndReport("SigScoresTester","TestVolumeMinusMinus()", TestVolumeMinusMinus());} catch: { CheckAndReport("SigScoresTester","!!! EXCEPTION IN TestVolumeMinusMinus() !!!", false); } return false; }
-test bool TryTestVeryHigh(){ try{ return CheckAndReport("SigScoresTester","TestVeryHigh()", TestVeryHigh());} catch: { CheckAndReport("SigScoresTester","!!! EXCEPTION IN TestVeryHigh() !!!", false); } return false; }
-test bool TryTestHigh(){ try{ return CheckAndReport("SigScoresTester","TestHigh()", TestHigh());} catch: { CheckAndReport("SigScoresTester","!!! EXCEPTION IN TestHigh() !!!", false); } return false; }
-test bool TryTestMedium(){ try{ return CheckAndReport("SigScoresTester","TestMedium()", TestMedium());} catch: { CheckAndReport("SigScoresTester","!!! EXCEPTION IN TestMedium() !!!", false); } return false; }
-test bool TryTestLow(){ try{ return CheckAndReport("SigScoresTester","TestLow()", TestLow());} catch: { CheckAndReport("SigScoresTester","!!! EXCEPTION IN TestLow() !!!", false); } return false; }
-test bool TryTestDistributionPlusPlus(){ try{ return CheckAndReport("SigScoresTester","TestDistributionPlusPlus()", TestDistributionPlusPlus());} catch: { CheckAndReport("SigScoresTester","!!! EXCEPTION IN TestDistributionPlusPlus() !!!", false); } return false; }
-test bool TryTestDistributionPlus(){ try{ return CheckAndReport("SigScoresTester","TestDistributionPlus()", TestDistributionPlus());} catch: { CheckAndReport("SigScoresTester","!!! EXCEPTION IN TestDistributionPlus() !!!", false); } return false; }
-test bool TryTestDistributionNeutral(){ try{ return CheckAndReport("SigScoresTester","TestDistributionNeutral()", TestDistributionNeutral());} catch: { CheckAndReport("SigScoresTester","!!! EXCEPTION IN TestDistributionNeutral() !!!", false); } return false; }
-test bool TryTestDistributionMinus(){ try{ return CheckAndReport("SigScoresTester","TestDistributionMinus()", TestDistributionMinus());} catch: { CheckAndReport("SigScoresTester","!!! EXCEPTION IN TestDistributionMinus() !!!", false); } return false; }
-test bool TryTestDistributionMinusMinus(){ try{ return CheckAndReport("SigScoresTester","TestDistributionMinusMinus()", TestDistributionMinusMinus());} catch: { CheckAndReport("SigScoresTester","!!! EXCEPTION IN TestDistributionMinusMinus() !!!", false); } return false; }
-test bool TryTestSigRatingPlusPlus(){ try{ return CheckAndReport("SigScoresTester","TestSigRatingPlusPlus()", TestSigRatingPlusPlus());} catch: { CheckAndReport("SigScoresTester","!!! EXCEPTION IN TestSigRatingPlusPlus() !!!", false); } return false; }
-test bool TryTestSigRatingPlus(){ try{ return CheckAndReport("SigScoresTester","TestSigRatingPlus()", TestSigRatingPlus());} catch: { CheckAndReport("SigScoresTester","!!! EXCEPTION IN TestSigRatingPlus() !!!", false); } return false; }
-test bool TryTestSigRatingNeutral(){ try{ return CheckAndReport("SigScoresTester","TestSigRatingNeutral()", TestSigRatingNeutral());} catch: { CheckAndReport("SigScoresTester","!!! EXCEPTION IN TestSigRatingNeutral() !!!", false); } return false; }
-test bool TryTestSigRatingMinus(){ try{ return CheckAndReport("SigScoresTester","TestSigRatingMinus()", TestSigRatingMinus());} catch: { CheckAndReport("SigScoresTester","!!! EXCEPTION IN TestSigRatingMinus() !!!", false); } return false; }
-test bool TryTestSigRatingMinusMinus(){ try{ return CheckAndReport("SigScoresTester","TestSigRatingMinusMinus()", TestSigRatingMinusMinus());} catch: { CheckAndReport("SigScoresTester","!!! EXCEPTION IN TestSigRatingMinusMinus() !!!", false); } return false; }
-test bool TryScanColumnJava(){ try{ return CheckAndReport("SlocModuleTester","ScanColumnJava()", ScanColumnJava());} catch: { CheckAndReport("SlocModuleTester","!!! EXCEPTION IN ScanColumnJava() !!!", false); } return false; }
-test bool TryScanWhiteLineJavaFile(){ try{ return CheckAndReport("SlocModuleTester","ScanWhiteLineJavaFile()", ScanWhiteLineJavaFile());} catch: { CheckAndReport("SlocModuleTester","!!! EXCEPTION IN ScanWhiteLineJavaFile() !!!", false); } return false; }
-test bool TryScanSourceCodeLines(){ try{ return CheckAndReport("SlocModuleTester","ScanSourceCodeLines()", ScanSourceCodeLines());} catch: { CheckAndReport("SlocModuleTester","!!! EXCEPTION IN ScanSourceCodeLines() !!!", false); } return false; }
-test bool TryIndentTester(){ try{ return CheckAndReport("StringHelpersTester","IndentTester()", IndentTester());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN IndentTester() !!!", false); } return false; }
-test bool TryTabIndent(){ try{ return CheckAndReport("StringHelpersTester","TabIndent()", TabIndent());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN TabIndent() !!!", false); } return false; }
-test bool TryLineCountOfTwo(){ try{ return CheckAndReport("StringHelpersTester","LineCountOfTwo()", LineCountOfTwo());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN LineCountOfTwo() !!!", false); } return false; }
-test bool TryLineCountOfThree(){ try{ return CheckAndReport("StringHelpersTester","LineCountOfThree()", LineCountOfThree());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN LineCountOfThree() !!!", false); } return false; }
-test bool TryTestEncoding(){ try{ return CheckAndReport("StringHelpersTester","TestEncoding()", TestEncoding());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN TestEncoding() !!!", false); } return false; }
-test bool TryTestDecoding(){ try{ return CheckAndReport("StringHelpersTester","TestDecoding()", TestDecoding());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN TestDecoding() !!!", false); } return false; }
-test bool TryTestTrimAssumption(){ try{ return CheckAndReport("StringHelpersTester","TestTrimAssumption()", TestTrimAssumption());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN TestTrimAssumption() !!!", false); } return false; }
-test bool TryTestStringTokenFirst(){ try{ return CheckAndReport("StringHelpersTester","TestStringTokenFirst()", TestStringTokenFirst());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN TestStringTokenFirst() !!!", false); } return false; }
-test bool TryTestStringTokenLast(){ try{ return CheckAndReport("StringHelpersTester","TestStringTokenLast()", TestStringTokenLast());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN TestStringTokenLast() !!!", false); } return false; }
-test bool TryTestStringToken(){ try{ return CheckAndReport("StringHelpersTester","TestStringToken()", TestStringToken());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN TestStringToken() !!!", false); } return false; }
-test bool TryTestStringTokenOverLoad(){ try{ return CheckAndReport("StringHelpersTester","TestStringTokenOverLoad()", TestStringTokenOverLoad());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN TestStringTokenOverLoad() !!!", false); } return false; }
-test bool TryTestStringTokenOverLoad(){ try{ return CheckAndReport("StringHelpersTester","TestStringTokenOverLoad()", TestStringTokenOverLoad());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN TestStringTokenOverLoad() !!!", false); } return false; }
-test bool TryTestLargerStringToken(){ try{ return CheckAndReport("StringHelpersTester","TestLargerStringToken()", TestLargerStringToken());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN TestLargerStringToken() !!!", false); } return false; }
-test bool TryTestSubStringEquivalence(){ try{ return CheckAndReport("StringHelpersTester","TestSubStringEquivalence()", TestSubStringEquivalence());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN TestSubStringEquivalence() !!!", false); } return false; }
-test bool TryTestSubStringInt(){ try{ return CheckAndReport("StringHelpersTester","TestSubStringInt()", TestSubStringInt());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN TestSubStringInt() !!!", false); } return false; }
-test bool TryTestClipString(){ try{ return CheckAndReport("StringHelpersTester","TestClipString()", TestClipString());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN TestClipString() !!!", false); } return false; }
-test bool TryTestClipStringWithSplit(){ try{ return CheckAndReport("StringHelpersTester","TestClipStringWithSplit()", TestClipStringWithSplit());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN TestClipStringWithSplit() !!!", false); } return false; }
-test bool TryExpectEqualIntTest(){ try{ return CheckAndReport("TestHelpersTester","ExpectEqualIntTest()", ExpectEqualIntTest());} catch: { CheckAndReport("TestHelpersTester","!!! EXCEPTION IN ExpectEqualIntTest() !!!", false); } return false; }
-test bool TryExpectFalseIsEqualIntTest(){ try{ return CheckAndReport("TestHelpersTester","ExpectFalseIsEqualIntTest()", ExpectFalseIsEqualIntTest());} catch: { CheckAndReport("TestHelpersTester","!!! EXCEPTION IN ExpectFalseIsEqualIntTest() !!!", false); } return false; }
-test bool TryExpectNotEqualintTest(){ try{ return CheckAndReport("TestHelpersTester","ExpectNotEqualintTest()", ExpectNotEqualintTest());} catch: { CheckAndReport("TestHelpersTester","!!! EXCEPTION IN ExpectNotEqualintTest() !!!", false); } return false; }
-test bool TryExpectFalseIsNotEqualintTest(){ try{ return CheckAndReport("TestHelpersTester","ExpectFalseIsNotEqualintTest()", ExpectFalseIsNotEqualintTest());} catch: { CheckAndReport("TestHelpersTester","!!! EXCEPTION IN ExpectFalseIsNotEqualintTest() !!!", false); } return false; }
-test bool TryShowMeARedCell(){ try{ return CheckAndReport("TestHelpersTester","ShowMeARedCell()", ShowMeARedCell());} catch: { CheckAndReport("TestHelpersTester","!!! EXCEPTION IN ShowMeARedCell() !!!", false); } return false; }
-test bool TryShowMeAGreenCell(){ try{ return CheckAndReport("TestHelpersTester","ShowMeAGreenCell()", ShowMeAGreenCell());} catch: { CheckAndReport("TestHelpersTester","!!! EXCEPTION IN ShowMeAGreenCell() !!!", false); } return false; }
-test bool TryCheckColourCompare(){ try{ return CheckAndReport("TestHelpersTester","CheckColourCompare()", CheckColourCompare());} catch: { CheckAndReport("TestHelpersTester","!!! EXCEPTION IN CheckColourCompare() !!!", false); } return false; }
-test bool TryExpectTrueTestTrue(){ try{ return CheckAndReport("TestHelpersTester","ExpectTrueTestTrue()", ExpectTrueTestTrue());} catch: { CheckAndReport("TestHelpersTester","!!! EXCEPTION IN ExpectTrueTestTrue() !!!", false); } return false; }
-test bool TryExpectTrueTestFalse(){ try{ return CheckAndReport("TestHelpersTester","ExpectTrueTestFalse()", ExpectTrueTestFalse());} catch: { CheckAndReport("TestHelpersTester","!!! EXCEPTION IN ExpectTrueTestFalse() !!!", false); } return false; }
-test bool TryExpectFalseTestTrue(){ try{ return CheckAndReport("TestHelpersTester","ExpectFalseTestTrue()", ExpectFalseTestTrue());} catch: { CheckAndReport("TestHelpersTester","!!! EXCEPTION IN ExpectFalseTestTrue() !!!", false); } return false; }
-test bool TryExpectFalseTestTrue(){ try{ return CheckAndReport("TestHelpersTester","ExpectFalseTestTrue()", ExpectFalseTestTrue());} catch: { CheckAndReport("TestHelpersTester","!!! EXCEPTION IN ExpectFalseTestTrue() !!!", false); } return false; }
-test bool TryTestEqualFiles(){ try{ return CheckAndReport("TestHelpersTester","TestEqualFiles()", TestEqualFiles());} catch: { CheckAndReport("TestHelpersTester","!!! EXCEPTION IN TestEqualFiles() !!!", false); } return false; }
-test bool TryTestEqualFiles(){ try{ return CheckAndReport("TestHelpersTester","TestEqualFiles()", TestEqualFiles());} catch: { CheckAndReport("TestHelpersTester","!!! EXCEPTION IN TestEqualFiles() !!!", false); } return false; }
-test bool TryTestUnEqualFiles(){ try{ return CheckAndReport("TestHelpersTester","TestUnEqualFiles()", TestUnEqualFiles());} catch: { CheckAndReport("TestHelpersTester","!!! EXCEPTION IN TestUnEqualFiles() !!!", false); } return false; }
+test bool TryBelowLower(){ try{ return CheckAndReport("MathHelpersTests","BelowLower()", BelowLower());} catch: { CheckAndReport("MathHelpersTests","!!! EXCEPTION IN BelowLower() !!!", false); } return false; }
+test bool TryAboveUpper(){ try{ return CheckAndReport("MathHelpersTests","AboveUpper()", AboveUpper());} catch: { CheckAndReport("MathHelpersTests","!!! EXCEPTION IN AboveUpper() !!!", false); } return false; }
+test bool TryNormal(){ try{ return CheckAndReport("MathHelpersTests","Normal()", Normal());} catch: { CheckAndReport("MathHelpersTests","!!! EXCEPTION IN Normal() !!!", false); } return false; }
+test bool TryInLimitsBelow(){ try{ return CheckAndReport("MathHelpersTests","InLimitsBelow()", InLimitsBelow());} catch: { CheckAndReport("MathHelpersTests","!!! EXCEPTION IN InLimitsBelow() !!!", false); } return false; }
+test bool TryInLimitsAbove(){ try{ return CheckAndReport("MathHelpersTests","InLimitsAbove()", InLimitsAbove());} catch: { CheckAndReport("MathHelpersTests","!!! EXCEPTION IN InLimitsAbove() !!!", false); } return false; }
+test bool TryInLimitsOk(){ try{ return CheckAndReport("MathHelpersTests","InLimitsOk()", InLimitsOk());} catch: { CheckAndReport("MathHelpersTests","!!! EXCEPTION IN InLimitsOk() !!!", false); } return false; }
+test bool TryDistributionOk(){ try{ return CheckAndReport("MathHelpersTests","DistributionOk()", DistributionOk());} catch: { CheckAndReport("MathHelpersTests","!!! EXCEPTION IN DistributionOk() !!!", false); } return false; }
+test bool TryDistributionRounding(){ try{ return CheckAndReport("MathHelpersTests","DistributionRounding()", DistributionRounding());} catch: { CheckAndReport("MathHelpersTests","!!! EXCEPTION IN DistributionRounding() !!!", false); } return false; }
+test bool TryFractionTest(){ try{ return CheckAndReport("MathHelpersTests","FractionTest()", FractionTest());} catch: { CheckAndReport("MathHelpersTests","!!! EXCEPTION IN FractionTest() !!!", false); } return false; }
+test bool TryPercentageTest(){ try{ return CheckAndReport("MathHelpersTests","PercentageTest()", PercentageTest());} catch: { CheckAndReport("MathHelpersTests","!!! EXCEPTION IN PercentageTest() !!!", false); } return false; }
+test bool TryTestSampleSqlOverview(){ try{ return CheckAndReport("OverviewTests","TestSampleSqlOverview()", TestSampleSqlOverview());} catch: { CheckAndReport("OverviewTests","!!! EXCEPTION IN TestSampleSqlOverview() !!!", false); } return false; }
+test bool TryTestGenerationSampleIndexesForClass(){ try{ return CheckAndReport("OverviewTests","TestGenerationSampleIndexesForClass()", TestGenerationSampleIndexesForClass());} catch: { CheckAndReport("OverviewTests","!!! EXCEPTION IN TestGenerationSampleIndexesForClass() !!!", false); } return false; }
+test bool TryTestGenerateTitleBox(){ try{ return CheckAndReport("OverviewTests","TestGenerateTitleBox()", TestGenerateTitleBox());} catch: { CheckAndReport("OverviewTests","!!! EXCEPTION IN TestGenerateTitleBox() !!!", false); } return false; }
+test bool TryTestGenerateBox(){ try{ return CheckAndReport("OverviewTests","TestGenerateBox()", TestGenerateBox());} catch: { CheckAndReport("OverviewTests","!!! EXCEPTION IN TestGenerateBox() !!!", false); } return false; }
+test bool TryTestGenerateVBox(){ try{ return CheckAndReport("OverviewTests","TestGenerateVBox()", TestGenerateVBox());} catch: { CheckAndReport("OverviewTests","!!! EXCEPTION IN TestGenerateVBox() !!!", false); } return false; }
+test bool TryTestRenderFigure(){ try{ return CheckAndReport("OverviewTests","TestRenderFigure()", TestRenderFigure());} catch: { CheckAndReport("OverviewTests","!!! EXCEPTION IN TestRenderFigure() !!!", false); } return false; }
+test bool TryTestGetClassName(){ try{ return CheckAndReport("OverviewTests","TestGetClassName()", TestGetClassName());} catch: { CheckAndReport("OverviewTests","!!! EXCEPTION IN TestGetClassName() !!!", false); } return false; }
+test bool TryTestExecOnMouseDown(){ try{ return CheckAndReport("OverviewTests","TestExecOnMouseDown()", TestExecOnMouseDown());} catch: { CheckAndReport("OverviewTests","!!! EXCEPTION IN TestExecOnMouseDown() !!!", false); } return false; }
+test bool TryTestExecOnMouseEnter(){ try{ return CheckAndReport("OverviewTests","TestExecOnMouseEnter()", TestExecOnMouseEnter());} catch: { CheckAndReport("OverviewTests","!!! EXCEPTION IN TestExecOnMouseEnter() !!!", false); } return false; }
+test bool TryTestGenerateTooltip(){ try{ return CheckAndReport("OverviewTests","TestGenerateTooltip()", TestGenerateTooltip());} catch: { CheckAndReport("OverviewTests","!!! EXCEPTION IN TestGenerateTooltip() !!!", false); } return false; }
+test bool TryTestExtractAndNormalizeIndexes(){ try{ return CheckAndReport("OverviewTests","TestExtractAndNormalizeIndexes()", TestExtractAndNormalizeIndexes());} catch: { CheckAndReport("OverviewTests","!!! EXCEPTION IN TestExtractAndNormalizeIndexes() !!!", false); } return false; }
+test bool TryTestGenerateSampleIndexesForClass(){ try{ return CheckAndReport("OverviewTests","TestGenerateSampleIndexesForClass()", TestGenerateSampleIndexesForClass());} catch: { CheckAndReport("OverviewTests","!!! EXCEPTION IN TestGenerateSampleIndexesForClass() !!!", false); } return false; }
+test bool TryAssumeRegexTrue(){ try{ return CheckAndReport("RegexHelpersTests","AssumeRegexTrue()", AssumeRegexTrue());} catch: { CheckAndReport("RegexHelpersTests","!!! EXCEPTION IN AssumeRegexTrue() !!!", false); } return false; }
+test bool TryAssumeRegexWithColon(){ try{ return CheckAndReport("RegexHelpersTests","AssumeRegexWithColon()", AssumeRegexWithColon());} catch: { CheckAndReport("RegexHelpersTests","!!! EXCEPTION IN AssumeRegexWithColon() !!!", false); } return false; }
+test bool TryAssumeRegexWithEqual(){ try{ return CheckAndReport("RegexHelpersTests","AssumeRegexWithEqual()", AssumeRegexWithEqual());} catch: { CheckAndReport("RegexHelpersTests","!!! EXCEPTION IN AssumeRegexWithEqual() !!!", false); } return false; }
+test bool TryAssumeRegexNoLeadingSpace(){ try{ return CheckAndReport("RegexHelpersTests","AssumeRegexNoLeadingSpace()", AssumeRegexNoLeadingSpace());} catch: { CheckAndReport("RegexHelpersTests","!!! EXCEPTION IN AssumeRegexNoLeadingSpace() !!!", false); } return false; }
+test bool TryAssumeRegexNoTralingSpace(){ try{ return CheckAndReport("RegexHelpersTests","AssumeRegexNoTralingSpace()", AssumeRegexNoTralingSpace());} catch: { CheckAndReport("RegexHelpersTests","!!! EXCEPTION IN AssumeRegexNoTralingSpace() !!!", false); } return false; }
+test bool TryTestVolumePlusPlus(){ try{ return CheckAndReport("SigScoresTests","TestVolumePlusPlus()", TestVolumePlusPlus());} catch: { CheckAndReport("SigScoresTests","!!! EXCEPTION IN TestVolumePlusPlus() !!!", false); } return false; }
+test bool TryTestVolumePlus(){ try{ return CheckAndReport("SigScoresTests","TestVolumePlus()", TestVolumePlus());} catch: { CheckAndReport("SigScoresTests","!!! EXCEPTION IN TestVolumePlus() !!!", false); } return false; }
+test bool TryTestVolumeNeutral(){ try{ return CheckAndReport("SigScoresTests","TestVolumeNeutral()", TestVolumeNeutral());} catch: { CheckAndReport("SigScoresTests","!!! EXCEPTION IN TestVolumeNeutral() !!!", false); } return false; }
+test bool TryTestVolumeMinus(){ try{ return CheckAndReport("SigScoresTests","TestVolumeMinus()", TestVolumeMinus());} catch: { CheckAndReport("SigScoresTests","!!! EXCEPTION IN TestVolumeMinus() !!!", false); } return false; }
+test bool TryTestVolumeMinusMinus(){ try{ return CheckAndReport("SigScoresTests","TestVolumeMinusMinus()", TestVolumeMinusMinus());} catch: { CheckAndReport("SigScoresTests","!!! EXCEPTION IN TestVolumeMinusMinus() !!!", false); } return false; }
+test bool TryTestVeryHigh(){ try{ return CheckAndReport("SigScoresTests","TestVeryHigh()", TestVeryHigh());} catch: { CheckAndReport("SigScoresTests","!!! EXCEPTION IN TestVeryHigh() !!!", false); } return false; }
+test bool TryTestHigh(){ try{ return CheckAndReport("SigScoresTests","TestHigh()", TestHigh());} catch: { CheckAndReport("SigScoresTests","!!! EXCEPTION IN TestHigh() !!!", false); } return false; }
+test bool TryTestMedium(){ try{ return CheckAndReport("SigScoresTests","TestMedium()", TestMedium());} catch: { CheckAndReport("SigScoresTests","!!! EXCEPTION IN TestMedium() !!!", false); } return false; }
+test bool TryTestLow(){ try{ return CheckAndReport("SigScoresTests","TestLow()", TestLow());} catch: { CheckAndReport("SigScoresTests","!!! EXCEPTION IN TestLow() !!!", false); } return false; }
+test bool TryTestDistributionPlusPlus(){ try{ return CheckAndReport("SigScoresTests","TestDistributionPlusPlus()", TestDistributionPlusPlus());} catch: { CheckAndReport("SigScoresTests","!!! EXCEPTION IN TestDistributionPlusPlus() !!!", false); } return false; }
+test bool TryTestDistributionPlus(){ try{ return CheckAndReport("SigScoresTests","TestDistributionPlus()", TestDistributionPlus());} catch: { CheckAndReport("SigScoresTests","!!! EXCEPTION IN TestDistributionPlus() !!!", false); } return false; }
+test bool TryTestDistributionNeutral(){ try{ return CheckAndReport("SigScoresTests","TestDistributionNeutral()", TestDistributionNeutral());} catch: { CheckAndReport("SigScoresTests","!!! EXCEPTION IN TestDistributionNeutral() !!!", false); } return false; }
+test bool TryTestDistributionMinus(){ try{ return CheckAndReport("SigScoresTests","TestDistributionMinus()", TestDistributionMinus());} catch: { CheckAndReport("SigScoresTests","!!! EXCEPTION IN TestDistributionMinus() !!!", false); } return false; }
+test bool TryTestDistributionMinusMinus(){ try{ return CheckAndReport("SigScoresTests","TestDistributionMinusMinus()", TestDistributionMinusMinus());} catch: { CheckAndReport("SigScoresTests","!!! EXCEPTION IN TestDistributionMinusMinus() !!!", false); } return false; }
+test bool TryTestSigRatingPlusPlus(){ try{ return CheckAndReport("SigScoresTests","TestSigRatingPlusPlus()", TestSigRatingPlusPlus());} catch: { CheckAndReport("SigScoresTests","!!! EXCEPTION IN TestSigRatingPlusPlus() !!!", false); } return false; }
+test bool TryTestSigRatingPlus(){ try{ return CheckAndReport("SigScoresTests","TestSigRatingPlus()", TestSigRatingPlus());} catch: { CheckAndReport("SigScoresTests","!!! EXCEPTION IN TestSigRatingPlus() !!!", false); } return false; }
+test bool TryTestSigRatingNeutral(){ try{ return CheckAndReport("SigScoresTests","TestSigRatingNeutral()", TestSigRatingNeutral());} catch: { CheckAndReport("SigScoresTests","!!! EXCEPTION IN TestSigRatingNeutral() !!!", false); } return false; }
+test bool TryTestSigRatingMinus(){ try{ return CheckAndReport("SigScoresTests","TestSigRatingMinus()", TestSigRatingMinus());} catch: { CheckAndReport("SigScoresTests","!!! EXCEPTION IN TestSigRatingMinus() !!!", false); } return false; }
+test bool TryTestSigRatingMinusMinus(){ try{ return CheckAndReport("SigScoresTests","TestSigRatingMinusMinus()", TestSigRatingMinusMinus());} catch: { CheckAndReport("SigScoresTests","!!! EXCEPTION IN TestSigRatingMinusMinus() !!!", false); } return false; }
+test bool TryScanColumnJava(){ try{ return CheckAndReport("SlocModuleTests","ScanColumnJava()", ScanColumnJava());} catch: { CheckAndReport("SlocModuleTests","!!! EXCEPTION IN ScanColumnJava() !!!", false); } return false; }
+test bool TryScanWhiteLineJavaFile(){ try{ return CheckAndReport("SlocModuleTests","ScanWhiteLineJavaFile()", ScanWhiteLineJavaFile());} catch: { CheckAndReport("SlocModuleTests","!!! EXCEPTION IN ScanWhiteLineJavaFile() !!!", false); } return false; }
+test bool TryScanSourceCodeLines(){ try{ return CheckAndReport("SlocModuleTests","ScanSourceCodeLines()", ScanSourceCodeLines());} catch: { CheckAndReport("SlocModuleTests","!!! EXCEPTION IN ScanSourceCodeLines() !!!", false); } return false; }
+test bool TryIndentTester(){ try{ return CheckAndReport("StringHelpersTests","IndentTester()", IndentTester());} catch: { CheckAndReport("StringHelpersTests","!!! EXCEPTION IN IndentTester() !!!", false); } return false; }
+test bool TryTabIndent(){ try{ return CheckAndReport("StringHelpersTests","TabIndent()", TabIndent());} catch: { CheckAndReport("StringHelpersTests","!!! EXCEPTION IN TabIndent() !!!", false); } return false; }
+test bool TryLineCountOfTwo(){ try{ return CheckAndReport("StringHelpersTests","LineCountOfTwo()", LineCountOfTwo());} catch: { CheckAndReport("StringHelpersTests","!!! EXCEPTION IN LineCountOfTwo() !!!", false); } return false; }
+test bool TryLineCountOfThree(){ try{ return CheckAndReport("StringHelpersTests","LineCountOfThree()", LineCountOfThree());} catch: { CheckAndReport("StringHelpersTests","!!! EXCEPTION IN LineCountOfThree() !!!", false); } return false; }
+test bool TryTestEncoding(){ try{ return CheckAndReport("StringHelpersTests","TestEncoding()", TestEncoding());} catch: { CheckAndReport("StringHelpersTests","!!! EXCEPTION IN TestEncoding() !!!", false); } return false; }
+test bool TryTestDecoding(){ try{ return CheckAndReport("StringHelpersTests","TestDecoding()", TestDecoding());} catch: { CheckAndReport("StringHelpersTests","!!! EXCEPTION IN TestDecoding() !!!", false); } return false; }
+test bool TryTestTrimAssumption(){ try{ return CheckAndReport("StringHelpersTests","TestTrimAssumption()", TestTrimAssumption());} catch: { CheckAndReport("StringHelpersTests","!!! EXCEPTION IN TestTrimAssumption() !!!", false); } return false; }
+test bool TryTestStringTokenFirst(){ try{ return CheckAndReport("StringHelpersTests","TestStringTokenFirst()", TestStringTokenFirst());} catch: { CheckAndReport("StringHelpersTests","!!! EXCEPTION IN TestStringTokenFirst() !!!", false); } return false; }
+test bool TryTestStringTokenLast(){ try{ return CheckAndReport("StringHelpersTests","TestStringTokenLast()", TestStringTokenLast());} catch: { CheckAndReport("StringHelpersTests","!!! EXCEPTION IN TestStringTokenLast() !!!", false); } return false; }
+test bool TryTestStringToken(){ try{ return CheckAndReport("StringHelpersTests","TestStringToken()", TestStringToken());} catch: { CheckAndReport("StringHelpersTests","!!! EXCEPTION IN TestStringToken() !!!", false); } return false; }
+test bool TryTestStringTokenOverLoad(){ try{ return CheckAndReport("StringHelpersTests","TestStringTokenOverLoad()", TestStringTokenOverLoad());} catch: { CheckAndReport("StringHelpersTests","!!! EXCEPTION IN TestStringTokenOverLoad() !!!", false); } return false; }
+test bool TryTestStringTokenOverLoad(){ try{ return CheckAndReport("StringHelpersTests","TestStringTokenOverLoad()", TestStringTokenOverLoad());} catch: { CheckAndReport("StringHelpersTests","!!! EXCEPTION IN TestStringTokenOverLoad() !!!", false); } return false; }
+test bool TryTestLargerStringToken(){ try{ return CheckAndReport("StringHelpersTests","TestLargerStringToken()", TestLargerStringToken());} catch: { CheckAndReport("StringHelpersTests","!!! EXCEPTION IN TestLargerStringToken() !!!", false); } return false; }
+test bool TryTestSubStringEquivalence(){ try{ return CheckAndReport("StringHelpersTests","TestSubStringEquivalence()", TestSubStringEquivalence());} catch: { CheckAndReport("StringHelpersTests","!!! EXCEPTION IN TestSubStringEquivalence() !!!", false); } return false; }
+test bool TryTestSubStringInt(){ try{ return CheckAndReport("StringHelpersTests","TestSubStringInt()", TestSubStringInt());} catch: { CheckAndReport("StringHelpersTests","!!! EXCEPTION IN TestSubStringInt() !!!", false); } return false; }
+test bool TryTestClipString(){ try{ return CheckAndReport("StringHelpersTests","TestClipString()", TestClipString());} catch: { CheckAndReport("StringHelpersTests","!!! EXCEPTION IN TestClipString() !!!", false); } return false; }
+test bool TryTestClipStringWithSplit(){ try{ return CheckAndReport("StringHelpersTests","TestClipStringWithSplit()", TestClipStringWithSplit());} catch: { CheckAndReport("StringHelpersTests","!!! EXCEPTION IN TestClipStringWithSplit() !!!", false); } return false; }
+test bool TryExpectEqualIntTest(){ try{ return CheckAndReport("TestHelpersTests","ExpectEqualIntTest()", ExpectEqualIntTest());} catch: { CheckAndReport("TestHelpersTests","!!! EXCEPTION IN ExpectEqualIntTest() !!!", false); } return false; }
+test bool TryExpectFalseIsEqualIntTest(){ try{ return CheckAndReport("TestHelpersTests","ExpectFalseIsEqualIntTest()", ExpectFalseIsEqualIntTest());} catch: { CheckAndReport("TestHelpersTests","!!! EXCEPTION IN ExpectFalseIsEqualIntTest() !!!", false); } return false; }
+test bool TryExpectNotEqualintTest(){ try{ return CheckAndReport("TestHelpersTests","ExpectNotEqualintTest()", ExpectNotEqualintTest());} catch: { CheckAndReport("TestHelpersTests","!!! EXCEPTION IN ExpectNotEqualintTest() !!!", false); } return false; }
+test bool TryExpectFalseIsNotEqualintTest(){ try{ return CheckAndReport("TestHelpersTests","ExpectFalseIsNotEqualintTest()", ExpectFalseIsNotEqualintTest());} catch: { CheckAndReport("TestHelpersTests","!!! EXCEPTION IN ExpectFalseIsNotEqualintTest() !!!", false); } return false; }
+test bool TryShowMeARedCell(){ try{ return CheckAndReport("TestHelpersTests","ShowMeARedCell()", ShowMeARedCell());} catch: { CheckAndReport("TestHelpersTests","!!! EXCEPTION IN ShowMeARedCell() !!!", false); } return false; }
+test bool TryShowMeAGreenCell(){ try{ return CheckAndReport("TestHelpersTests","ShowMeAGreenCell()", ShowMeAGreenCell());} catch: { CheckAndReport("TestHelpersTests","!!! EXCEPTION IN ShowMeAGreenCell() !!!", false); } return false; }
+test bool TryCheckColourCompare(){ try{ return CheckAndReport("TestHelpersTests","CheckColourCompare()", CheckColourCompare());} catch: { CheckAndReport("TestHelpersTests","!!! EXCEPTION IN CheckColourCompare() !!!", false); } return false; }
+test bool TryExpectTrueTestTrue(){ try{ return CheckAndReport("TestHelpersTests","ExpectTrueTestTrue()", ExpectTrueTestTrue());} catch: { CheckAndReport("TestHelpersTests","!!! EXCEPTION IN ExpectTrueTestTrue() !!!", false); } return false; }
+test bool TryExpectTrueTestFalse(){ try{ return CheckAndReport("TestHelpersTests","ExpectTrueTestFalse()", ExpectTrueTestFalse());} catch: { CheckAndReport("TestHelpersTests","!!! EXCEPTION IN ExpectTrueTestFalse() !!!", false); } return false; }
+test bool TryExpectFalseTestTrue(){ try{ return CheckAndReport("TestHelpersTests","ExpectFalseTestTrue()", ExpectFalseTestTrue());} catch: { CheckAndReport("TestHelpersTests","!!! EXCEPTION IN ExpectFalseTestTrue() !!!", false); } return false; }
+test bool TryExpectFalseTestTrue(){ try{ return CheckAndReport("TestHelpersTests","ExpectFalseTestTrue()", ExpectFalseTestTrue());} catch: { CheckAndReport("TestHelpersTests","!!! EXCEPTION IN ExpectFalseTestTrue() !!!", false); } return false; }
+test bool TryTestEqualFiles(){ try{ return CheckAndReport("TestHelpersTests","TestEqualFiles()", TestEqualFiles());} catch: { CheckAndReport("TestHelpersTests","!!! EXCEPTION IN TestEqualFiles() !!!", false); } return false; }
+test bool TryTestEqualFiles(){ try{ return CheckAndReport("TestHelpersTests","TestEqualFiles()", TestEqualFiles());} catch: { CheckAndReport("TestHelpersTests","!!! EXCEPTION IN TestEqualFiles() !!!", false); } return false; }
+test bool TryTestUnEqualFiles(){ try{ return CheckAndReport("TestHelpersTests","TestUnEqualFiles()", TestUnEqualFiles());} catch: { CheckAndReport("TestHelpersTests","!!! EXCEPTION IN TestUnEqualFiles() !!!", false); } return false; }
+test bool TrySmallSqlSample(){ try{ return CheckAndReport("Type2ClonesTests","SmallSqlSample()", SmallSqlSample());} catch: { CheckAndReport("Type2ClonesTests","!!! EXCEPTION IN SmallSqlSample() !!!", false); } return false; }
+test bool TrySingleCloneSample(){ try{ return CheckAndReport("Type2ClonesTests","SingleCloneSample()", SingleCloneSample());} catch: { CheckAndReport("Type2ClonesTests","!!! EXCEPTION IN SingleCloneSample() !!!", false); } return false; }
+test bool TryType2NumericClones(){ try{ return CheckAndReport("Type2ClonesTests","Type2NumericClones()", Type2NumericClones());} catch: { CheckAndReport("Type2ClonesTests","!!! EXCEPTION IN Type2NumericClones() !!!", false); } return false; }
+test bool TryResetList(){ try{ return CheckAndReport("Type2ClonesTests","ResetList()", ResetList());} catch: { CheckAndReport("Type2ClonesTests","!!! EXCEPTION IN ResetList() !!!", false); } return false; }
+test bool TryAddList(){ try{ return CheckAndReport("Type2ClonesTests","AddList()", AddList());} catch: { CheckAndReport("Type2ClonesTests","!!! EXCEPTION IN AddList() !!!", false); } return false; }
+test bool TryRemoveType(){ try{ return CheckAndReport("Type2ClonesTests","RemoveType()", RemoveType());} catch: { CheckAndReport("Type2ClonesTests","!!! EXCEPTION IN RemoveType() !!!", false); } return false; }
+test bool TryTestType3(){ try{ return CheckAndReport("Type3ClonesTests","TestType3()", TestType3());} catch: { CheckAndReport("Type3ClonesTests","!!! EXCEPTION IN TestType3() !!!", false); } return false; }
+test bool TryTestValidClone(){ try{ return CheckAndReport("Type3ClonesTests","TestValidClone()", TestValidClone());} catch: { CheckAndReport("Type3ClonesTests","!!! EXCEPTION IN TestValidClone() !!!", false); } return false; }
+test bool TryCheckLastMatchingLine(){ try{ return CheckAndReport("Type3ClonesTests","CheckLastMatchingLine()", CheckLastMatchingLine());} catch: { CheckAndReport("Type3ClonesTests","!!! EXCEPTION IN CheckLastMatchingLine() !!!", false); } return false; }
+test bool TryValidateCloneSize(){ try{ return CheckAndReport("Type3ClonesTests","ValidateCloneSize()", ValidateCloneSize());} catch: { CheckAndReport("Type3ClonesTests","!!! EXCEPTION IN ValidateCloneSize() !!!", false); } return false; }
 
 bool RunAllTests()
 {
@@ -151,6 +203,10 @@ bool RunAllTests()
   if(false == TryTestIntegerDivision()){ Result = false;}
   if(false == TryAssumeIteratorIncrementing()){ Result = false;}
   if(false == TryDoWithTry()){ Result = false;}
+  if(false == TryHowManyLoops()){ Result = false;}
+  if(false == TryHowManyLoops2()){ Result = false;}
+  if(false == TryAssumeForCanhaveTonsOfConditions()){ Result = false;}
+  if(false == TryAssumeForConditionsAnd()){ Result = false;}
   if(false == TryTestTernaryOperator()){ Result = false;}
   if(false == TryTestInfixOperatorAnd()){ Result = false;}
   if(false == TryTestInfixOperatorOr()){ Result = false;}
@@ -165,6 +221,13 @@ bool RunAllTests()
   if(false == TryTestBraceCase()){ Result = false;}
   if(false == TryTestNoClone()){ Result = false;}
   if(false == TryTestMaxOfList()){ Result = false;}
+  if(false == TryTestExtractSingleClass()){ Result = false;}
+  if(false == TryTestExtractingMultipleClasses()){ Result = false;}
+  if(false == TryTestRemovingDuplicates()){ Result = false;}
+  if(false == TryTestGettingCloneClasses()){ Result = false;}
+  if(false == TryTestDupesList()){ Result = false;}
+  if(false == TrySmallSqlDiff()){ Result = false;}
+  if(false == TrySmallSqlBigDiff()){ Result = false;}
   if(false == TryFindFilesInDirectory()){ Result = false;}
   if(false == TryFindFilesInEmptyDir()){ Result = false;}
   if(false == TryCheckFindNameInDir()){ Result = false;}
@@ -175,7 +238,15 @@ bool RunAllTests()
   if(false == TryTestStrippingExtension()){ Result = false;}
   if(false == TryTestSplittingIndexes()){ Result = false;}
   if(false == TryTestSplittingContent()){ Result = false;}
+  if(false == TryTestExistingColor()){ Result = false;}
+  if(false == TryTestDefaultColor()){ Result = false;}
+  if(false == TryTestSamplePath()){ Result = false;}
+  if(false == TryTestSamplePathBack()){ Result = false;}
   if(false == TryTestNormalizingFile()){ Result = false;}
+  if(false == TryTestNormalizingIndexes()){ Result = false;}
+  if(false == TryTestDefaultFilePath()){ Result = false;}
+  if(false == TryTestFilePathWithColour()){ Result = false;}
+  if(false == TryTestFilePathWithoutColor()){ Result = false;}
   if(false == TryCheckRed()){ Result = false;}
   if(false == TryCheckGreen()){ Result = false;}
   if(false == TryCheckYellow()){ Result = false;}
@@ -213,6 +284,23 @@ bool RunAllTests()
   if(false == TryDistributionRounding()){ Result = false;}
   if(false == TryFractionTest()){ Result = false;}
   if(false == TryPercentageTest()){ Result = false;}
+  if(false == TryTestSampleSqlOverview()){ Result = false;}
+  if(false == TryTestGenerationSampleIndexesForClass()){ Result = false;}
+  if(false == TryTestGenerateTitleBox()){ Result = false;}
+  if(false == TryTestGenerateBox()){ Result = false;}
+  if(false == TryTestGenerateVBox()){ Result = false;}
+  if(false == TryTestRenderFigure()){ Result = false;}
+  if(false == TryTestGetClassName()){ Result = false;}
+  if(false == TryTestExecOnMouseDown()){ Result = false;}
+  if(false == TryTestExecOnMouseEnter()){ Result = false;}
+  if(false == TryTestGenerateTooltip()){ Result = false;}
+  if(false == TryTestExtractAndNormalizeIndexes()){ Result = false;}
+  if(false == TryTestGenerateSampleIndexesForClass()){ Result = false;}
+  if(false == TryAssumeRegexTrue()){ Result = false;}
+  if(false == TryAssumeRegexWithColon()){ Result = false;}
+  if(false == TryAssumeRegexWithEqual()){ Result = false;}
+  if(false == TryAssumeRegexNoLeadingSpace()){ Result = false;}
+  if(false == TryAssumeRegexNoTralingSpace()){ Result = false;}
   if(false == TryTestVolumePlusPlus()){ Result = false;}
   if(false == TryTestVolumePlus()){ Result = false;}
   if(false == TryTestVolumeNeutral()){ Result = false;}
@@ -266,6 +354,16 @@ bool RunAllTests()
   if(false == TryTestEqualFiles()){ Result = false;}
   if(false == TryTestEqualFiles()){ Result = false;}
   if(false == TryTestUnEqualFiles()){ Result = false;}
+  if(false == TrySmallSqlSample()){ Result = false;}
+  if(false == TrySingleCloneSample()){ Result = false;}
+  if(false == TryType2NumericClones()){ Result = false;}
+  if(false == TryResetList()){ Result = false;}
+  if(false == TryAddList()){ Result = false;}
+  if(false == TryRemoveType()){ Result = false;}
+  if(false == TryTestType3()){ Result = false;}
+  if(false == TryTestValidClone()){ Result = false;}
+  if(false == TryCheckLastMatchingLine()){ Result = false;}
+  if(false == TryValidateCloneSize()){ Result = false;}
   FinalizeTestReport();
   return Result;
 }

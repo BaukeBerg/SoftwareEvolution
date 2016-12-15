@@ -1,4 +1,4 @@
-module \test::Type1ClonesTest
+module \test::Type1ClonesTests
 
 import FileLocations;
 import \clones::Type1Clones;

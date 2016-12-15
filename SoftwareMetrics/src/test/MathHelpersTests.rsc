@@ -1,4 +1,4 @@
-module \test::MathHelpersTest
+module \test::MathHelpersTests
 
 import \helpers::MathHelpers;
 import \helpers::TestHelpers;

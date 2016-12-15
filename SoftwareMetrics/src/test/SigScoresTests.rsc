@@ -1,4 +1,4 @@
-module \test::SigScoresTester
+module \test::SigScoresTests
 
 import \metrics::SigScores;
 import \helpers::TestHelpers;

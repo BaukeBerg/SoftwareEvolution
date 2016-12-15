@@ -1,4 +1,4 @@
-module \test::SlocModuleTester
+module \test::SlocModuleTests
 
 import \metrics::SlocModule;// Required for testing functions
 import \helpers::TestHelpers; // Some convenience printing functions

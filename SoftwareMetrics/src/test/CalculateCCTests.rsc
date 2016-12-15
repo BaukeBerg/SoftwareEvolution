@@ -1,4 +1,4 @@
-module \test::CalculateCCTest
+module \test::CalculateCCTests
 
 import \metrics::CalculateCC;
 import FileLocations;

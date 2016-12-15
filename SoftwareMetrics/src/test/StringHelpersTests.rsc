@@ -1,4 +1,4 @@
-module \test::StringHelpersTester
+module \test::StringHelpersTests
 
 import Map;
 import FileLocations;

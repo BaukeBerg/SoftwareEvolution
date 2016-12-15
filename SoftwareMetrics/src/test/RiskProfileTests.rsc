@@ -1,4 +1,4 @@
-module \test::RiskProfileTest
+module \test::RiskProfileTests
 
 import \graphics::RiskProfile;
 import \test::SigScoresTester;

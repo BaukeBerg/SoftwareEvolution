@@ -1,4 +1,4 @@
-module \test::Type2ClonesTest
+module \test::Type2ClonesTests
 
 import \clones::Type2Clones;
 import \clones::CloneAlgorithm;
