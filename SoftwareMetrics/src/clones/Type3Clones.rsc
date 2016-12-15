@@ -1,5 +1,6 @@
 module clones::Type3Clones
 
+import FileLocations;
 import IO;
 import List;
 import Map;
@@ -10,42 +11,80 @@ import \clones::CloneAlgorithm;
 import \helpers::CloneHelpers;
 import \helpers::StringHelpers;
 
+import \util::Math;
+
+TCloneClasses SmallSqlType3Clones() = FindType3CloneClasses(SampleFile("clones/SmallSqlContent.txt"));
+
 TCloneClasses FindType3CloneClasses(loc FileToCheck) = FindType3CloneClasses(HashFile(FileToCheck));
 TCloneClasses FindType3CloneClasses(THashInfo Information)
 {
   PrepareProcess(Information);
-  TCloneClasses CloneClasses = [];  
-  for(LineNumber <- [0..size(Lines)], (Lines[LineNumber] != InvalidCloneStart))
+  TCloneClasses CloneClasses = []; 
+  list[int] DuplicatedLines = ListWithDupes(Lines, InvalidCloneStart);
+  for(DuplicatedLine <- DuplicatedLines)
   {
-    list[int] Dupes = GetDupes(Lines, LineNumber);
+    <LineNumber, ListOfDupes> = pop(DuplicatedLines);
+    list[int] Dupes = GetDupes(Lines, DuplicatedLines, LineNumber);
     for(Dupe <- Dupes)
-    {
-      int LastMatching = GetLastMatchingLine(Lines, LineNumber, Dupe);
-      int CloneSize = LastMatching - LineNumber;
+    { 
+      int LastMatching = GetLastMatchingLine(Lines, DuplicatedLine, Dupe);
+      int CloneSize = LastMatching - DuplicatedLine;
       println("Source: <LineNumber> : <Dupe> : <CloneSize>");
-      CloneClasses += ExtractCloneClasses(LineNumber, [<Dupe, CloneSize>]);
+      if((CloneSize > MinimumCloneSize) 
+        && (MinimumCloneSize <= DuplicatedLines(Lines, LineNumber, Dupe, CloneSize)))
+      {
+        CloneClasses += ExtractCloneClasses(LineNumber, [<Dupe, CloneSize>]);
+      }
     }
   }
   return CloneClasses;
 }
 
+int MinimumCloneSize = 6;
+
+int DuplicatedLines(loc File, int Line, int Dupe, int Size) = DuplicatedLines(HashFile(File).HashMap , Line, Dupe, Size);
+int DuplicatedLines(THashMap Lines, int Line, int Dupe, int Size)
+{
+  int MatchingLines = 0;
+  bool Found = false;
+  for(n <- [0 .. Size+1])
+  { 
+    for(i <- [0 .. Size+1], (false == Found), (Dupe + i) < size(Lines), Lines[Line+n] == Lines[Dupe+i])
+    {
+      MatchingLines += 1;
+      Found = true;      
+    }
+    Found = false; 
+  }
+  return MatchingLines; 
+}
+
+
+int GetLastMatchingLine(loc File, int LineNumber, int Dupe) = GetLastMatchingLine(HashFile(File).HashMap, LineNumber, Dupe);
 int GetLastMatchingLine(THashMap Lines, int LineNumber, int Dupe)
 {
   Size = 0;
+  int Dist = 0;
+  int LastDist = 0;
   Distance = Dupe - LineNumber;
-  while((true == HasOverlap(Lines, LineNumber, Dupe))
-    && (false == CodeOverlapsClone(Size, Distance)))
+  while(false == CodeOverlapsClone(Size, Distance))
   {
+    LastDist = Dist;
+    Dist = HasOverlap(Lines, LineNumber, Dupe);
+    if(-1 == Dist)
+    {
+      break;
+    }
     LineNumber += 1;
     Dupe += 1;
     Size +=1;
   }
-  return LineNumber;
+  return LineNumber+LastDist;
 }
 
 int MaxDistance = 5;
 
-bool HasOverlap(THashMap Lines, int LineNumber, int Dupe)
+int HasOverlap(THashMap Lines, int LineNumber, int Dupe)
 {
   Limit = size(Lines);
   for(L <- [0 .. MaxDistance + 1])
@@ -54,9 +93,9 @@ bool HasOverlap(THashMap Lines, int LineNumber, int Dupe)
     { 
       if(Lines[LineNumber+L] == Lines[Dupe+D])
       {
-        return true;
+        return max(L,D);
       }
     }
   }
-  return false;   
+  return -1;   
 }
