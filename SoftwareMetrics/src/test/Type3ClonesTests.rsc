@@ -26,5 +26,5 @@ loc ValidCloneFile = SampleFile("type3clones/ValidClone.txt");
 
 test bool TestValidClone() = ExpectEqual(List, FindType3CloneClasses(ValidCloneFile));
 test bool CheckLastMatchingLine() = ExpectEqual(10, GetLastMatchingLine(ValidCloneFile, 0, 14));
-test bool ValidateCloneSize() = ExpectEqual(6, DuplicatedLines(ValidCloneFile, 0, 14, 10));
+test bool ValidateCloneSize() = ExpectEqual(6, CalcDuplicatedLines(ValidCloneFile, 0, 14, 10));
 

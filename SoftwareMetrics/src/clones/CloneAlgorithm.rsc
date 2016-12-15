@@ -166,7 +166,7 @@ int GetKey(TStringMap Dictionary, str Key)
   return -1;
 }
 
-int CloneSize = 6;
+public int CloneSize = 6;
 
 TCloneList GetClones(THashMap Lines, int LineNumber, list[int] Dupes)
 {       

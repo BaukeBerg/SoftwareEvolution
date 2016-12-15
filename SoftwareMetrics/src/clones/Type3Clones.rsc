@@ -13,6 +13,8 @@ import \helpers::StringHelpers;
 
 import \util::Math;
 
+int TheCloneSize = 6;
+
 TCloneClasses SmallSqlType3Clones() = FindType3CloneClasses(SampleFile("clones/SmallSqlContent.txt"));
 
 TCloneClasses FindType3CloneClasses(loc FileToCheck) = FindType3CloneClasses(HashFile(FileToCheck));
@@ -28,10 +30,11 @@ TCloneClasses FindType3CloneClasses(THashInfo Information)
     for(Dupe <- Dupes)
     { 
       int LastMatching = GetLastMatchingLine(Lines, DuplicatedLine, Dupe);
-      int CloneSize = LastMatching - DuplicatedLine;
+      int CurrentCloneSize = LastMatching - DuplicatedLine;
+      int DuplicatedLines = CalcDuplicatedLines(Lines, LineNumber, Dupe, CurrentCloneSize);
       println("Source: <LineNumber> : <Dupe> : <CloneSize>");
-      if((CloneSize > MinimumCloneSize) 
-        && (MinimumCloneSize <= DuplicatedLines(Lines, LineNumber, Dupe, CloneSize)))
+      if((CurrentCloneSize > CloneSize) 
+        && (CloneSize <= DuplicatedLines))
       {
         CloneClasses += ExtractCloneClasses(LineNumber, [<Dupe, CloneSize>]);
       }
@@ -40,10 +43,8 @@ TCloneClasses FindType3CloneClasses(THashInfo Information)
   return CloneClasses;
 }
 
-int MinimumCloneSize = 6;
-
-int DuplicatedLines(loc File, int Line, int Dupe, int Size) = DuplicatedLines(HashFile(File).HashMap , Line, Dupe, Size);
-int DuplicatedLines(THashMap Lines, int Line, int Dupe, int Size)
+int CalcDuplicatedLines(loc File, int Line, int Dupe, int Size) = CalcDuplicatedLines(HashFile(File).HashMap , Line, Dupe, Size);
+int CalcDuplicatedLines(THashMap Lines, int Line, int Dupe, int Size)
 {
   int MatchingLines = 0;
   bool Found = false;
