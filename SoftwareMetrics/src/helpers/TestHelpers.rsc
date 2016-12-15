@@ -61,10 +61,10 @@ bool ExpectNotEqual(&T Expected, &T Actual)
 }
 
 bool ExpectEqualFiles(loc ExpectedFile, loc ActualFile) = ExpectEqualFiles(ExpectedFile, readFileLines(ActualFile));
-
-bool ExpectEqualFiles(loc FileToScan, list[str] ContentToCompare)
+bool ExpectEqualFiles(loc FileToScan, list[str] ContentToCompare) = ExpectEqualFiles(readFileLines(FileToScan), ContentToCompare);
+bool ExpectEqualFiles(list[str] FileToScan, list[str] ContentToCompare)
 {
-  if(false == ExpectEqual(readFileLines(FileToScan), ContentToCompare))
+  if(false == ExpectEqual(FileToScan, ContentToCompare))
   {
     AppendToFile(OutputFile("test/FailedFileCompares.txt"), JoinList(ContentToCompare));
     return false;
