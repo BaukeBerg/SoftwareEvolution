@@ -11,11 +11,11 @@ import \helpers::CloneHelpers;
 import \helpers::StringHelpers;
 import \helpers::TestHelpers;
 
-THashInfo SmallSqlHash = HashFile(SampleFile("clonehelpers/SampleDupes.txt"));
+THashInfo SmallSqlHash() = HashFile(SampleFile("clonehelpers/SampleDupes.txt"));
 
 test bool TestDupesList()
 {
-  PrepareProcess(SmallSqlHash);
+  PrepareProcess(SmallSqlHash());
   list[int] Dupes  = ListWithDupes(Lines, InvalidCloneStart);
   println("Dupes: <Dupes>");
   return ExpectEqual(14, size(Dupes));
