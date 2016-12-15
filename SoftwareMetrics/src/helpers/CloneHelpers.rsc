@@ -9,11 +9,13 @@ import Set;
 import \helpers::ListHelpers;
 import \helpers::StringHelpers;
 
+// I know it can be this, but how can this be more maintainable / readable?
+//list[int] SantizeDupes(list[int] Dupes, int MinSize) = [ Dupes[n] | n <- [0 .. size(Dupes) - MinSize-1], Dupes[n + MinSize-1] - Dupes[n] == MinSize-1 ];
+
 list[int] SanitizeDupes(list[int] Dupes, int MinSize)
 {
   int Distance = MinSize - 1;
-  list[int] Result = [];
-  // only retain starts of 6 size clones
+  list[int] Result = [];  
   for(n <- [0 .. size(Dupes)-Distance])
   {
     if(Dupes[n+Distance] - Dupes[n] == Distance)

@@ -16,9 +16,11 @@ import \helpers::ListHelpers;
 import lang::java::\syntax::Java15;
 
 TCloneList GetSmallSqlCloneList() = GetCloneList(SmallSqlContent);
-TClonePairs GetSmallSqlClonePairs = GetClonePairs(SmallSqlContent);
+TCloneClasses GetSmallSqlCloneClasses() = CreateClassesFromPairs(GetSmallSqlClonePairs());
+TClonePairs GetSmallSqlClonePairs() = GetClonePairs(SmallSqlContent);
 
 TCloneList GetHsqlDbClones() = GetClonesList(HsqlDbContent);
+TCloneClasses GetHsqlDbCloneClasses() = CreateClassesFromPairs(GetHsqlDbClonePairs());
 TClonePairs GetHsqlDbClonePairs() = GetClonePairs(HsqlDbContent);
 
 void CreateAllIntermediateOutput()

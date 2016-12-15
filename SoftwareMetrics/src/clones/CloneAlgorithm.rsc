@@ -20,11 +20,11 @@ import \metrics::SigScores;
 alias TCloneList = list[TClone];
 alias TClone = tuple[int Start, int Size];
 
-alias TCloneClass = list[TClone];
-alias TCloneClasses = list[TCloneClass];
+alias TCloneClass = set[TClone];
+alias TCloneClasses = set[TCloneClass];
 
 alias TClonePairs = list[TClonePair];
-alias TClonePair = tuple[TClone, TClone];
+alias TClonePair = tuple[TClone First, TClone Second];
 
 alias TCloneInfo = tuple[TCloneList CloneList, TClonePairs ClonePairs];
 
@@ -51,8 +51,59 @@ void PrepareProcess(THashInfo Information)
 
 int GetKey(TStringMap Dictionary, str Key) = Key in Dictionary ? Dictionary[Key] : -1 ;
 
-TCloneList GetCloneList(loc FileToCheck) = GetClonesInfo(FileToCheck).CloneList;
+TCloneList GetCloneList(loc FileToCheck) = MergeClonesWithOverlap(GetClonesInfo(FileToCheck).CloneList);
 TClonePairs GetClonePairs(loc FileToCheck) = GetClonesInfo(FileToCheck).ClonePairs;
+TCloneClasses CreateClassesFromPairs(TClonePairs Pairs)
+{
+  TCloneClasses CloneClasses = {};
+  while(0 != size(Pairs))
+  {
+    TCloneClass ThisClass = {};
+    <Pair, Pairs> = pop(Pairs);
+    for(SubPair <- Pairs, SameClones(Pair, SubPair))
+    {
+      ThisClass += {Pair.First, Pair.Second, SubPair.First, SubPair.Second};      
+    }
+    if(false == isEmpty(ThisClass))
+    {
+      CloneClasses += {ThisClass};
+    }
+  }
+  return CloneClasses;
+}
+
+
+// Merge them until it remains equal
+TCloneClasses MergeClasses(TCloneClasses CloneClasses)
+{
+  TCloneClasses Result = {};
+  while(0 < size(CloneClasses))
+  {
+    <Class, CloneClasses> = takeOneFrom(CloneClasses);
+    for(Clone <- Class)
+    {
+      for(CloneClass <- CloneClasses, Clone in CloneClass)
+      {
+        CloneClasses += {CloneClass+Class}; 
+      }     
+    }     
+  }
+  if(Result != CloneClasses)
+  {
+    Result = MergeClasses(Result);
+  }
+  return Result;
+}
+
+bool SameClones(TClonePair FirstClone, TClonePair SecondClone)
+{
+  <First, Second> = FirstClone;
+  <Third, Fourth> = SecondClone;
+  return((First == Third)
+   || (First == Fourth)
+   || (Second == Third)
+   || (Second == Fourth));
+}
 
 TCloneInfo GetClonesInfo(loc FileToCheck) = GetClonesInfo(HashFile(FileToCheck));
 TCloneInfo GetClonesInfo(THashInfo Information)
@@ -72,11 +123,7 @@ TCloneInfo GetClonesInfo(THashInfo Information)
     Clones = InsertNewClones(Clones, CurrentClones);
     Clones = MergeClonesWithEqualStart(Clones, CurrentClones);
     ClonePairs += CurrentPairs;
-  }
-  Duration("Found all clones, now merging overlapping clones!", Start);
-  Start = now();
-  Clones = MergeClonesWithOverlap(Clones);  // Clones is a nicely organized    
-  Duration("Merged all clones!", Start);
+  }  
   return <Clones, ClonePairs>;
 }
 
@@ -159,25 +206,20 @@ TCloneList MergeClonesWithOverlap(TCloneList TotalClones)
       TClone SecondClone = TotalClones[Second];
       if(true == HasOverlap(FirstClone, SecondClone))
       {
-        DebugPrint("<FirstClone> overlaps with <SecondClone>");
         TClone MergedClone = MergeClones(FirstClone, SecondClone);
-        DebugPrint("Added this <MergedClone> to the list");
         MergedList += MergedClone;
         SkipIndexes += Second;
         WasMerged = true ;      
       }            
     }
     
-    // If the clone was not merged, is was no dupe, so retain it
     if(false == WasMerged)
     {
-      DebugPrint("Added <FirstClone> to the list");
       MergedList += FirstClone;
     }    
   }
   if(TotalClones != MergedList)
   {
-    DebugPrint("Made some changes, go another iteration!");
     MergedList = MergeClonesWithOverlap(MergedList);
   }  
   return MergedList;
