@@ -1,0 +1,20 @@
+// Dupes are reported, } is skipped. 14 lines should be investigated
+a
+b
+c
+dZ
+e
+f
+D
+g
+a
+b
+c
+d
+}
+}
+}
+K
+e
+f
+g

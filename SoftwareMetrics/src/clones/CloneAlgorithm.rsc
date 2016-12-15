@@ -6,13 +6,16 @@ import List;
 import Map;
 import Quotes;
 import Set;
-import \metrics::SigScores;
 
+import \helpers::CloneHelpers;
 import \helpers::Debugging;
 import \helpers::ListHelpers;
 import \helpers::MathHelpers;
 import \helpers::StringHelpers;
+import \helpers::TestHelpers;
 import \util::Math;
+
+import \metrics::SigScores;
 
 alias TCloneList = list[TClone];
 alias TClone = tuple[int Start, int Size];
@@ -123,11 +126,13 @@ TCloneList GetClonesList(THashInfo Information)
   Start = now();
   PrepareProcess(Information);  
   TCloneList Clones = [];
-  
-  for(LineNumber <- [0..size(Lines)], (Lines[LineNumber] != InvalidCloneStart))
+  ListOfDupes = ListWithDupes(Lines, InvalidCloneStart);
+  Size = size(ListOfDupes);
+  for(LineNumber <- [0..Size])
   {
     PrintQuote(LineNumber, 250);
-    list[int] Dupes = GetDupes(Lines, LineNumber);
+    <LineNumber, ListOfDupes> = pop(ListOfDupes);
+    list[int] Dupes = GetDupes(Lines, ListOfDupes, LineNumber);
     TCloneList CurrentClones = GetClones(Lines, LineNumber, Dupes);
     Clones = InsertNewClones(Clones, CurrentClones);
     Clones = MergeClonesWithEqualStart(Clones, CurrentClones);
@@ -174,6 +179,17 @@ TCloneList GetClones(THashMap Lines, int LineNumber, list[int] Dupes)
     }
   }
   return Results;
+}
+
+list[int] GetDupes(THashMap Lines, list[int] AllDupes, int LineNumber)
+{
+  int Find = Lines[LineNumber];
+  list[int] Dupes = [];
+  for(Dupe <- AllDupes, (Find == Lines[Dupe]))
+  {
+    Dupes += Dupe;
+  }
+  return Dupes;  
 }
 
 list[int] GetDupes(THashMap Lines, int LineNumber)
