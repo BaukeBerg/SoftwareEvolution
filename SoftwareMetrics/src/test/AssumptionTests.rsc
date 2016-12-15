@@ -115,13 +115,4 @@ test bool AssumeForConditionsAnd()
     Result = true;
   }
   return ExpectFalse(Result);
-}
-
-test bool AssumeIf()
-{
-  if(5<10) println("hallo"); println("hoi");  
-  if(5>10) println("hallo"); 
-  println("hoi");
-
-}
-    
+}    
