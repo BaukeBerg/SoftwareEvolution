@@ -22,8 +22,6 @@ void CreateAllOutput()
   CreateIntermediateOutput("hsqldb", HsqlDbIntermediate, HsqlDbIndexes, HsqlDbContent); 
 }
 
-
-
 void CreateIntermediateOutput(str ProjectName, loc ProjectIntermediate, loc ProjectFilesIndexes, loc ProjectFilesContent) 
   = CreateIntermediateOutput(EnumerateDirFiles(SampleFile(ProjectName)), ProjectIntermediate, ProjectFilesIndexes, ProjectFilesContent);
   
@@ -48,6 +46,12 @@ void CreateIntermediateOutput(list[loc] ProjectFiles, loc ProjectIntermediate, l
 TCloneList GetSmallSqlClones()
 {
   TCloneList Clones = GetClonesList(SmallSqlContent);
+  return Clones;
+}
+
+TCloneList GetHsqlDbClones()
+{
+  TCloneList Clones = GetClonesList(HsqlDbContent);
   return Clones;
 }
 
