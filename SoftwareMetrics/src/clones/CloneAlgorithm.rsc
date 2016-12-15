@@ -12,6 +12,7 @@ import \helpers::Debugging;
 import \helpers::ListHelpers;
 import \helpers::MathHelpers;
 import \helpers::StringHelpers;
+import \helpers::TestHelpers;
 import \util::Math;
 
 import \metrics::SigScores;
@@ -126,9 +127,11 @@ TCloneList GetClonesList(THashInfo Information)
   PrepareProcess(Information);  
   TCloneList Clones = [];
   ListOfDupes = ListWithDupes(Lines, InvalidCloneStart);
-  for(LineNumber <- [0..size(ListOfDupes)])
+  Size = size(ListOfDupes);
+  for(LineNumber <- [0..Size])
   {
     PrintQuote(LineNumber, 250);
+    <LineNumber, ListOfDupes> = pop(ListOfDupes);
     list[int] Dupes = GetDupes(Lines, ListOfDupes, LineNumber);
     TCloneList CurrentClones = GetClones(Lines, LineNumber, Dupes);
     Clones = InsertNewClones(Clones, CurrentClones);
@@ -182,7 +185,7 @@ list[int] GetDupes(THashMap Lines, list[int] AllDupes, int LineNumber)
 {
   int Find = Lines[LineNumber];
   list[int] Dupes = [];
-  for(Dupe <- AllDupes, Find == Lines[Dupe], LineNumber < Dupe)
+  for(Dupe <- AllDupes, (Find == Lines[Dupe]))
   {
     Dupes += Dupe;
   }
