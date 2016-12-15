@@ -1,5 +1,6 @@
 module \test::AssumptionTests
 
+import IO;
 import List;
 import Set;
 import String;
@@ -94,5 +95,33 @@ test bool HowManyLoops2()
     ActualInt += 1;
   }
   return ExpectEqual(ExpectedInt, ActualInt);
+}
+    
+test bool AssumeForCanhaveTonsOfConditions()
+{
+  bool Result = false;
+  for(n <- [0 .. 10], true, true, true, true, true, true, true, true)
+  {
+    Result = true;
+  }
+  return ExpectTrue(Result);
+}    
+
+test bool AssumeForConditionsAnd()
+{
+  bool Result = false;
+  for(n <- [0 .. 10], true, true, false, true, true, true, true, true)
+  {
+    Result = true;
+  }
+  return ExpectFalse(Result);
+}
+
+test bool AssumeIf()
+{
+  if(5<10) println("hallo"); println("hoi");  
+  if(5>10) println("hallo"); 
+  println("hoi");
+
 }
     
