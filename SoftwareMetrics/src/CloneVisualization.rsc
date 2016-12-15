@@ -2,6 +2,7 @@ module CloneVisualization
 
 import FileLocations;
 import IO;
+import String;
 
 import \clones::CloneAlgorithm;
 
@@ -42,9 +43,12 @@ list[str] ColorIndexes(loc IndexedFileToColour, TCloneClasses CloneClasses)
   {
     for(Clone <- CloneClass)
     {
-      for(n <- [Clone.Start .. (Clone.Start + Clone.Size)+1])
+      for(n <- [Clone.Start .. (Clone.Start + Clone.Size)])
       {
-        AllIndexes[n] = AddColor(AllIndexes[n], "Red");
+      	if(false == contains(AllIndexes[n], "Ѭ"))
+      	{
+        	AllIndexes[n] = AddColor(AllIndexes[n], "Red");
+        }
       }
     }
   }
