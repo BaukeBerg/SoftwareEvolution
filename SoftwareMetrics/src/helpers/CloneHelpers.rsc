@@ -31,7 +31,7 @@ list[int] ListWithDupes(THashMap Lines,int Invalid)
   Dupes += GetSetOfDupes(Lines, Invalid, size(Lines)-1, -1);
   list[int] ListOfDupes = sort(toList(Dupes));
   writeFile(OutputFile("test/listOfDupes.txt"), JoinList(ListOfDupes));
-  return SanitizeDupes(ListOfDupes, 6);  
+  return ListOfDupes;
 }
 
 set[int] GetSetOfDupes(THashMap Lines, int Invalid, int First, int Last)

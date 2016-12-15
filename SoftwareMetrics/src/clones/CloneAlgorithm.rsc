@@ -126,7 +126,7 @@ TCloneList GetClonesList(THashInfo Information)
   Start = now();
   PrepareProcess(Information);  
   TCloneList Clones = [];
-  ListOfDupes = ListWithDupes(Lines, InvalidCloneStart);
+  ListOfDupes = SanitizeDupes(ListWithDupes(Lines, InvalidCloneStart), MinimumCloneSize);
   Size = size(ListOfDupes);
   for(LineNumber <- [0..Size])
   {
