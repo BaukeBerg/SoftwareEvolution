@@ -1,28 +1,32 @@
 module clones::Type3Clones
 
 import IO;
+import List;
 import Map;
+import Set;
 
 import \clones::CloneAlgorithm;
 
+import \helpers::CloneHelpers;
 import \helpers::StringHelpers;
-
 
 TCloneClasses FindType3CloneClasses(loc FileToCheck) = FindType3CloneClasses(HashFile(FileToCheck));
 TCloneClasses FindType3CloneClasses(THashInfo Information)
 {
   PrepareProcess(Information);
-  TCloneClasses CloneClasses = [];
+  TCloneClasses CloneClasses = [];  
   for(LineNumber <- [0..size(Lines)], (Lines[LineNumber] != InvalidCloneStart))
   {
     list[int] Dupes = GetDupes(Lines, LineNumber);
     for(Dupe <- Dupes)
     {
       int LastMatching = GetLastMatchingLine(Lines, LineNumber, Dupe);
-      println("Source: <LineNumber> : <Dupe> : <LastMatching - LineNumber>");
+      int CloneSize = LastMatching - LineNumber;
+      println("Source: <LineNumber> : <Dupe> : <CloneSize>");
+      CloneClasses += ExtractCloneClasses(LineNumber, [<Dupe, CloneSize>]);
     }
   }
-  return CloneClasses;  
+  return CloneClasses;
 }
 
 int GetLastMatchingLine(THashMap Lines, int LineNumber, int Dupe)
@@ -39,7 +43,7 @@ int GetLastMatchingLine(THashMap Lines, int LineNumber, int Dupe)
   return LineNumber;
 }
 
-int MaxDistance = 50;
+int MaxDistance = 5;
 
 bool HasOverlap(THashMap Lines, int LineNumber, int Dupe)
 {
