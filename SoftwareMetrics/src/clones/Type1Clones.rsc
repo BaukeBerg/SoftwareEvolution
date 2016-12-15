@@ -15,7 +15,13 @@ import \helpers::ListHelpers;
 
 import lang::java::\syntax::Java15;
 
-void CreateAllOutput()
+TCloneList GetSmallSqlCloneList() = GetCloneList(SmallSqlContent);
+TClonePairs GetSmallSqlClonePairs = GetClonePairs(SmallSqlContent);
+
+TCloneList GetHsqlDbClones() = GetClonesList(HsqlDbContent);
+TClonePairs GetHsqlDbClonePairs() = GetClonePairs(HsqlDbContent);
+
+void CreateAllIntermediateOutput()
 {
   CreateIntermediateOutput(EnumerateDirFiles(|project://SoftwareMetrics/src|), SoftwareEvolutionIntermediate, SoftwareEvolutionIndexes, SoftwareEvolutionContent);
   CreateIntermediateOutput("smallsql", SmallSqlIntermediate, SmallSqlIndexes, SmallSqlContent);
@@ -41,22 +47,4 @@ void CreateIntermediateOutput(list[loc] ProjectFiles, loc ProjectIntermediate, l
   Start = now();
   SplitIndexedFile(ProjectIntermediate, ProjectFilesIndexes, ProjectFilesContent);
   Duration("Done splitting indexed file.", Start);
-}
-
-TCloneList GetSmallSqlClones()
-{
-  TCloneList Clones = GetClonesList(SmallSqlContent);
-  return Clones;
-}
-
-TCloneList GetHsqlDbClones()
-{
-  TCloneList Clones = GetClonesList(HsqlDbContent);
-  return Clones;
-}
-
-TCloneClasses GetSmallSqlCloneClasses()
-{
-  TCloneClasses CloneClasses = GetClonesClasses(SmallSqlContent);
-  return CloneClasses;
 }
