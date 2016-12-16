@@ -51,8 +51,6 @@ void PrepareProcess(THashInfo Information)
 
 int GetKey(TStringMap Dictionary, str Key) = Key in Dictionary ? Dictionary[Key] : -1 ;
 
-TCloneList GetCloneList(loc FileToCheck) = MergeClonesWithOverlap(GetClonesInfo(FileToCheck).CloneList);
-TClonePairs GetClonePairs(loc FileToCheck) = GetClonesInfo(FileToCheck).ClonePairs;
 TCloneClasses CreateClassesFromPairs(TClonePairs Pairs)
 {
   TCloneClasses CloneClasses = {};
@@ -106,12 +104,11 @@ bool SameClones(TClonePair FirstClone, TClonePair SecondClone)
    || (Second == Fourth));
 }
 
-TCloneInfo GetClonesInfo(loc FileToCheck) = GetClonesInfo(HashFile(FileToCheck));
-TCloneInfo GetClonesInfo(THashInfo Information)
+TClonePairs GetClonePairs(loc FileToCheck) = GetClonePairs(HashFile(FileToCheck));
+TClonePairs GetClonePairs(THashInfo Information)
 {
   Start = now();
   PrepareProcess(Information);  
-  TCloneList Clones = [];
   TClonePairs ClonePairs = [];
   ListOfDupes = SanitizeDupes(ListWithDupes(Lines), CloneSize, InvalidCloneStart);
   Size = size(ListOfDupes);
@@ -119,29 +116,60 @@ TCloneInfo GetClonesInfo(THashInfo Information)
   {
     PrintQuote(LineNumber, 250);
     <LineNumber, ListOfDupes> = pop(ListOfDupes);
-    list[int] Dupes = GetDupes(Lines, ListOfDupes, LineNumber, ClonePairs);
-    <CurrentClones, CurrentPairs> = GetClones(Lines, LineNumber, Dupes);
-    Clones = InsertNewClones(Clones, CurrentClones);
-    Clones = MergeClonesWithEqualStart(Clones, CurrentClones);
-    ClonePairs += CurrentPairs;
+    list[int] Dupes = GetDupes(Lines, ListOfDupes, LineNumber, ClonePairs);    
+    ClonePairs += GetPairs(Lines, LineNumber, Dupes);;
   }  
-  return <Clones, ClonePairs>;
+  Duration("Extracted all pairs.", Start);
+  return ClonePairs;
 }
 
-TCloneInfo GetClones(THashMap Lines, int LineNumber, list[int] Dupes)
-{       
-  TCloneList Clones = [];  
-  TClonePairs Pairs = [];
+TCloneList GetCloneList(loc FileToCheck) = GetCloneList(HashFile(FileToCheck));
+TCloneList GetCloneList(THashInfo Information)
+{
+  Start = now();
+  PrepareProcess(Information);  
+  TCloneList Clones = [];
+  ListOfDupes = SanitizeDupes(ListWithDupes(Lines), CloneSize, InvalidCloneStart);
+  Size = size(ListOfDupes);
+  for(LineNumber <- [0..Size])
+  {
+    PrintQuote(LineNumber, 250);
+    <LineNumber, ListOfDupes> = pop(ListOfDupes);
+    list[int] Dupes = GetDupes(Lines, ListOfDupes, LineNumber, ClonePairs);    
+    Clones = InsertNewClones(Clones, GetClones(Lines, LineNumber, Dupes));
+    Clones = MergeClonesWithEqualStart(Clones, CurrentClones);
+  }  
+  Duration("Extracted all clones.", Start);
+  return Clones;
+}
+
+
+TCloneList GetClones(THashMap Lines, int LineNumber, list[int] Dupes)
+{
+  TCloneList Clones = [];
   for(Dupe <- Dupes)
   {
     if(true == MinimumCloneSizeReached(Lines, LineNumber, Dupe))
     {
       int CloneSize = CalcCloneSize(Lines, LineNumber, Dupe);
-      Clones += <Dupe, CloneSize>;
+      Clones += <Dupe, CloneSize>;      
+    }
+  }
+  return Clones;
+}
+
+TClonePairs GetPairs(THashMap Lines, int LineNumber, list[int] Dupes)
+{ 
+  TClonePairs Pairs = [];
+  for(Dupe <- Dupes)
+  {
+    if(true == MinimumCloneSizeReached(Lines, LineNumber, Dupe))
+    {
+      int CloneSize = CalcCloneSize(Lines, LineNumber, Dupe);      
       Pairs += < <LineNumber, CloneSize>, <Dupe, CloneSize> >;
     }
   }
-  return <Clones, Pairs>;
+  return Pairs;
 }
 
 list[int] GetDupes(THashMap Lines, list[int] AllDupes, int LineNumber, TClonePairs ClonePairs)
@@ -157,19 +185,18 @@ list[int] GetDupes(THashMap Lines, list[int] AllDupes, int LineNumber, TClonePai
 
 bool SameAsPreviousPairs(int Dupe, int LineNumber, TClonePairs ClonePairs)
 {
-  ClonePairs = reverse(ClonePairs);
-  while(0 < size(ClonePairs))
-  {
-    <<First, Second>, ClonePairs> = pop(ClonePairs);
+  for(<First, Second> <- reverse(ClonePairs))
+  { 
     if(LineNumber > LastLine(First))
     {
       return false;
     }
-    else if(true == InClone(First, LineNumber)
+    
+    if(true == InClone(First, LineNumber)
       && (true == InClone(Second, Dupe)))
     {
       return true;
-    }     
+    }       
   }  
   return false; 
 }
