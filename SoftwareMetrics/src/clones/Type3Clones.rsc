@@ -15,32 +15,33 @@ import \util::Math;
 
 int TheCloneSize = 6;
 
-TCloneClasses SmallSqlType3Clones() = FindType3CloneClasses(SampleFile("clones/SmallSqlContent.txt"));
+TClonePairs SmallSqlType3Clones() = FindType3ClonePairs(SampleFile("clones/SmallSqlContent.txt"));
 
-TCloneClasses FindType3CloneClasses(loc FileToCheck) = FindType3CloneClasses(HashFile(FileToCheck));
-TCloneClasses FindType3CloneClasses(THashInfo Information)
+TClonePairs FindType3ClonePairs(loc FileToCheck) = FindType3ClonePairs(HashFile(FileToCheck));
+TClonePairs FindType3ClonePairs(THashInfo Information)
 {
   PrepareProcess(Information);
-  TCloneClasses CloneClasses = []; 
+  TClonePairs ClonePairs = []; 
   list[int] DuplicatedLines = ListWithDupes(Lines, InvalidCloneStart);
-  for(DuplicatedLine <- DuplicatedLines)
+  while(0 < size(DuplicatedLines))
   {
-    <LineNumber, ListOfDupes> = pop(DuplicatedLines);
-    list[int] Dupes = GetDupes(Lines, DuplicatedLines, LineNumber);
+    <DuplicatedLine, DuplicatedLines> = pop(DuplicatedLines);
+    list[int] Dupes = GetDupes(Lines, DuplicatedLines, DuplicatedLine, ClonePairs);
     for(Dupe <- Dupes)
     { 
       int LastMatching = GetLastMatchingLine(Lines, DuplicatedLine, Dupe);
       int CurrentCloneSize = LastMatching - DuplicatedLine;
-      int DuplicatedLines = CalcDuplicatedLines(Lines, LineNumber, Dupe, CurrentCloneSize);
-      println("Source: <LineNumber> : <Dupe> : <CloneSize>");
+      int DuplicatedLines = CalcDuplicatedLines(Lines, DuplicatedLine, Dupe, CurrentCloneSize);      
       if((CurrentCloneSize > CloneSize) 
         && (CloneSize <= DuplicatedLines))
       {
-        CloneClasses += ExtractCloneClasses(LineNumber, [<Dupe, CloneSize>]);
+        ThisPair = <<DuplicatedLine, CurrentCloneSize>, <Dupe, CurrentCloneSize>>;
+        ClonePairs += ThisPair;
+        println("<ThisPair>");
       }
     }
   }
-  return CloneClasses;
+  return ClonePairs;
 }
 
 int CalcDuplicatedLines(loc File, int Line, int Dupe, int Size) = CalcDuplicatedLines(HashFile(File).HashMap , Line, Dupe, Size);
@@ -83,7 +84,7 @@ int GetLastMatchingLine(THashMap Lines, int LineNumber, int Dupe)
   return LineNumber+LastDist;
 }
 
-int MaxDistance = 5;
+int MaxDistance = 0;
 
 int HasOverlap(THashMap Lines, int LineNumber, int Dupe)
 {

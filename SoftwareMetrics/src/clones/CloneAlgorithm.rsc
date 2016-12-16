@@ -66,12 +66,11 @@ TCloneClasses CreateClassesFromPairs(TClonePairs Pairs)
     }
     if(false == isEmpty(ThisClass))
     {
-      CloneClasses += {ThisClass};
+      CloneClasses += ThisClass;
     }
   }
   return CloneClasses;
 }
-
 
 // Merge them until it remains equal
 TCloneClasses MergeClasses(TCloneClasses CloneClasses)
@@ -84,7 +83,9 @@ TCloneClasses MergeClasses(TCloneClasses CloneClasses)
     {
       for(CloneClass <- CloneClasses, Clone in CloneClass)
       {
-        CloneClasses += {CloneClass+Class}; 
+        CloneClasses -= CloneClass; // Remove from set
+        CloneClass += Class;  // Create new larger class
+        CloneClasses += CloneClass; // Add to set
       }     
     }     
   }
@@ -112,13 +113,13 @@ TCloneInfo GetClonesInfo(THashInfo Information)
   PrepareProcess(Information);  
   TCloneList Clones = [];
   TClonePairs ClonePairs = [];
-  ListOfDupes = SanitizeDupes(ListWithDupes(Lines, InvalidCloneStart), CloneSize);
+  ListOfDupes = SanitizeDupes(ListWithDupes(Lines), CloneSize, InvalidCloneStart);
   Size = size(ListOfDupes);
   for(LineNumber <- [0..Size])
   {
     PrintQuote(LineNumber, 250);
     <LineNumber, ListOfDupes> = pop(ListOfDupes);
-    list[int] Dupes = GetDupes(Lines, ListOfDupes, LineNumber);
+    list[int] Dupes = GetDupes(Lines, ListOfDupes, LineNumber, ClonePairs);
     <CurrentClones, CurrentPairs> = GetClones(Lines, LineNumber, Dupes);
     Clones = InsertNewClones(Clones, CurrentClones);
     Clones = MergeClonesWithEqualStart(Clones, CurrentClones);
@@ -143,36 +144,27 @@ TCloneInfo GetClones(THashMap Lines, int LineNumber, list[int] Dupes)
   return <Clones, Pairs>;
 }
 
-list[int] GetDupes(THashMap Lines, list[int] AllDupes, int LineNumber)
+list[int] GetDupes(THashMap Lines, list[int] AllDupes, int LineNumber, TClonePairs ClonePairs)
 {
   int Find = Lines[LineNumber];
   list[int] Dupes = [];
-  for(Dupe <- AllDupes, (Find == Lines[Dupe]))
+  for(Dupe <- AllDupes, (Find == Lines[Dupe]), false == SameAsPreviousPairs(Dupe, LineNumber, ClonePairs))
   {
     Dupes += Dupe;
   }
   return Dupes;  
 }
 
-list[int] GetDupes(THashMap Lines, int LineNumber)
+bool SameAsPreviousPairs(int Dupe, int LineNumber, TClonePairs ClonePairs)
 {
-  int Find = Lines[LineNumber];
-  list[int] Dupes = [];
-  for(n <- [LineNumber+1 .. size(Lines)], Find == Lines[n])
+  for(<TClone First, TClone Second> <- ClonePairs, InClone(Second, Dupe) && InClone(First, LineNumber))
   {
-    Dupes += n;
+    return true;    
   }
-  return Dupes;
+  return false; 
 }
 
-bool AlreadyPartOfClone(TCloneList Clones, int LineNumber)
-{
-  for(Clone <- Clones, InLimits(Clone.Start, LineNumber, Clone.Start + Clone.Size))
-  {
-    return true;
-  }
-  return false;
-}
+bool InClone(TClone Clone, int Line) = InLimits(Clone.Start, Line, LastLine(Clone));
 
 TCloneList InsertNewClones(TCloneList TotalClones, TCloneList NewClones)
 {
