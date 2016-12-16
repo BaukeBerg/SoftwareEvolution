@@ -125,6 +125,7 @@ TCloneInfo GetClonesInfo(THashInfo Information)
     Clones = MergeClonesWithEqualStart(Clones, CurrentClones);
     ClonePairs += CurrentPairs;
   }  
+  Duration("Obtained all classes", Start);
   return <Clones, ClonePairs>;
 }
 
