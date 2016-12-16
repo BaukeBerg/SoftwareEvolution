@@ -157,10 +157,20 @@ list[int] GetDupes(THashMap Lines, list[int] AllDupes, int LineNumber, TClonePai
 
 bool SameAsPreviousPairs(int Dupe, int LineNumber, TClonePairs ClonePairs)
 {
-  for(<TClone First, TClone Second> <- ClonePairs, InClone(Second, Dupe) && InClone(First, LineNumber))
+  ClonePairs = reverse(ClonePairs);
+  while(0 < size(ClonePairs))
   {
-    return true;    
-  }
+    <<First, Second>, ClonePairs> = pop(ClonePairs);
+    if(LineNumber > LastLine(First))
+    {
+      return false;
+    }
+    else if(true == InClone(First, LineNumber)
+      && (true == InClone(Second, Dupe)))
+    {
+      return true;
+    }     
+  }  
   return false; 
 }
 
