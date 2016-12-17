@@ -2,6 +2,7 @@ module \data::CloneData
 
 import \data::DataTypes;
 
+import \helpers::CloneHelpers;
 import \helpers::MathHelpers;
 
 // Clone gathering information
@@ -12,14 +13,16 @@ public int CloneSize = 6;
 public TCloneClasses KnownClasses = {};
 
 // Some convenience functions
-TCloneClass GetCloneClass(str Line) = GetCloneClass(LineNumber(Line));
-TCloneClass GetCloneClass(int LineNumber)
+TCloneClasses GetCloneClass(str Line) = GetCloneClasses(LineNumber(Line));
+TCloneClasses GetCloneClass(int LineNumber)
 {
-  for(CloneClass <- KnownClones)
+  TotalClasses = {};
+  for(CloneClass <- KnownClasses)
   {
     for(Clone <- CloneClass, InClone(Clone, LineNumber))
     {
-      return CloneClass;
+      TotalClasses += {CloneClass};
     } 
   }
+  return TotalClasses;
 }
