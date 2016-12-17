@@ -6,18 +6,24 @@ import List;
 import Map;
 import Set;
 
+import \data::CloneData;
+import \data::DataTypes;
+
 import \helpers::ListHelpers;
+import \helpers::MathHelpers;
 import \helpers::StringHelpers;
+
+import \util::Math;
 
 // I know it can be this, but how can this be more maintainable / readable?
 //list[int] SantizeDupes(list[int] Dupes, int MinSize) = [ Dupes[n] | n <- [0 .. size(Dupes) - MinSize-1], Dupes[n + MinSize-1] - Dupes[n] == MinSize-1 ];
 bool StoreList = false;
 
 list[int] SanitizeDupes(list[int] Dupes, int MinSize, int InvalidToken)
-{
+{ 
   int Distance = MinSize - 1;
   list[int] Result = [];  
-  for(n <- [0 .. size(Dupes)-Distance], Dupes[n] != InvalidToken)
+  for(n <- [0 .. size(Dupes)-Distance], Lines[Dupes[n]] != InvalidToken)
   {
     if(Dupes[n+Distance] - Dupes[n] == Distance)
     {
@@ -57,3 +63,6 @@ set[int] GetSetOfDupes(THashMap Lines, int First, int Last)
   }
   return Dupes;
 }
+
+bool InClone(TClone Clone, int Line) = InLimits(Clone.Start, Line, LastLine(Clone));
+int LastLine(TClone Clone) = (Clone.Start + Clone.Size)-1;
