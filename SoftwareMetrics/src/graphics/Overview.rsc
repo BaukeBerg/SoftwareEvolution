@@ -1,8 +1,10 @@
 module graphics::Overview
 
 import IO;
-import String;
 import List;
+import Map;
+import Set;
+import String;
 
 import vis::Figure;
 import vis::Render;
@@ -16,9 +18,18 @@ import \graphics::DetailView;
 import \util::Math;
 
 import \data::CloneData;
+import \data::DataTypes;
 
 Figure GenerateTitleBox(str IndexedLine) = box(text(GetClassName(toLocation(GetFilePath(IndexedLine))), fontSize(7), fontColor("Blue")), vresizable(false), vsize(30), top(), fillColor("Lightgray"));
-Figure GenerateBox(str IndexedLine, list[str] IndexedLines) = box(fillColor(GetColor(IndexedLine)), lineColor(GetColor(IndexedLine)), vresizable(false), vsize(5), top(), ExecOnMouseDown(IndexedLine, IndexedLines), ExecOnMouseEnter(IndexedLine, IndexedLines));
+
+Figure GenerateBox(str IndexedLine, list[str] IndexedLines, int AbsoluteLine) = box
+																													    (
+																													      fillColor(GetColor(IndexedLine)), 
+																													      lineColor(GetColor(IndexedLine)), 
+																													      vresizable(false), vsize(5), top(), 
+																													      ExecOnMouseDown(AbsoluteLine), 
+																													      ExecOnMouseEnter(IndexedLine, IndexedLines)
+																													    );
 Figure GenerateVBox(list[Figure] VBox) = !isEmpty(VBox) ? box(box(vcat(VBox), top(), shrink(0.9)), resizable(false), top()) : box();
 void RenderFigure(str Caption, Figure Fig) = render(Caption, Fig);
 
@@ -36,13 +47,12 @@ void Overview(list[str] IndexedLines)
 	list[Figure] BoxList = [];
 	list[Figure] VBox = [];
 	str PrevFile = "";
-
+  
 	for(i <- [0 .. size(IndexedLines)])
 	{
-		
-		if(PrevFile == GetFilePath(IndexedLines[i]))
+	  if(PrevFile == GetFilePath(IndexedLines[i]))
 		{
-			VBox += GenerateBox(IndexedLines[i], IndexedLines);			
+			VBox += GenerateBox(IndexedLines[i], IndexedLines, i);			
 		}
 		else
 		{
@@ -50,7 +60,7 @@ void Overview(list[str] IndexedLines)
 			BoxList += GenerateVBox(VBox);
 			VBox = [];
 			VBox += GenerateTitleBox(IndexedLines[i]);
-			VBox += GenerateBox(IndexedLines[i], IndexedLines);
+			VBox += GenerateBox(IndexedLines[i], IndexedLines, i);
 			PrevFile = GetFilePath(IndexedLines[i]);
 			println("<IndexedLines[i]>");
 			println("File path: <PrevFile>");
@@ -61,17 +71,15 @@ void Overview(list[str] IndexedLines)
 	RenderFigure("Overview", hcat(BoxList, hgap(3)));
 }
 
-FProperty ExecOnMouseDown(str IndexedLine, list[str] IndexedLines)
+FProperty ExecOnMouseDown(int AbsoluteLineNumber)
 {
   return onMouseDown(bool (int butnr, map[KeyModifier,bool] modifiers) 
 	{
-		if(GetColor(IndexedLine) == "Red")
-		{
-		  CloneClasses = GetCloneClasses(IndexedLine);
-      list[list[str]] DiffData = GetDiffData(CloneClasses);
-		  //list[str] NormalizedIndexes = ExtractAndNormalizeIndexes(IndexedLine, IndexedLines);
-			GenerateDiff([DiffData]);
-		}
+	  CloneClasses = GetCloneClasses(AbsoluteLineNumber);
+		println("Class amount: <size(CloneClasses)>");
+    list[list[str]] DiffData = GetDiffData(CloneClasses);
+    println("Diff data: <DiffData>");     
+    GenerateDiff(DiffData);
 		return true;
 	});	
 }

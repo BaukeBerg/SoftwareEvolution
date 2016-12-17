@@ -18,7 +18,6 @@ public TCloneClasses KnownClasses = {};
 public list[str] ColoredIndexes = [];
 
 // Some convenience functions
-TCloneClasses GetCloneClasses(str Line) = GetCloneClasses(LineNumber(Line));
 TCloneClasses GetCloneClasses(int LineNumber)
 {
   TotalClasses = {};
