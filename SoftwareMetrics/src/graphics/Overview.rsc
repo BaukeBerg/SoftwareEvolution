@@ -42,8 +42,7 @@ void Overview(list[str] IndexedLines)
 		
 		if(PrevFile == GetFilePath(IndexedLines[i]))
 		{
-			VBox += GenerateBox(IndexedLines[i], IndexedLines);
-			println("adding box");
+			VBox += GenerateBox(IndexedLines[i], IndexedLines);			
 		}
 		else
 		{
@@ -64,12 +63,14 @@ void Overview(list[str] IndexedLines)
 
 FProperty ExecOnMouseDown(str IndexedLine, list[str] IndexedLines)
 {
-	return onMouseDown(bool (int butnr, map[KeyModifier,bool] modifiers) 
+  return onMouseDown(bool (int butnr, map[KeyModifier,bool] modifiers) 
 	{
 		if(GetColor(IndexedLine) == "Red")
 		{
-		  list[str] NormalizedIndexes = ExtractAndNormalizeIndexes(IndexedLine, IndexedLines);
-			GenerateDiff([NormalizedIndexes]);
+		  CloneClasses = GetCloneClasses(IndexedLine);
+      list[list[str]] DiffData = GetDiffData(CloneClasses);
+		  //list[str] NormalizedIndexes = ExtractAndNormalizeIndexes(IndexedLine, IndexedLines);
+			GenerateDiff([DiffData]);
 		}
 		return true;
 	});	
