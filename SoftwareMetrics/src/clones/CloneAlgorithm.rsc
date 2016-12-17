@@ -1,6 +1,7 @@
 module \clones::CloneAlgorithm
 
 import DateTime;
+import FileLocations;
 import IO;
 import List;
 import Map;
@@ -58,28 +59,45 @@ TCloneClasses CreateClassesFromPairs(TClonePairs Pairs)
   return CloneClasses;
 }
 
+// Local loop to prevent stackoverflow on large classes
 TCloneClasses MergeCloneClasses(TCloneClasses CloneClasses)
+{  
+  Start = now();
+  TCloneClasses Output = TryMerge(CloneClasses); 
+  while(CloneClasses != Output)
+  {
+    CloneClasses = Output;
+    Output = TryMerge(CloneClasses);
+  }
+  Duration("Merging completed.", Start);
+  return Output;
+}
+
+TCloneClasses TryMerge(TCloneClasses CloneClasses)
 {
   TCloneClasses Input = CloneClasses;
   println("Starting iteration, <size(CloneClasses)> passes left.");
-  <Class, CloneClasses> = takeOneFrom(CloneClasses);   
-  for(TClone Clone <- Class)
-  { 
-    for(TCloneClass CloneClass <- CloneClasses, Clone in CloneClass)
+  while(0 < size(CloneClasses))
+  {
+    <Class, CloneClasses> = takeOneFrom(CloneClasses);
+    for(TClone Clone <- Class)
     { 
-      CloneClasses = CombineClass(CloneClasses, Class, CloneClass);
-      CloneClasses = MergeCloneClasses(CloneClasses);
-    }
-  } 
-  return CloneClasses;
+      for(TCloneClass CloneClass <- CloneClasses, Clone in CloneClass)
+      { 
+        return CombineClass(Input, Class, CloneClass);        
+      }
+    }  
+  }
+  return Input;
 }
 
-TCloneClasses CombineClass(TCloneClass First, TCloneClass Second)
+TCloneClasses CombineClass(TCloneClasses Original, TCloneClass First, TCloneClass Second)
 {
-  Result = Original - {First, Second};
+  Original -= {First};
+  Original -= {Second};
   TCloneClass CombinedSet = union({First,Second});
   println("Combining <First> and <Second> to <CombinedSet>");
-  return Result + {CombinedSet};
+  return Original + {CombinedSet};
 }
   
 
