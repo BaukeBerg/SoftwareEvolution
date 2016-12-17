@@ -6,6 +6,12 @@ import CloneVisualization;
 import FileLocations;
 
 import \clones::CloneAlgorithm;
+
+import \data::CloneData;
+import \data::DataTypes;
+
+import \graphics::DetailView;
+
 import \helpers::TestHelpers;
  
 loc InputFile = SampleFile("clones/ColorIndexesSampleIndexesInput.txt");
@@ -19,3 +25,19 @@ test bool TestHandleClones()
 
 test bool TestColorIndexes() = ExpectEqualFiles(readFileLines(ResultFile), ColorIndexes(InputFile, {{<1,2>}} ));
 test bool TestMultipleColorIndexes() = ExpectEqualFiles(readFileLines(ResultFile), ColorIndexes(InputFile, {{<1,2>}, {<1,2>}} ));
+
+TCloneClass ExpectedClass = {<803,7>, <767,7>, <818,7>};
+
+test bool CheckSmallSqlSample()
+{
+  GenerateSmallSqlSample();
+  ExpectTrue(ExpectedClass in KnownClasses);
+}
+
+test bool TestDiffData()
+{
+  GenerateSmallSqlSample();
+  list[list[str]] DiffData = GetDiffData({ExpectedClass});
+  GenerateDiff(DiffData);
+  return true;  
+} 
