@@ -6,6 +6,8 @@ import String;
 
 import \clones::CloneAlgorithm;
 
+import \data::DataTypes;
+
 import \graphics::Overview;
 
 import \helpers::FileHelpers;
@@ -13,25 +15,12 @@ import \helpers::FileHelpers;
 loc SmallSqlSampleContent = SampleFile("type2clones/SmallSqlContent.txt");
 loc SmallSqlSampleIndexes = SampleFile("type2clones/SmallSqlIndexes.txt");
 
-// Dit is de CloneBucket
-public TCloneClasses CurrentClones = [];
-
-
-list[list[str]] GenerateClonesFor(TClone Clone)
-{
-  ;// Sniff in the CurrentClones
-  // Find the clone CLASS
-  // Generate list[str] for each of the Clones
-  // return list of these
-  // pass in GenerateDiff
-}
-
 void GenerateSmallSqlSample() = HandleClones(SmallSqlSampleContent, SmallSqlSampleIndexes);
 void GenerateSoftwareEvolutionSample() = HandleClones(SampleFile("clones/SoftwareEvolutionContent.txt"), SampleFile("clones/SoftwareEvolutionIndexes.txt"));
 
 void HandleClones(loc ContentFile, loc IndexesFile)
 { 
-  CurrentClones = GetClonesClasses(ContentFile);
+  CurrentClones = GetCloneClasses(ContentFile);
   list[str] ColoredIndexes = ColorIndexes(IndexesFile, CurrentClones);
   Overview(ColoredIndexes);
 }

@@ -116,3 +116,17 @@ test bool AssumeForConditionsAnd()
   }
   return ExpectFalse(Result);
 }    
+
+test bool SetTests()
+{
+  set[int] m = {};
+  m += 1;
+  m += 5;
+  m += 10;
+  m -= 2;
+  
+  set[int] n = {1,4,432,43};
+  m += n;
+  println(m);
+  return ExpectEqual(6, size(m)); 
+}

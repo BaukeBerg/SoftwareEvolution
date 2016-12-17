@@ -8,6 +8,9 @@ import Set;
 
 import \clones::CloneAlgorithm;
 
+import \data::CloneData;
+import \data::DataTypes;
+
 import \helpers::CloneHelpers;
 import \helpers::StringHelpers;
 
@@ -22,7 +25,8 @@ TClonePairs FindType3ClonePairs(THashInfo Information)
 {
   PrepareProcess(Information);
   TClonePairs ClonePairs = []; 
-  list[int] DuplicatedLines = ListWithDupes(Lines, InvalidCloneStart);
+  list[int] DuplicatedLines = ListWithDupes(Lines);
+  DuplicatedLines = SanitizeDupes(DuplicatedLines, 1, InvalidCloneStart);
   while(0 < size(DuplicatedLines))
   {
     <DuplicatedLine, DuplicatedLines> = pop(DuplicatedLines);
@@ -84,7 +88,7 @@ int GetLastMatchingLine(THashMap Lines, int LineNumber, int Dupe)
   return LineNumber+LastDist;
 }
 
-int MaxDistance = 0;
+int MaxDistance = 4;
 
 int HasOverlap(THashMap Lines, int LineNumber, int Dupe)
 {

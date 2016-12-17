@@ -6,6 +6,8 @@ import String;
 
 import \clones::CloneAlgorithm;
 
+import \data::DataTypes;
+
 import \helpers::JavaHelpers;
 import \helpers::ListHelpers;
 import \helpers::TestHelpers;
@@ -40,31 +42,11 @@ test bool TestDualDifferentClone() = ExpectEqual(20, GetClonesForSampleFile("Dou
 test bool TestBraceCase() = ExpectEqual(0, GetClonesForSampleFile("BraceCase.txt"));
 test bool TestNoClone() = ExpectEqual(0, GetClonesForSampleFile("NoClone.txt"));
 
-TCloneList SomeClones = [ <34,6>,
-                          <45,8>,
-                          <60,9>,
-                          <50,1>
-                        ];  
+TCloneClasses SampleCloneClasses = {
+                                    {<247,7>, <767,7>, <803,7>, <818,7>}, 
+                                    {<364,7>, <876,7>}, 
+                                    {<464,6>, <474,6>}
+                                   };
 
-test bool TestMaxOfList() = ExpectEqual(9, LineIncrement(SomeClones));
-
-TCloneList SingleExtractionInput = [<10,6>, <20,6>];
-TCloneClasses SingleExtractionResult = [[<1,6>, <10,6>, <20,6>]];
- 
-test bool TestExtractSingleClass() = ExpectEqual(SingleExtractionResult, ExtractCloneClasses(1, SingleExtractionInput));                                                
-
-TCloneList MultipleExtractionInput = [<10,8>, <20,20>];
-TCloneClasses MultipleExtractionResult = [ [<1,8>, <10,8>], [<1,20>, <20,20>]];
-
-test bool TestExtractingMultipleClasses() = ExpectEqual(MultipleExtractionResult, ExtractCloneClasses(1, MultipleExtractionInput));
-
-TCloneClasses KnownClasses = [ [<1,8> , <10,8>] ];
-TCloneClasses SampleCloneClasses = [
-                                    [<247,7>, <767,7>, <803,7>, <818,7>], 
-                                    [<364,7>, <876,7>], [<464,6>, <474,6>]
-                                   ];
-
-test bool TestRemovingDuplicates() = ExpectEqual( [], RemovePreviousDupes(KnownClasses, [12], 5)); // Both covered in known clones, don't evaluate 
-
-test bool TestGettingCloneClasses() = ExpectEqual(SampleCloneClasses, GetClonesClasses(SampleFile("type2clones/SmallSqlContent.txt")));
-TCloneClasses RunSmallSql() = GetClonesClasses(SampleFile("clones/SmallSqlContent.txt"));
+test bool TestGettingCloneClasses() = ExpectEqual(SampleCloneClasses, GetCloneClasses(SampleFile("type2clones/SmallSqlContent.txt")));
+TCloneClasses RunSmallSql() = GetCloneClasses(SampleFile("clones/SmallSqlContent.txt"));
