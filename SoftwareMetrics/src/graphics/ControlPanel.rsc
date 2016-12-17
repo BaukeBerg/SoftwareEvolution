@@ -1,5 +1,7 @@
 module graphics::ControlPanel
 
+import IO;
+
 import vis::Figure;
 import vis::Render;
 
@@ -9,38 +11,66 @@ import \graphics::DetailView;
 
 void ControlPanel()
 {             
-  Figure Box = box(hcat([	box(vcat([ComboTypes()]), size(390, 350), resizable(false), lineColor("white"), left()),
-  												box(vcat([Buttons(), ChoiceOptions()]), size(190, 350), resizable(false), lineColor("white"), right())
-  											], hgap(10)), shadow(true), size(600, 400), resizable(false));
+  Figure Box = box(hcat([	box(vcat([ChoiceTypes()]), size(400, 500), resizable(false), lineColor("white")),
+  												box(vcat([Buttons(), ChoiceOptions()]), size(200, 500), resizable(false), lineColor("white"))
+  											]), shadow(true), size(700, 400), resizable(false), lineColor("white"));
   
   render("Control Panel", Box);
 }
 
 public Figure Buttons()
 {
-	return box(vcat([button("SmallSql", void(){DiffSmallSql();}, size(80, 30), resizable(false)),
-                   button("HsqlDb", void(){DiffHsqlDb();}, size(80, 30), resizable(false))
-                 ], shrink(0.8), gap(10)), top(), gap(10), lineColor("white"));
+	return box(vcat([button("SmallSql", void(){;}, size(80, 30), resizable(false)),
+                   button("HsqlDb", void(){;}, size(80, 30), resizable(false))
+                 ], shrink(0.8), gap(10)), gap(10), size(100, 50), resizable(false), lineColor("white"));
 }
 
 public Figure ChoiceOptions()
 {
   str state = "Type 1";
   return box(vcat([ text("Options"),
-  									choice(["Type 1","Type 2","Type 3","Type 4", "Priming Type"], void(str s){ DiffSmallSql();})
-              		]));
+  									choice(["Type 1","Type 2","Type 3","Type 4", "Priming Type"], void(str s){;})
+              		]), size(200, 300), resizable(false), top());
 }
 
-public Figure ComboTypes()
+// To add a Type, type your text in the textfield followed by enter or else the call back will not fire!!!. Then click on the "+" button. 
+//Rascal Tutor states the following.
+//The callback scallback is called whenever the user types ENTER or RETURN in the textfield.
+//
+// To remove a Type, select a Type from the list. Then click on the "-" button.
+//
+// To clear the whole list, click on the "x" button.
+public Figure ChoiceTypes()
 {
-  str state = "";
-  return box(hcat([	text("Types ", top()),
-  									combo(TypesToReplace, void(str s){ state = s;}),
-  									button(" + ", void(){;}, size(30, 30), resizable(false), top()),
-  									button(" - ", void(){;}, size(30, 30), resizable(false), top()),
-  									button(" x ", void(){;}, size(30, 30), resizable(false), top())
-              		]), gap(10), hsize(280), hresizable(false), lineColor("White"), top());
+	str State = "";
+	str Input = "";
+  return box(vcat([ choice(TypesToReplace, void(str s){ State = s;}, size(400, 350), resizable(false), left()),
+                    hcat([text("Types "),
+                         textfield("", void(str s){ Input = s;}, size(250, 30), resizable(false)),
+                         button(" + ", void(){Add(Input);}, size(30, 30), resizable(false)),
+                         button(" - ", void(){Delete(State);}, size(30, 30), resizable(false)),
+                         button(" x ", void(){Clear();}, size(30, 30), resizable(false))
+                         ], size(400, 40), resizable(false), left())
+              		]), size(400, 350), resizable(false), left());
 }
+
+void Add(str Type)
+{
+  if(Type != "")
+  {
+    AddType(Type);
+  }
+}
+
+void Delete(str Type)
+{
+  if(Type != "")
+  {
+    RemoveType(Type);
+  }
+}
+
+void Clear() = ResetTypes();
 
 // Simple callback, todo: Create some ControlPanel callback fucntions with proper feedback:
 void DiffSmallSql() = GenerateDiff(SampleFile("Visu/VisuSampleResult.txt"), SampleFile("Visu/VisuSampleResult2.txt"));
