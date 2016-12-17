@@ -47,31 +47,5 @@ list[list[str]] GetDiffData(TCloneClasses CloneClasses)
       TotalDiffs += [ThisClone];        
     } 
   }
-  // BvdB Debug:
-  println(GetDiffDataWithContent(CloneClasses));  
   return TotalDiffs; 
-}
-
-// This function fills the Diffs with the REAL content
-list[list[str]] GetDiffDataWithContent(TCloneClasses CloneClasses)
-{
-  list[list[str]] TotalDiffs = [];
-  for(CloneClass <- CloneClasses)
-  {
-    for(Clone <- CloneClass)
-    {
-      list[str] ThisClone = [];
-      str IndexedLine = ColoredIndexes[Clone.Start];
-      println("Indexed line: <IndexedLine>");
-      list[str] FileContent = readFileLines(SampleFile(GetFilePath(IndexedLine)));
-      for(n <- [Clone.Start-2 .. LastLine(Clone)+2])
-      {
-        str OriginalContent = FileContent[LineNumber(ColoredIndexes[n])];
-        println("Cloned line: <OriginalContent>");        
-        ThisClone += OriginalContent;
-      }
-      TotalDiffs += [ThisClone];        
-    }
-  }
-  return TotalDiffs;
 }
