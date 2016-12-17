@@ -15,6 +15,7 @@ import \graphics::DetailView;
 
 import \util::Math;
 
+import \data::CloneData;
 
 Figure GenerateTitleBox(str IndexedLine) = box(text(GetClassName(toLocation(GetFilePath(IndexedLine))), fontSize(7), fontColor("Blue")), vresizable(false), vsize(30), top(), fillColor("Lightgray"));
 Figure GenerateBox(str IndexedLine, list[str] IndexedLines) = box(fillColor(GetColor(IndexedLine)), lineColor(GetColor(IndexedLine)), vresizable(false), vsize(5), top(), ExecOnMouseDown(IndexedLine, IndexedLines), ExecOnMouseEnter(IndexedLine, IndexedLines));
@@ -67,7 +68,7 @@ FProperty ExecOnMouseDown(str IndexedLine, list[str] IndexedLines)
 	{
 		if(GetColor(IndexedLine) == "Red")
 		{
-			list[str] NormalizedIndexes = ExtractAndNormalizeIndexes(IndexedLine, IndexedLines);
+		  list[str] NormalizedIndexes = ExtractAndNormalizeIndexes(IndexedLine, IndexedLines);
 			GenerateDiff([NormalizedIndexes]);
 		}
 		return true;
@@ -81,8 +82,7 @@ FProperty ExecOnMouseEnter(str IndexedLine, list[str] IndexedLines)
 	{
 		list[str] NormalizedIndexes = ExtractAndNormalizeIndexes(IndexedLine, IndexedLines);
 		Tooltip = GenerateTooltip(IndexedLine, NormalizedIndexes);
-  }
-  
+  }  
   return mouseOver(Tooltip);
 }
 
