@@ -1,5 +1,6 @@
 module \test::CloneDataTests
 
+import IO;
 import Set;
 
 import \data::CloneData;
@@ -14,7 +15,7 @@ bool Initialized = false;
 bool ResetClones()
 {
   KnownClones = {};
-  Initialized = false;
+  ColoredIndexes = [];
   return ExpectEqual(0, size(KnownClones));  
 }
 
@@ -33,18 +34,9 @@ TCloneClass ExpectedClass = {
     <19386,6>
   };
 
-void Initialize()
+test bool TestSmallSqlClasses()
 {
-  if(false == Initialized)
-  {
-    ResetClones();
-    GetSmallSqlMergedClasses();
-    Initialized = true;
-  }
-} 
-
-test bool GetClasses()
-{
-  Initialize();
-  return ExpectEqual(ExpectedClass, GetCloneClass(19130));  
+  ResetClones();
+  GetSmallSqlMergedClasses(); 
+  return ExpectTrue(ExpectedClass in GetCloneClasses(19130));  
 }
