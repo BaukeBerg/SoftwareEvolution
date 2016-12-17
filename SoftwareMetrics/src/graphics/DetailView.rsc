@@ -46,7 +46,8 @@ Figure GenerateBox(list[str] indexedLines)
 	//println("type1clones/<GetFilePath(indexedLines[0])>");
 	for(i <- [0 .. size(indexedLines)])
 	{
-		boxList += GenerateBox("<LineNumber(indexedLines[i])> : <inputLines[i]>", indexedLines[i]);
+	  int FileLineNumber = LineNumber(indexedLines[i]);
+		boxList += GenerateBox("<FileLineNumber> : <inputLines[FileLineNumber]>", indexedLines[i]);
 	}	
 	return box(vcat(boxList));
 }
