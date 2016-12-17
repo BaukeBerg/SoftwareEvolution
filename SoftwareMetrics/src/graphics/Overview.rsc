@@ -20,7 +20,16 @@ import \util::Math;
 import \data::CloneData;
 import \data::DataTypes;
 
-Figure GenerateTitleBox(str IndexedLine) = box(text(GetClassName(toLocation(GetFilePath(IndexedLine))), fontSize(7), fontColor("Blue")), vresizable(false), vsize(30), top(), fillColor("Lightgray"));
+Figure GenerateTitleBox(str IndexedLine) = box
+                                          (
+                                            text(GetClassName(toLocation(GetFilePath(IndexedLine))), 
+                                            fontSize(7), 
+                                            fontColor("Blue")), 
+                                            vresizable(false), 
+                                            vsize(30), 
+                                            top(), 
+                                            fillColor("Lightgray")
+                                          );
 
 Figure GenerateBox(str IndexedLine, list[str] IndexedLines, int AbsoluteLine) = box
 																													    (
@@ -30,6 +39,7 @@ Figure GenerateBox(str IndexedLine, list[str] IndexedLines, int AbsoluteLine) = 
 																													      ExecOnMouseDown(AbsoluteLine), 
 																													      ExecOnMouseEnter(IndexedLine, IndexedLines)
 																													    );
+																													    
 Figure GenerateVBox(list[Figure] VBox) = !isEmpty(VBox) ? box(box(vcat(VBox), top(), shrink(0.9)), resizable(false), top()) : box();
 void RenderFigure(str Caption, Figure Fig) = render(Caption, Fig);
 

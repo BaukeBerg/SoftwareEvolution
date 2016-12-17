@@ -30,7 +30,7 @@ void GenerateDiff(list[loc] Locations) = GenerateDiff([ readFileLines(Location) 
 void GenerateDiff(list[list[str]] Clones)
 {
   println("Size of Clones: <size(Clones)>");
-	list[Figure] Boxes = [];
+	list[Figure] Boxes = [];	
 	for(Clone <- Clones)
 	{
     Boxes += GenerateBox(Clone);
@@ -38,12 +38,11 @@ void GenerateDiff(list[list[str]] Clones)
 	RenderFigure("Comparer", hcat(Boxes, hgap(3)));
 }
 
-// Hier gaat er iets mis, volgens mij ?
 Figure GenerateBox(list[str] indexedLines)
 {
-	list[Figure] boxList = [];
-	list[str] inputLines = readFileLines(SampleFile(GetFilePath(indexedLines[0])));
-	//println("type1clones/<GetFilePath(indexedLines[0])>");
+  str FilePath = GetFilePath(indexedLines[0]);
+	list[str] inputLines = readFileLines(SampleFile(FilePath));
+	list[Figure] boxList = [GenerateTextBox("File: <FilePath>", "Blue")];
 	for(i <- [0 .. size(indexedLines)])
 	{
 	  int FileLineNumber = LineNumber(indexedLines[i]);
@@ -53,9 +52,14 @@ Figure GenerateBox(list[str] indexedLines)
 }
 
 Figure GenerateBox(Figure fig) = box(fig);
-Figure GenerateBox(str inputLine, str indexedLine) = box(text(inputLine, left()), fillColor(GetColor(indexedLine)), lineColor(GetColor(indexedLine)));
+Figure GenerateBox(str InputLine, str indexedLine) = GenerateTextBox(InputLine, GetColor(indexedLine));
+Figure GenerateTextBox(str InputLine, str Color) = box
+(
+  text(InputLine, left()),
+  fillColor(Color),
+  lineColor(Color)
+);
 
 void RenderFigure(str caption, Figure fig) = render(caption, fig);
 
 public void btn() = render(vcat([button("btn", void(){Comparer2();})]));
-
