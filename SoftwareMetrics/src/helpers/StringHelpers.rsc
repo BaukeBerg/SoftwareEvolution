@@ -6,6 +6,8 @@ import Map;
 import Set;
 import String;
 
+import \data::DataTypes;
+
 // Amount of typed code in a string
 int TypedChars(str StringToCheck) = size(StringToCheck) - Indent(StringToCheck);
 
@@ -83,10 +85,6 @@ public str ClipString(str StringToClip, str Start, str End) = ClipString(StringT
 public str ClipString(str StringToClip, str Start, str End, str Split) = ClipString(StringToClip, findFirst(StringToClip, Start), findFirst(StringToClip, End) + size(End), Split);
 public str ClipString(str StringToClip, int StartPos, int EndPos) = ClipString(StringToClip, StartPos, EndPos, ""); 
 public str ClipString(str StringToClip, int StartPos, int EndPos, str Split) = substring(StringToClip, 0, StartPos) + Split + substring(StringToClip, EndPos); 
-
-alias THashInfo = tuple[THashMap HashMap, TStringMap StringMap];
-alias THashMap = map[int,int];
-alias TStringMap = map[str Source, int Encoding];
 
 THashInfo HashFile(loc FileToHash) = HashFile(readFileLines(FileToHash));
 THashInfo HashFile(list[str] Lines)

@@ -7,6 +7,9 @@ import Map;
 import Quotes;
 import Set;
 
+import \data::CloneData;
+import \data::DataTypes;
+
 import \helpers::CloneHelpers;
 import \helpers::Debugging;
 import \helpers::ListHelpers;
@@ -17,30 +20,13 @@ import \util::Math;
 
 import \metrics::SigScores;
 
-alias TCloneList = list[TClone];
-alias TClone = tuple[int Start, int Size];
-
-alias TCloneClass = set[TClone];
-alias TCloneClasses = set[TCloneClass];
-
-alias TClonePairs = list[TClonePair];
-alias TClonePair = tuple[TClone First, TClone Second];
-
-alias TCloneInfo = tuple[TCloneList CloneList, TClonePairs ClonePairs];
-
 int GetClonesPercentage(loc FileToCheck) = Percentage(GetClonesForFile(FileToCheck), size(readFileLines(FileToCheck)));
 
 int GetClonesForFile(loc FileToCheck) = GetClonesForFile(HashFile(FileToCheck));
-int GetClonesForFile(THashInfo Information) = ClonedLines(GetClonesList(Information));
+int GetClonesForFile(THashInfo Information) = ClonedLines(GetCloneList(Information));
 
 int ClonedLines([]) = 0;
 int ClonedLines(TCloneList Clones) = sum(Clones.Size);
-
-// Clone gathering information
-public TStringMap Dictionary = ();
-public THashMap Lines = (); 
-public int InvalidCloneStart = -1; 
-public int CloneSize = 6;
 
 void PrepareProcess(THashInfo Information)
 {
@@ -50,6 +36,8 @@ void PrepareProcess(THashInfo Information)
 }
 
 int GetKey(TStringMap Dictionary, str Key) = Key in Dictionary ? Dictionary[Key] : -1 ;
+
+TCloneClasses GetCloneClasses(loc FromFile) = CreateClassesFromPairs(GetClonePairs(FromFile));
 
 TCloneClasses CreateClassesFromPairs(TClonePairs Pairs)
 {
@@ -64,35 +52,36 @@ TCloneClasses CreateClassesFromPairs(TClonePairs Pairs)
     }
     if(false == isEmpty(ThisClass))
     {
-      CloneClasses += ThisClass;
+      CloneClasses += {ThisClass};
     }
   }
   return CloneClasses;
 }
 
-// Merge them until it remains equal
-TCloneClasses MergeClasses(TCloneClasses CloneClasses)
+TCloneClasses MergeCloneClasses(TCloneClasses CloneClasses)
 {
-  TCloneClasses Result = {};
-  while(0 < size(CloneClasses))
-  {
-    <Class, CloneClasses> = takeOneFrom(CloneClasses);
-    for(Clone <- Class)
-    {
-      for(CloneClass <- CloneClasses, Clone in CloneClass)
-      {
-        CloneClasses -= CloneClass; // Remove from set
-        CloneClass += Class;  // Create new larger class
-        CloneClasses += CloneClass; // Add to set
-      }     
-    }     
-  }
-  if(Result != CloneClasses)
-  {
-    Result = MergeClasses(Result);
-  }
-  return Result;
+  TCloneClasses Input = CloneClasses;
+  println("Starting iteration, <size(CloneClasses)> passes left.");
+  <Class, CloneClasses> = takeOneFrom(CloneClasses);   
+  for(TClone Clone <- Class)
+  { 
+    for(TCloneClass CloneClass <- CloneClasses, Clone in CloneClass)
+    { 
+      CloneClasses = CombineClass(CloneClasses, Class, CloneClass);
+      CloneClasses = MergeCloneClasses(CloneClasses);
+    }
+  } 
+  return CloneClasses;
 }
+
+TCloneClasses CombineClass(TCloneClass First, TCloneClass Second)
+{
+  Result = Original - {First, Second};
+  TCloneClass CombinedSet = union({First,Second});
+  println("Combining <First> and <Second> to <CombinedSet>");
+  return Result + {CombinedSet};
+}
+  
 
 bool SameClones(TClonePair FirstClone, TClonePair SecondClone)
 {
@@ -128,17 +117,19 @@ TCloneList GetCloneList(THashInfo Information)
 {
   Start = now();
   PrepareProcess(Information);  
-  TCloneList Clones = [];
+  TCloneList Clones = [];  
   ListOfDupes = SanitizeDupes(ListWithDupes(Lines), CloneSize, InvalidCloneStart);
   Size = size(ListOfDupes);
   for(LineNumber <- [0..Size])
   {
     PrintQuote(LineNumber, 250);
     <LineNumber, ListOfDupes> = pop(ListOfDupes);
-    list[int] Dupes = GetDupes(Lines, ListOfDupes, LineNumber, ClonePairs);    
-    Clones = InsertNewClones(Clones, GetClones(Lines, LineNumber, Dupes));
+    list[int] Dupes = GetDupes(Lines, ListOfDupes, LineNumber, []);
+    CurrentClones = GetClones(Lines, LineNumber, Dupes);    
+    Clones = InsertNewClones(Clones, CurrentClones);
     Clones = MergeClonesWithEqualStart(Clones, CurrentClones);
   }  
+  Clones = MergeClonesWithOverlap(Clones);
   Duration("Extracted all clones.", Start);
   return Clones;
 }
@@ -183,6 +174,7 @@ list[int] GetDupes(THashMap Lines, list[int] AllDupes, int LineNumber, TClonePai
   return Dupes;  
 }
 
+bool SameAsPreviousPairs(int Dupe, int LineNumber, []) = false;
 bool SameAsPreviousPairs(int Dupe, int LineNumber, TClonePairs ClonePairs)
 {
   for(<First, Second> <- reverse(ClonePairs))
@@ -199,8 +191,6 @@ bool SameAsPreviousPairs(int Dupe, int LineNumber, TClonePairs ClonePairs)
   }  
   return false; 
 }
-
-bool InClone(TClone Clone, int Line) = InLimits(Clone.Start, Line, LastLine(Clone));
 
 TCloneList InsertNewClones(TCloneList TotalClones, TCloneList NewClones)
 {
@@ -255,7 +245,6 @@ TCloneList MergeClonesWithOverlap(TCloneList TotalClones)
 
 bool HasOverlap(TClone First, TClone Second) = InLimits(First.Start, Second.Start, LastLine(First));
 
-int LastLine(TClone Clone) = (Clone.Start + Clone.Size)-1;
 TClone MergeClones(TClone First, TClone Second)
 {
   int NewStart = min(First.Start, Second.Start);
