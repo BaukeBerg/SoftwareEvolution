@@ -140,8 +140,9 @@ list[str] ExtractAndNormalizeIndexes(str IndexedLine, list[str] IndexedLines)
 
 list[str] GenerateSampleIndexesForClass(str IndexedLine, list[str] IndexedLines)
 {
-	list[str] SampleIndexes = [];	
-	for(Line <- IndexedLines, GetFilePath(IndexedLine) == GetFilePath(Line))
+	list[str] SampleIndexes = [];
+	str Path =  GetFilePath(IndexedLine);
+	for(Line <- IndexedLines, contains(Line, Path))
 	{
 		SampleIndexes += Line;
 	}
