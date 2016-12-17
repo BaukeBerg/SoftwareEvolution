@@ -6,6 +6,7 @@ import String;
 
 import \clones::CloneAlgorithm;
 
+import \data::CloneData;
 import \data::DataTypes;
 
 import \graphics::Overview;
@@ -22,8 +23,8 @@ void GenerateSoftwareEvolutionSample() = HandleClones(SampleFile("clones/Softwar
 
 void HandleClones(loc ContentFile, loc IndexesFile)
 { 
-  CurrentClones = GetCloneClasses(ContentFile);
-  list[str] ColoredIndexes = ColorIndexes(IndexesFile, CurrentClones);
+  KnownClasses = MergeCloneClasses(GetCloneClasses(ContentFile));
+  ColoredIndexes = ColorIndexes(IndexesFile, KnownClasses);
   Overview(ColoredIndexes);
 }
 
