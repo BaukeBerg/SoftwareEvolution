@@ -42,7 +42,7 @@ Figure GenerateBox(list[str] indexedLines)
 {
   str FilePath = GetFilePath(indexedLines[0]);
 	list[str] inputLines = readFileLines(SampleFile(FilePath));
-	list[Figure] boxList = [GenerateTextBox("File: <FilePath>", "Blue")];
+	list[Figure] boxList = [GenerateTitleBox("File: <FilePath>")];
 	for(i <- [0 .. size(indexedLines)])
 	{
 	  int FileLineNumber = LineNumber(indexedLines[i]);
@@ -59,6 +59,14 @@ Figure GenerateTextBox(str InputLine, str Color) = box
   fillColor(Color),
   lineColor(Color)
 );
+
+Figure GenerateTitleBox(str InputLine) = box
+(
+  text(InputLine, fontColor("Blue")),
+  fillColor("Lightgray"),
+  lineColor("Lightgray")  
+);
+
 
 void RenderFigure(str caption, Figure fig) = render(caption, fig);
 
