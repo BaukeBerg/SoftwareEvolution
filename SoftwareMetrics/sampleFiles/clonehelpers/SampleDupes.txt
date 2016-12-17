@@ -1,20 +1,13 @@
-// Dupes are reported, } is skipped. 14 lines should be investigated
+// Dupes are reported, } is not skipped 10 lines should be investigated
 a
 b
-c
-d
-e
-f
-D
-g
-a
-b
+}
 c
 d
 }
-}
-}
-K
-e
-f
-g
+a
+00000
+b
+11111
+c
+d
