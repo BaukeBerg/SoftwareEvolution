@@ -19,12 +19,20 @@ import lang::java::\syntax::Java15;
 import \data::CloneData;
 import \data::DataTypes;
 
-TCloneList GetSmallSqlCloneList() = GetCloneList(SmallSqlContent);
+
 TCloneClasses GetSmallSqlMergedClasses()
 {
   KnownClasses = MergeCloneClasses(GetSmallSqlCloneClasses());
   return KnownClasses;
 }
+
+TCloneClasses GetHsqlDbMergedClasses()
+{
+  KnownClasses = MergeCloneClasses(GetHsqlDbCloneClasses());
+  return KnownClasses;
+}
+
+TCloneList GetSmallSqlCloneList() = GetCloneList(SmallSqlContent);
 TCloneClasses GetSmallSqlCloneClasses() = CreateClassesFromPairs(GetSmallSqlClonePairs());
 TClonePairs GetSmallSqlClonePairs() = GetClonePairs(SmallSqlContent);
 
