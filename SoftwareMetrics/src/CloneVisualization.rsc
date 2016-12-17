@@ -15,6 +15,8 @@ import \helpers::FileHelpers;
 loc SmallSqlSampleContent = SampleFile("type2clones/SmallSqlContent.txt");
 loc SmallSqlSampleIndexes = SampleFile("type2clones/SmallSqlIndexes.txt");
 
+void HandleSmallSql() = HandleClones(SampleFile("clones/SmallSqlContent.txt"), SampleFile("clones/SmallSqlIndexes.txt"));
+
 void GenerateSmallSqlSample() = HandleClones(SmallSqlSampleContent, SmallSqlSampleIndexes);
 void GenerateSoftwareEvolutionSample() = HandleClones(SampleFile("clones/SoftwareEvolutionContent.txt"), SampleFile("clones/SoftwareEvolutionIndexes.txt"));
 
