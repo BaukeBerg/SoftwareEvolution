@@ -191,12 +191,11 @@ bool SameAsPreviousPairs(int Dupe, int LineNumber, TClonePairs ClonePairs)
     {
       return false;
     }
-    
-    if(true == InClone(First, LineNumber)
-      && (true == InClone(Second, Dupe)))
+    if((true == InClone(Second, Dupe))
+     && (true == InClone(First, LineNumber)))
     {
       return true;
-    }       
+    }    
   }  
   return false; 
 }

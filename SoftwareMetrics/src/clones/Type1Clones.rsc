@@ -3,6 +3,7 @@ module \clones::Type1Clones
 import DateTime;
 import FileLocations;
 import IO;
+import Set;
 import ParseTree;
 import Quotes;
 import vis::ParseTree;
@@ -22,6 +23,8 @@ TClonePairs GetSmallSqlClonePairs() = GetClonePairs(SmallSqlContent);
 TCloneList GetHsqlDbClones() = GetClonesList(HsqlDbContent);
 TCloneClasses GetHsqlDbCloneClasses() = CreateClassesFromPairs(GetHsqlDbClonePairs());
 TClonePairs GetHsqlDbClonePairs() = GetClonePairs(HsqlDbContent);
+
+int QuickResultCheck() = size(GetSmallSqlClonePairs());
 
 void CreateAllIntermediateOutput()
 {
