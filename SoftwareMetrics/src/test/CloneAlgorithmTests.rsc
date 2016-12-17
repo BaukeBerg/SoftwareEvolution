@@ -45,8 +45,47 @@ test bool TestNoClone() = ExpectEqual(0, GetClonesForSampleFile("NoClone.txt"));
 TCloneClasses SampleCloneClasses = {
                                     {<247,7>, <767,7>, <803,7>, <818,7>}, 
                                     {<364,7>, <876,7>}, 
-                                    {<464,6>, <474,6>}
+                                    {<464,7>, <474,7>, <247,7>}
+                                   };
+
+TCloneClasses ResultCloneClasses = {
+                                    {<464,7>, <474,7>, <247,7>,<767,7>, <803,7>, <818,7>}, 
+                                    {<364,7>, <876,7>}
                                    };
 
 test bool TestGettingCloneClasses() = ExpectEqual(SampleCloneClasses, GetCloneClasses(SampleFile("type2clones/SmallSqlContent.txt")));
 TCloneClasses RunSmallSql() = GetCloneClasses(SampleFile("clones/SmallSqlContent.txt"));
+
+test bool TestMerging() = ExpectEqual(ResultCloneClasses, MergeCloneClasses(SampleCloneClasses));
+
+TCloneClasses SmallSqlClones = {
+                                {<2509,13>,<2550,13>,<2471,13>},
+                                {<19219,6>,<19500,6>,<19532,6>},
+                                {<803,7>,<767,7>,<818,7>},
+                                {<23662,6>,<23870,6>,<23746,6>,<23813,6>},
+                                {<4091,6>,<3523,6>,<3368,6>},
+                                {<8363,9>,<8338,9>,<8313,9>},
+                                {<7585,6>,<23870,6>,<186,6>},
+                                {<19499,7>,<19167,7>,<19432,7>,<19531,7>,<19471,7>,<19269,7>}
+                                };
+                                
+TCloneClasses SmallSqlClonesResult = 
+                                {
+                                {<2509,13>,<2550,13>,<2471,13>},
+                                {<19219,6>,<19500,6>,<19532,6>},
+                                {<803,7>,<767,7>,<818,7>},
+                                {<23662,6>,<23870,6>,<23746,6>,<23813,6>,<7585,6>,<186,6>},
+                                {<4091,6>,<3523,6>,<3368,6>},
+                                {<8363,9>,<8338,9>,<8313,9>},
+                                {<19499,7>,<19167,7>,<19432,7>,<19531,7>,<19471,7>,<19269,7>}
+                                };
+                                
+                                
+test bool TestRealMerging() = ExpectEqual(SmallSqlClonesResult, MergeCloneClasses(SmallSqlClones));
+
+test bool TestNoMerging() = ExpectEqual(SmallSqlConesResult, MergeCloneClasses(SmallSqlConesResult));
+
+
+
+
+
