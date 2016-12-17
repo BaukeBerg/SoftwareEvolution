@@ -76,10 +76,12 @@ FProperty ExecOnMouseDown(int AbsoluteLineNumber)
   return onMouseDown(bool (int butnr, map[KeyModifier,bool] modifiers) 
 	{
 	  CloneClasses = GetCloneClasses(AbsoluteLineNumber);
-		println("Class amount: <size(CloneClasses)>");
-    list[list[str]] DiffData = GetDiffData(CloneClasses);
-    println("Diff data: <DiffData>");     
-    GenerateDiff(DiffData);
+		if(0 < size(CloneClasses))
+		{
+      list[list[str]] DiffData = GetDiffData(CloneClasses);
+      println("Diff data: <DiffData>");     
+      GenerateDiff(DiffData);
+    }
 		return true;
 	});	
 }
