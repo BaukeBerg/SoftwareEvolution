@@ -29,6 +29,7 @@ void GenerateDiff(list[loc] Locations) = GenerateDiff([ readFileLines(Location) 
 
 void GenerateDiff(list[list[str]] Clones)
 {
+  println("Size of Clones: <size(Clones)>");
 	list[Figure] Boxes = [];
 	for(Clone <- Clones)
 	{
@@ -37,6 +38,7 @@ void GenerateDiff(list[list[str]] Clones)
 	RenderFigure("Comparer", hcat(Boxes, hgap(3)));
 }
 
+// Hier gaat er iets mis, volgens mij ?
 Figure GenerateBox(list[str] indexedLines)
 {
 	list[Figure] boxList = [];
@@ -44,7 +46,7 @@ Figure GenerateBox(list[str] indexedLines)
 	//println("type1clones/<GetFilePath(indexedLines[0])>");
 	for(i <- [0 .. size(indexedLines)])
 	{
-		boxList += GenerateBox("<i+1>: <inputLines[i]>", indexedLines[i]);
+		boxList += GenerateBox("<LineNumber(indexedLines[i])> : <inputLines[i]>", indexedLines[i]);
 	}	
 	return box(vcat(boxList));
 }
