@@ -8,34 +8,38 @@ import \clones::Type2Clones;
 import \graphics::DetailView;
 
 void ControlPanel()
-{ 
-  tmap = treemap([box(vcat([button("SmallSql", void(){DiffSmallSql();}),
-                            button("HsqlDb", void(){DiffHsqlDb();})
-                          ])),
-                  box(vcat([text("Options"),
-                            ChoiceOptions()
-                          ])),
-                  box(hcat([text("Types", top()),
-                            ComboTypes()
-                          ]))
-                ]);
-  render(tmap);
+{             
+  Figure Box = box(hcat([	box(vcat([ComboTypes()]), size(390, 350), resizable(false), lineColor("white"), left()),
+  												box(vcat([Buttons(), ChoiceOptions()]), size(190, 350), resizable(false), lineColor("white"), right())
+  											], hgap(10)), shadow(true), size(600, 400), resizable(false));
+  
+  render("Control Panel", Box);
+}
+
+public Figure Buttons()
+{
+	return box(vcat([button("SmallSql", void(){DiffSmallSql();}, size(80, 30), resizable(false)),
+                   button("HsqlDb", void(){DiffHsqlDb();}, size(80, 30), resizable(false))
+                 ], shrink(0.8), gap(10)), top(), gap(10), lineColor("white"));
 }
 
 public Figure ChoiceOptions()
 {
   str state = "Type 1";
-  return vcat([ choice(["Type 1","Type 2","Type 3","Type 4", "Priming Type"], void(str s){ state = s;}),
-                text(str(){return "Current state: " + state ;}, left())
-              ]);
+  return box(vcat([ text("Options"),
+  									choice(["Type 1","Type 2","Type 3","Type 4", "Priming Type"], void(str s){ DiffSmallSql();})
+              		]));
 }
 
 public Figure ComboTypes()
 {
   str state = "";
-  return vcat([ combo(TypesToReplace, void(str s){ state = s;}),
-                text(str(){return "Current state: " + state ;}, left())
-              ]);
+  return box(hcat([	text("Types ", top()),
+  									combo(TypesToReplace, void(str s){ state = s;}),
+  									button(" + ", void(){;}, size(30, 30), resizable(false), top()),
+  									button(" - ", void(){;}, size(30, 30), resizable(false), top()),
+  									button(" x ", void(){;}, size(30, 30), resizable(false), top())
+              		]), gap(10), hsize(280), hresizable(false), lineColor("White"), top());
 }
 
 // Simple callback, todo: Create some ControlPanel callback fucntions with proper feedback:
