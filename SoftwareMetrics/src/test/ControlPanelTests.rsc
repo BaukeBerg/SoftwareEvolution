@@ -11,3 +11,22 @@ test bool RenderCheckBoxList()
   render(CheckBoxList());  
   return true;
 }
+
+test bool RenderButtons()
+{
+  render(Buttons());
+  return true;
+}
+
+test bool RenderChoices()
+{
+  render(ChoiceTypes());
+  return true;
+}
+
+test bool RenderControlPanel()
+{
+  ControlPanel();
+  return true;
+}
+  
