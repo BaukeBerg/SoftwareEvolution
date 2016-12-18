@@ -45,15 +45,22 @@ test bool TestNoClone() = ExpectEqual(0, GetClonesForSampleFile("NoClone.txt"));
 TCloneClasses SampleCloneClasses = {
                                     {<247,7>, <767,7>, <803,7>, <818,7>}, 
                                     {<364,7>, <876,7>}, 
+                                    {<464,6>, <474,6>}
+                                   };
+
+TCloneClasses SampleCloneClasses = {
+                                    {<247,7>, <767,7>, <803,7>, <818,7>}, 
+                                    {<364,7>, <876,7>}, 
                                     {<464,7>, <474,7>, <247,7>}
                                    };
+
 
 TCloneClasses ResultCloneClasses = {
                                     {<464,7>, <474,7>, <247,7>,<767,7>, <803,7>, <818,7>}, 
                                     {<364,7>, <876,7>}
                                    };
 
-test bool TestGettingCloneClasses() = ExpectEqual(SampleCloneClasses, GetCloneClasses(SampleFile("type2clones/SmallSqlContent.txt")));  
+test bool TestGettingCloneClasses() = ExpectEqual(SampleCloneClasses, MergeCloneClasses(GetCloneClasses(SampleFile("type2clones/SmallSqlContent.txt"))));  
 
 TCloneClasses RunSmallSql() = GetCloneClasses(SampleFile("clones/SmallSqlContent.txt"));
 

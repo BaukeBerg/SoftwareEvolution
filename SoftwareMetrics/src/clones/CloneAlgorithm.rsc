@@ -48,23 +48,22 @@ TCloneClasses GetCloneClasses(loc FromFile) = CreateClassesFromPairs(GetClonePai
 
 TCloneClasses CreateClassesFromPairs(TClonePairs Pairs)
 {
-  DebugPrint("Creating Clone classes");
+  DebugPrint("Creating Clone classes from pairs <Pairs>");
   TCloneClasses CloneClasses = {};
   while(0 != size(Pairs))
   {
     DebugPrint("<size(Pairs)> pairs left");
-    TCloneClass ThisClass = {};
     <Pair, Pairs> = pop(Pairs);
+    TCloneClass ThisClass = {Pair.First, Pair.Second};
+    DebugPrint("Investigating <Pair>");
     for(SubPair <- Pairs, SameClones(Pair, SubPair))
     {
       DebugPrint("Merging <Pair> and <SubPair>");
-      ThisClass += {Pair.First, Pair.Second, SubPair.First, SubPair.Second};      
+      ThisClass += {Pair.First, Pair.Second, SubPair.First, SubPair.Second};            
     }
-    if(false == isEmpty(ThisClass))
-    {
-      CloneClasses += {ThisClass};
-    }
+    CloneClasses += {ThisClass};    
   }
+  DebugPrint("All pairs merged, returning <size(CloneClasses)> cloneclasses: <CloneClasses>");
   return CloneClasses;
 }
 
@@ -135,7 +134,7 @@ TClonePairs GetClonePairs(THashInfo Information)
     list[int] Dupes = GetDupes(Lines, ListOfDupes, LineNumber, ClonePairs);    
     ClonePairs += GetPairs(Lines, LineNumber, Dupes);;
   }  
-  Duration("Extracted all pairs.", Start);
+  Duration("Extracted all pairs.<ClonePairs>", Start);
   return ClonePairs;
 }
 
