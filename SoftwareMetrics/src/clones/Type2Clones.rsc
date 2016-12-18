@@ -77,13 +77,12 @@ str RemoveDupes(str Line, str Token)
   return Line;    
 }
 
-// only replace one instance
 str ReplaceTypes(str Line, set[str] Types, str Replacement)
 {
-  for(Type <- Types, startsWith(Line, Type))
+  for(Type <- Types)
   {
-    println("replaced <Type> in <Line>");
-    return replaceAll(Line, Type, Replacement);
+    DebugPrint("replaced <Type> in <Line>");
+    Line = replaceAll(Line, Type, Replacement);
   }
   return Line;
 }
