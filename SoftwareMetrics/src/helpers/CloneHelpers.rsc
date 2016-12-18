@@ -19,6 +19,8 @@ import \util::Math;
 //list[int] SantizeDupes(list[int] Dupes, int MinSize) = [ Dupes[n] | n <- [0 .. size(Dupes) - MinSize-1], Dupes[n + MinSize-1] - Dupes[n] == MinSize-1 ];
 bool StoreList = false;
 
+list[int] SanitizeDupes([], _, _) = [];
+
 list[int] SanitizeDupes(list[int] Dupes, int MinSize, int InvalidToken) = SanitizeDupes(Dupes, MinSize, [InvalidToken]);
 list[int] SanitizeDupes(list[int] Dupes, int MinSize, list[str] InvalidTokens) = SanitizeDupes(Dupes, MinSize, ConvertValues(InvalidTokens));
 list[int] SanitizeDupes(list[int] Dupes, int MinSize, list[int] InvalidTokens)
