@@ -48,11 +48,11 @@ TCloneClasses SampleCloneClasses = {
                                     {<464,6>, <474,6>}
                                    };
 
-TCloneClasses SampleCloneClasses = {
-                                    {<247,7>, <767,7>, <803,7>, <818,7>}, 
-                                    {<364,7>, <876,7>}, 
-                                    {<464,7>, <474,7>, <247,7>}
-                                   };
+TCloneClasses SampleCloneClassesForMerging = {
+                                              {<247,7>, <767,7>, <803,7>, <818,7>}, 
+                                              {<364,7>, <876,7>}, 
+                                              {<464,7>, <474,7>, <247,7>}
+                                            };
 
 
 TCloneClasses ResultCloneClasses = {
@@ -64,7 +64,7 @@ test bool TestGettingCloneClasses() = ExpectEqual(SampleCloneClasses, MergeClone
 
 TCloneClasses RunSmallSql() = GetCloneClasses(SampleFile("clones/SmallSqlContent.txt"));
 
-test bool TestMerging() = ExpectEqual(ResultCloneClasses, MergeCloneClasses(SampleCloneClasses));
+test bool TestMerging() = ExpectEqual(ResultCloneClasses, MergeCloneClasses(SampleCloneClassesForMerging));
 
 TCloneClasses SmallSqlClones = {
                                 {<2509,13>,<2550,13>,<2471,13>},
