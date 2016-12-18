@@ -53,7 +53,8 @@ Figure GenerateBox(list[str] indexedLines)
 		}
 		catch:
 		{
-		  println("FileLineNumber: <FileLineNumber>, Input lines zie: <size(inputLines)>, i: <i>, Indexes lines size: <size(indexedLines)>"); 
+		  println("FileLineNumber: <FileLineNumber>, Input lines zie: <size(inputLines)>, i: <i>, Indexes lines size: <size(indexedLines)>");
+		  println("Original line: <indexedLines[i]>"); 
 		}
 	}	
 	return box(vcat(boxList));
