@@ -158,7 +158,7 @@ Figure GenerateTooltip(str IndexedLine, list[str] IndexedLines)
 	return box(vcat(Texts), fillColor("lightyellow"), grow(1.2), resizable(false));
 }
 
-list[str] SampleIndexes = [];
+list[str] NormalizedIndexes = [];
 str LastPath = "";
 
 list[str] ExtractAndNormalizeIndexes(str IndexedLine, list[str] IndexedLines)
@@ -166,10 +166,10 @@ list[str] ExtractAndNormalizeIndexes(str IndexedLine, list[str] IndexedLines)
   str Path = GetFilePath(IndexedLine);
   if(LastPath != Path)
   {
-    SampleIndexes = GenerateSampleIndexesForClass(Path, IndexedLines);
+    list[str] SampleIndexes = GenerateSampleIndexesForClass(Path, IndexedLines);
+    NormalizedIndexes = NormalizeIndexes(SampleIndexes);
     LastPath = Path;
-  }
-	list[str] NormalizedIndexes = NormalizeIndexes(SampleIndexes);
+  }	
 	return NormalizedIndexes;
 }
 
