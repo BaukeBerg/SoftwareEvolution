@@ -2,12 +2,15 @@ module \data::CloneData
 
 import FileLocations;
 import IO;
+import List;
 
 import \data::DataTypes;
 
 import \helpers::CloneHelpers;
 import \helpers::FileHelpers;
 import \helpers::MathHelpers;
+
+import \util::Math;
 
 // Clone gathering information
 public TStringMap Dictionary = ();
@@ -39,7 +42,7 @@ list[list[str]] GetDiffData(TCloneClasses CloneClasses)
     for(Clone <- CloneClass)
     {
       list[str] ThisClone = [];      
-      for(n <- [Clone.Start-2 .. LastLine(Clone)+2])
+      for(n <- [max(0,Clone.Start-2) .. min(size(ColoredIndexes),LastLine(Clone)+2)])
       {
         ThisClone += ColoredIndexes[n];
       }
