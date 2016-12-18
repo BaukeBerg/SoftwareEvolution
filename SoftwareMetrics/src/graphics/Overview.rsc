@@ -54,23 +54,6 @@ void Overview(loc IndexedFile)
   Overview(readFileLines(IndexedFile));
 }
 
-list[str] GetClonedFiles(list[str] IndexedLines)
-{
-  set[str] ListClonedFiles = {};
-  for(i <- [0 .. size(IndexedLines)])
-  {
-    str IndexedLine = IndexedLines[i];
-    str Path =  GetFilePath(IndexedLine);
-    if(("Red" == GetColor(IndexedLine))
-        || (true == Check_ShowEmtpyFiles))
-    {
-      ListClonedFiles += Path;
-    }
-  }  
-  DebugPrint("List with <size(ListClonedFiles)> cloned files: <ListClonedFiles>");
-  return toList(ListClonedFiles);
-}
-
 void Overview(list[str] IndexedLines)
 {	
 	list[str] FileNames = [];
@@ -106,6 +89,23 @@ void Overview(list[str] IndexedLines)
 	DebugPrint("rendering figure");
 	BoxList += GenerateVBox(VBox);
 	RenderFigure("Overview", hcat(BoxList, hgap(3)));
+}
+
+list[str] GetClonedFiles(list[str] IndexedLines)
+{
+  set[str] ListClonedFiles = {};
+  for(i <- [0 .. size(IndexedLines)])
+  {
+    str IndexedLine = IndexedLines[i];
+    str Path =  GetFilePath(IndexedLine);
+    if(("Red" == GetColor(IndexedLine))
+        || (true == Check_ShowEmtpyFiles))
+    {
+      ListClonedFiles += Path;
+    }
+  }  
+  DebugPrint("List with <size(ListClonedFiles)> cloned files: <ListClonedFiles>");
+  return toList(ListClonedFiles);
 }
 
 FProperty ExecOnMouseDown(int AbsoluteLineNumber)
