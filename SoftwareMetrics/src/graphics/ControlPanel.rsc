@@ -85,6 +85,7 @@ void Add(str Type)
   if(Type != "")
   {
     AddType(Type);
+    ControlPanel();
   }
 }
 
@@ -93,10 +94,15 @@ void Delete(str Type)
   if(Type != "")
   {
     RemoveType(Type);
+    ControlPanel();
   }
 }
 
-void Clear() = ResetTypes();
+void Clear()
+{
+  ResetTypes();
+  ControlPanel();
+}
 
 // Simple callback, todo: Create some ControlPanel callback fucntions with proper feedback:
 void DiffSmallSql() = GenerateDiff(SampleFile("Visu/VisuSampleResult.txt"), SampleFile("Visu/VisuSampleResult2.txt"));
