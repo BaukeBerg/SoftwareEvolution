@@ -1,5 +1,6 @@
 module graphics::Overview
 
+import FileLocations;
 import IO;
 import List;
 import Map;
@@ -10,15 +11,17 @@ import vis::Figure;
 import vis::Render;
 import vis::KeySym;
 
-import FileLocations;
-import \helpers::ListHelpers;
-import \helpers::FileHelpers;
 import \graphics::DetailView;
+
+import \helpers::Debugging;
+import \helpers::FileHelpers;
+import \helpers::ListHelpers;
 
 import \util::Math;
 
 import \data::CloneData;
 import \data::DataTypes;
+import \data::Options;
 
 Figure GenerateTitleBox(str IndexedLine) = box
                                           (
@@ -53,19 +56,21 @@ void Overview(loc IndexedFile)
 
 list[str] GetClonedFiles(list[str] IndexedLines)
 {
-  list[str] ListClonedFiles = [];
-  list[str] ClonedIndexedLines = [];
+  set[str] ListClonedFiles = {};
   for(i <- [0 .. size(IndexedLines)])
   {
     str IndexedLine = IndexedLines[i];
     str Path =  GetFilePath(IndexedLine);
-    if(false == Contains(ListClonedFiles, Path) && "Red" == GetColor(IndexedLine))
+    if(("Red" == GetColor(IndexedLine))
+        || (true == Check_ShowEmtpyFiles))
     {
       ListClonedFiles += Path;
     }
-  }
-  return ListClonedFiles;
+  }  
+  DebugPrint("List with <size(ListClonedFiles)> cloned files: <ListClonedFiles>");
+  return toList(ListClonedFiles);
 }
+
 void Overview(list[str] IndexedLines)
 {	
 	list[str] FileNames = [];
@@ -94,11 +99,11 @@ void Overview(list[str] IndexedLines)
 			  VBox += GenerateBox(IndexedLines[i], IndexedLines, i);
 			}
 			PrevFile = GetFilePath(IndexedLines[i]);
-			println("<IndexedLines[i]>");
-			println("File path: <PrevFile>");
+			DebugPrint("<IndexedLines[i]>");
+			DebugPrint("File path: <PrevFile>");
 		}
 	}
-	println("rendering figure");
+	DebugPrint("rendering figure");
 	BoxList += GenerateVBox(VBox);
 	RenderFigure("Overview", hcat(BoxList, hgap(3)));
 }
@@ -111,7 +116,7 @@ FProperty ExecOnMouseDown(int AbsoluteLineNumber)
 		if(0 < size(CloneClasses))
 		{
       list[list[str]] DiffData = GetDiffData(CloneClasses);
-      println("Diff data: <DiffData>");     
+      DebugPrint("Diff data: <DiffData>");     
       GenerateDiff(DiffData);
     }
 		return true;

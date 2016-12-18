@@ -29,7 +29,7 @@ void GenerateDiff(list[loc] Locations) = GenerateDiff([ readFileLines(Location) 
 
 void GenerateDiff(list[list[str]] Clones)
 {
-  println("Size of Clones: <size(Clones)>");
+  DebugPrint("Size of Clones: <size(Clones)>");
 	list[Figure] Boxes = [];	
 	for(Clone <- Clones)
 	{
