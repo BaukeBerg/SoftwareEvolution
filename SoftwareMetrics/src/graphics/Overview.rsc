@@ -51,26 +51,48 @@ void Overview(loc IndexedFile)
   Overview(readFileLines(IndexedFile));
 }
 
+list[str] GetClonedFiles(list[str] IndexedLines)
+{
+  list[str] ListClonedFiles = [];
+  list[str] ClonedIndexedLines = [];
+  for(i <- [0 .. size(IndexedLines)])
+  {
+    str IndexedLine = IndexedLines[i];
+    str Path =  GetFilePath(IndexedLine);
+    if(false == Contains(ListClonedFiles, Path) && "Red" == GetColor(IndexedLine))
+    {
+      ListClonedFiles += Path;
+    }
+  }
+  return ListClonedFiles;
+}
 void Overview(list[str] IndexedLines)
 {	
 	list[str] FileNames = [];
 	list[Figure] BoxList = [];
 	list[Figure] VBox = [];
 	str PrevFile = "";
-  
+	
+  list[str] ClonedFiles = GetClonedFiles(IndexedLines);
 	for(i <- [0 .. size(IndexedLines)])
 	{
 	  if(PrevFile == GetFilePath(IndexedLines[i]))
 		{
-			VBox += GenerateBox(IndexedLines[i], IndexedLines, i);			
+		  if(Contains(ClonedFiles, GetFilePath(IndexedLines[i])))
+		  {
+			  VBox += GenerateBox(IndexedLines[i], IndexedLines, i);
+			}		
 		}
 		else
 		{
 			
 			BoxList += GenerateVBox(VBox);
 			VBox = [];
-			VBox += GenerateTitleBox(IndexedLines[i]);
-			VBox += GenerateBox(IndexedLines[i], IndexedLines, i);
+			if(Contains(ClonedFiles, GetFilePath(IndexedLines[i])))
+      {
+			  VBox += GenerateTitleBox(IndexedLines[i]);
+			  VBox += GenerateBox(IndexedLines[i], IndexedLines, i);
+			}
 			PrevFile = GetFilePath(IndexedLines[i]);
 			println("<IndexedLines[i]>");
 			println("File path: <PrevFile>");
