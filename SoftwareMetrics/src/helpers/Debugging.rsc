@@ -3,12 +3,12 @@ module \helpers::Debugging
 import DateTime;
 import IO;
 
-bool LoggingEnabled = false;
+import \data::Options;
 
 // simple funtion to print, disabling LoggingEnabled will quickly disable printing
 public void DebugPrint(str TextToPrint)
 {
-  if(true == LoggingEnabled)
+  if(true == Check_PrintDebug)
   {
     println(TextToPrint);
   }

@@ -2,7 +2,11 @@ module Quotes
 
 import IO;
 import List;
+
+import \data::Options;
+
 import \util::Math;
+
 
 public list[str] WaitingQuotes = [
                                   "If A equals success, then the formula is A equals X plus Y plus Z. X is work. Y is play. Z is keep your mouth shut.",
@@ -315,8 +319,6 @@ public list[str] WaitingQuotes = [
 
 int GlobalCounter = 0;
 
-bool QuotesEnabled = false;
-
 void PrintQuote()
 {
   PrintQuote(GlobalCounter);
@@ -326,7 +328,7 @@ void PrintQuote(int Counter) = PrintQuote(Counter, 50);
 void PrintQuote(int Counter, int QuoteInterval)
 {
   if((0 == Counter % QuoteInterval)
-    && (true == QuotesEnabled))
+    && (true == Check_PrintQuotes))
   {
     println(WaitingQuotes[arbInt(size(WaitingQuotes))]) ;
   }
