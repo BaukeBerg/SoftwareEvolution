@@ -1,36 +1,100 @@
 module CloneVisualization
 import FileLocations;
 import IO;
+import List;
+import Set;
+import String;
 import \clones::CloneAlgorithm;
+import \clones::Type1Clones;
+import \clones::Type2Clones;
+import \clones::Type3Clones;
+import \data::CloneData;
+import \data::DataTypes;
+import \data::Options;
 import \graphics::Overview;
+import \helpers::Debugging;
 import \helpers::FileHelpers;
+import \util::Math;
 loc SmallSqlSampleContent = SampleFile("type2clones/SmallSqlContent.txt");
 loc SmallSqlSampleIndexes = SampleFile("type2clones/SmallSqlIndexes.txt");
-public TCloneClasses CurrentClones = [];
-list[list[str]] GenerateClonesFor(TClone Clone)
+void Type1ClonesSmallSqlSample() = HandleClones(SmallSqlContent, SmallSqlSampleIndexes);
+void Type1ClonesSmallSql() = HandleType1Clones(SmallSqlContent, SmallSqlIndexes);
+void Type1ClonesHsqlDb() = HandleType1Clones(HsqlDbContent, HsqlDbIndexes);
+void Type1ClonesSoftwareEvolution() = HandleType1Clones(SoftwareEvolutionContent, SoftwareEvolutionIndexes);
+void Type2ClonesSmallSql() = HandleType2Clones(SmallSqlContent, SmallSqlContent_Type2, SmallSqlIndexes);
+void Type2ClonesHsqlDb() = HandleType2Clones(HsqlDbContent, HsqlDbContent_Type2, HsqlDbIndexes);
+void Type2ClonesSoftwareEvolution() = HandleType2Clones(SoftwareEvolutionContent, SoftwareEvolutionContent_Type2, SoftwareEvolutionIndexes);
+void Type3ClonesSmallSql() = HandleType3Clones(SmallSqlContent, SmallSqlIndexes);
+void Type3ClonesHsqlDb() = HandleType3Clones(HsqlDbContent, HsqlDbIndexes);
+void Type3ClonesSoftwareEvolution() = HandleType3Clones(SoftwareEvolutionContent, SoftwareEvolutionIndexes);
+void Type3ClonesSmallSqlSample() = HandleType3Clones(SmallSqlSampleContent, SmallSqlSampleIndexes);
+void HandleType3Clones(loc ContentFile, loc IndexesFile)
 {
-;
+GetAndStoreClasses(FindType3ClonePairs(ContentFile));
+DebugPrint("Known classes: <KnownClasses>");
+HandleOverView(IndexesFile);
 }
-void GenerateSmallSqlSample()
+void HandleType2Clones(loc ContentFile, loc ContentOutput, loc IndexesFile)
 {
-CurrentClones = GetClonesClasses(SmallSqlSampleContent);
-list[str] ColoredIndexes = ColorIndexes(SmallSqlSampleIndexes, CurrentClones);
+CreateType2Output(ContentFile, ContentOutput);
+HandleType1Clones(ContentOutput, IndexesFile);
+}
+void HandleType1Clones(loc ContentFile, loc IndexesFile)
+{
+GetAndStoreClasses(ContentFile);
+HandleOverView(IndexesFile);
+}
+void HandleOverView(loc IndexesFile)
+{
+ColoredIndexes = ColorIndexes(IndexesFile, KnownClasses);
 Overview(ColoredIndexes);
 }
 list[str] ColorIndexes(loc IndexedFileToColour, TCloneClasses CloneClasses)
 {
+DebugPrint("Coloring clones");
 list[str] AllIndexes = readFileLines(IndexedFileToColour);
 for(CloneClass <- CloneClasses)
 {
+DebugPrint("Coloring class <CloneClass>, consisting of <size(CloneClass)> clones.");
 for(Clone <- CloneClass)
 {
-for(n <- [Clone.Start .. (Clone.Start + Clone.Size)+1])
+for(n <- [max(0, Clone.Start) .. min((Clone.Start + Clone.Size), size(AllIndexes))])
+{
+if(false == contains(AllIndexes[n], "xXx"))
 {
 AllIndexes[n] = AddColor(AllIndexes[n], "Red");
 }
 }
 }
+}
 return AllIndexes;
+}
+void HandleSmallSql()
+{
+switch(Switch_CloneType)
+{
+case "Type 1": Type1ClonesSmallSql();
+case "Type 2": Type2ClonesSmallSql();
+case "Type 3": Type3ClonesSmallSql();
+}
+}
+void HandleHsqlDb()
+{
+switch(Switch_CloneType)
+{
+case "Type 1": Type1ClonesHsqlDb();
+case "Type 2": Type2ClonesHsqlDb();
+case "Type 3": Type3ClonesHsqlDb();
+}
+}
+void HandleSoftwareEvolution()
+{
+switch(Switch_CloneType)
+{
+case "Type 1": Type1ClonesSoftwareEvolution();
+case "Type 2": Type2ClonesSoftwareEvolution();
+case "Type 3": Type3ClonesSoftwareEvolution();
+}
 }
 module FileLocations
 import String;
@@ -70,6 +134,7 @@ public loc SoftwareEvolutionIndexes = SampleFile("clones/SoftwareEvolutionIndexe
 public loc SoftwareEvolutionContent = SampleFile("clones/SoftwareEvolutionContent.txt");
 public loc SmallSqlContent_Type2 = SampleFile("clones/SmallSqlContent_Type2.txt");
 public loc HsqlDbContent_Type2 = SampleFile("clones/HsqlDbContent_Type2.txt");
+public loc SoftwareEvolutionContent_Type2 = SampleFile("clones/SoftwareEvolutionContent_Type2.txt");
 module GettingStarted
 import FileHandler;
 import FileLocations;
@@ -86,20 +151,26 @@ GenerateSanitizedCode("hsqldb", HSqlDbMethodLinesFile);
 }
 module MainTestModule
 import \test::AssumptionTests;
-import \test::CalculateCCTest;
-import \test::CloneAlgorithmTest;
+import \test::CalculateCCTests;
+import \test::CloneAlgorithmTests;
+import \test::CloneHelpersTests;
+import \test::DetailViewTests;
 import \test::FileHelperTests;
-import \test::GraphGeneratorTest;
+import \test::GraphGeneratorTests;
 import \test::JavaHelpersTests;
 import \test::ListHelperTests;
-import \test::MathHelpersTest;
-import \test::RiskProfileTest;
-import \test::SigScoresTester;
-import \test::SlocModuleTester;
-import \test::StringHelpersTester;
-import \test::TestHelpersTester;
+import \test::MathHelpersTests;
+import \test::OverviewTests;
+import \test::RegexHelpersTests;
+import \test::RiskProfileTests;
+import \test::SigScoresTests;
+import \test::SlocModuleTests;
+import \test::StringHelpersTests;
+import \test::TestHelpersTests;
 import \test::TestModule;
-import \test::Type1ClonesTest;
+import \test::Type1ClonesTests;
+import \test::Type2ClonesTests;
+import \test::Type3ClonesTests;
 test bool TryTestAssumeIntToNumConversion(){ try{ return CheckAndReport("AssumptionTests","TestAssumeIntToNumConversion()", TestAssumeIntToNumConversion());} catch: { CheckAndReport("AssumptionTests","!!! EXCEPTION IN TestAssumeIntToNumConversion() !!!", false); } return false; }
 test bool TryTestAssumeRounding(){ try{ return CheckAndReport("AssumptionTests","TestAssumeRounding()", TestAssumeRounding());} catch: { CheckAndReport("AssumptionTests","!!! EXCEPTION IN TestAssumeRounding() !!!", false); } return false; }
 test bool TryTestAssumeJoinList(){ try{ return CheckAndReport("AssumptionTests","TestAssumeJoinList()", TestAssumeJoinList());} catch: { CheckAndReport("AssumptionTests","!!! EXCEPTION IN TestAssumeJoinList() !!!", false); } return false; }
@@ -107,20 +178,31 @@ test bool TryTestAssumeForLoop(){ try{ return CheckAndReport("AssumptionTests","
 test bool TryTestIntegerDivision(){ try{ return CheckAndReport("AssumptionTests","TestIntegerDivision()", TestIntegerDivision());} catch: { CheckAndReport("AssumptionTests","!!! EXCEPTION IN TestIntegerDivision() !!!", false); } return false; }
 test bool TryAssumeIteratorIncrementing(){ try{ return CheckAndReport("AssumptionTests","AssumeIteratorIncrementing()", AssumeIteratorIncrementing());} catch: { CheckAndReport("AssumptionTests","!!! EXCEPTION IN AssumeIteratorIncrementing() !!!", false); } return false; }
 test bool TryDoWithTry(){ try{ return CheckAndReport("AssumptionTests","DoWithTry()", DoWithTry());} catch: { CheckAndReport("AssumptionTests","!!! EXCEPTION IN DoWithTry() !!!", false); } return false; }
-test bool TryTestTernaryOperator(){ try{ return CheckAndReport("CalculateCCTest","TestTernaryOperator()", TestTernaryOperator());} catch: { CheckAndReport("CalculateCCTest","!!! EXCEPTION IN TestTernaryOperator() !!!", false); } return false; }
-test bool TryTestInfixOperatorAnd(){ try{ return CheckAndReport("CalculateCCTest","TestInfixOperatorAnd()", TestInfixOperatorAnd());} catch: { CheckAndReport("CalculateCCTest","!!! EXCEPTION IN TestInfixOperatorAnd() !!!", false); } return false; }
-test bool TryTestInfixOperatorOr(){ try{ return CheckAndReport("CalculateCCTest","TestInfixOperatorOr()", TestInfixOperatorOr());} catch: { CheckAndReport("CalculateCCTest","!!! EXCEPTION IN TestInfixOperatorOr() !!!", false); } return false; }
-test bool TryTestMergingOverlappedClones(){ try{ return CheckAndReport("CloneAlgorithmTest","TestMergingOverlappedClones()", TestMergingOverlappedClones());} catch: { CheckAndReport("CloneAlgorithmTest","!!! EXCEPTION IN TestMergingOverlappedClones() !!!", false); } return false; }
-test bool TryTestOverlapFunction(){ try{ return CheckAndReport("CloneAlgorithmTest","TestOverlapFunction()", TestOverlapFunction());} catch: { CheckAndReport("CloneAlgorithmTest","!!! EXCEPTION IN TestOverlapFunction() !!!", false); } return false; }
-test bool TryTestMergingClones(){ try{ return CheckAndReport("CloneAlgorithmTest","TestMergingClones()", TestMergingClones());} catch: { CheckAndReport("CloneAlgorithmTest","!!! EXCEPTION IN TestMergingClones() !!!", false); } return false; }
-test bool TryTestSingleClone(){ try{ return CheckAndReport("CloneAlgorithmTest","TestSingleClone()", TestSingleClone());} catch: { CheckAndReport("CloneAlgorithmTest","!!! EXCEPTION IN TestSingleClone() !!!", false); } return false; }
-test bool TryTestDoubleClone(){ try{ return CheckAndReport("CloneAlgorithmTest","TestDoubleClone()", TestDoubleClone());} catch: { CheckAndReport("CloneAlgorithmTest","!!! EXCEPTION IN TestDoubleClone() !!!", false); } return false; }
-test bool TryTestExtendedClone(){ try{ return CheckAndReport("CloneAlgorithmTest","TestExtendedClone()", TestExtendedClone());} catch: { CheckAndReport("CloneAlgorithmTest","!!! EXCEPTION IN TestExtendedClone() !!!", false); } return false; }
-test bool TryTestDualOffsetClone(){ try{ return CheckAndReport("CloneAlgorithmTest","TestDualOffsetClone()", TestDualOffsetClone());} catch: { CheckAndReport("CloneAlgorithmTest","!!! EXCEPTION IN TestDualOffsetClone() !!!", false); } return false; }
-test bool TryTestDualDifferentClone(){ try{ return CheckAndReport("CloneAlgorithmTest","TestDualDifferentClone()", TestDualDifferentClone());} catch: { CheckAndReport("CloneAlgorithmTest","!!! EXCEPTION IN TestDualDifferentClone() !!!", false); } return false; }
-test bool TryTestBraceCase(){ try{ return CheckAndReport("CloneAlgorithmTest","TestBraceCase()", TestBraceCase());} catch: { CheckAndReport("CloneAlgorithmTest","!!! EXCEPTION IN TestBraceCase() !!!", false); } return false; }
-test bool TryTestNoClone(){ try{ return CheckAndReport("CloneAlgorithmTest","TestNoClone()", TestNoClone());} catch: { CheckAndReport("CloneAlgorithmTest","!!! EXCEPTION IN TestNoClone() !!!", false); } return false; }
-test bool TryTestMaxOfList(){ try{ return CheckAndReport("CloneAlgorithmTest","TestMaxOfList()", TestMaxOfList());} catch: { CheckAndReport("CloneAlgorithmTest","!!! EXCEPTION IN TestMaxOfList() !!!", false); } return false; }
+test bool TryHowManyLoops(){ try{ return CheckAndReport("AssumptionTests","HowManyLoops()", HowManyLoops());} catch: { CheckAndReport("AssumptionTests","!!! EXCEPTION IN HowManyLoops() !!!", false); } return false; }
+test bool TryHowManyLoops2(){ try{ return CheckAndReport("AssumptionTests","HowManyLoops2()", HowManyLoops2());} catch: { CheckAndReport("AssumptionTests","!!! EXCEPTION IN HowManyLoops2() !!!", false); } return false; }
+test bool TryAssumeForCanhaveTonsOfConditions(){ try{ return CheckAndReport("AssumptionTests","AssumeForCanhaveTonsOfConditions()", AssumeForCanhaveTonsOfConditions());} catch: { CheckAndReport("AssumptionTests","!!! EXCEPTION IN AssumeForCanhaveTonsOfConditions() !!!", false); } return false; }
+test bool TryAssumeForConditionsAnd(){ try{ return CheckAndReport("AssumptionTests","AssumeForConditionsAnd()", AssumeForConditionsAnd());} catch: { CheckAndReport("AssumptionTests","!!! EXCEPTION IN AssumeForConditionsAnd() !!!", false); } return false; }
+test bool TryTestTernaryOperator(){ try{ return CheckAndReport("CalculateCCTests","TestTernaryOperator()", TestTernaryOperator());} catch: { CheckAndReport("CalculateCCTests","!!! EXCEPTION IN TestTernaryOperator() !!!", false); } return false; }
+test bool TryTestInfixOperatorAnd(){ try{ return CheckAndReport("CalculateCCTests","TestInfixOperatorAnd()", TestInfixOperatorAnd());} catch: { CheckAndReport("CalculateCCTests","!!! EXCEPTION IN TestInfixOperatorAnd() !!!", false); } return false; }
+test bool TryTestInfixOperatorOr(){ try{ return CheckAndReport("CalculateCCTests","TestInfixOperatorOr()", TestInfixOperatorOr());} catch: { CheckAndReport("CalculateCCTests","!!! EXCEPTION IN TestInfixOperatorOr() !!!", false); } return false; }
+test bool TryTestMergingOverlappedClones(){ try{ return CheckAndReport("CloneAlgorithmTests","TestMergingOverlappedClones()", TestMergingOverlappedClones());} catch: { CheckAndReport("CloneAlgorithmTests","!!! EXCEPTION IN TestMergingOverlappedClones() !!!", false); } return false; }
+test bool TryTestOverlapFunction(){ try{ return CheckAndReport("CloneAlgorithmTests","TestOverlapFunction()", TestOverlapFunction());} catch: { CheckAndReport("CloneAlgorithmTests","!!! EXCEPTION IN TestOverlapFunction() !!!", false); } return false; }
+test bool TryTestMergingClones(){ try{ return CheckAndReport("CloneAlgorithmTests","TestMergingClones()", TestMergingClones());} catch: { CheckAndReport("CloneAlgorithmTests","!!! EXCEPTION IN TestMergingClones() !!!", false); } return false; }
+test bool TryTestSingleClone(){ try{ return CheckAndReport("CloneAlgorithmTests","TestSingleClone()", TestSingleClone());} catch: { CheckAndReport("CloneAlgorithmTests","!!! EXCEPTION IN TestSingleClone() !!!", false); } return false; }
+test bool TryTestDoubleClone(){ try{ return CheckAndReport("CloneAlgorithmTests","TestDoubleClone()", TestDoubleClone());} catch: { CheckAndReport("CloneAlgorithmTests","!!! EXCEPTION IN TestDoubleClone() !!!", false); } return false; }
+test bool TryTestExtendedClone(){ try{ return CheckAndReport("CloneAlgorithmTests","TestExtendedClone()", TestExtendedClone());} catch: { CheckAndReport("CloneAlgorithmTests","!!! EXCEPTION IN TestExtendedClone() !!!", false); } return false; }
+test bool TryTestDualOffsetClone(){ try{ return CheckAndReport("CloneAlgorithmTests","TestDualOffsetClone()", TestDualOffsetClone());} catch: { CheckAndReport("CloneAlgorithmTests","!!! EXCEPTION IN TestDualOffsetClone() !!!", false); } return false; }
+test bool TryTestDualDifferentClone(){ try{ return CheckAndReport("CloneAlgorithmTests","TestDualDifferentClone()", TestDualDifferentClone());} catch: { CheckAndReport("CloneAlgorithmTests","!!! EXCEPTION IN TestDualDifferentClone() !!!", false); } return false; }
+test bool TryTestBraceCase(){ try{ return CheckAndReport("CloneAlgorithmTests","TestBraceCase()", TestBraceCase());} catch: { CheckAndReport("CloneAlgorithmTests","!!! EXCEPTION IN TestBraceCase() !!!", false); } return false; }
+test bool TryTestNoClone(){ try{ return CheckAndReport("CloneAlgorithmTests","TestNoClone()", TestNoClone());} catch: { CheckAndReport("CloneAlgorithmTests","!!! EXCEPTION IN TestNoClone() !!!", false); } return false; }
+test bool TryTestMaxOfList(){ try{ return CheckAndReport("CloneAlgorithmTests","TestMaxOfList()", TestMaxOfList());} catch: { CheckAndReport("CloneAlgorithmTests","!!! EXCEPTION IN TestMaxOfList() !!!", false); } return false; }
+test bool TryTestExtractSingleClass(){ try{ return CheckAndReport("CloneAlgorithmTests","TestExtractSingleClass()", TestExtractSingleClass());} catch: { CheckAndReport("CloneAlgorithmTests","!!! EXCEPTION IN TestExtractSingleClass() !!!", false); } return false; }
+test bool TryTestExtractingMultipleClasses(){ try{ return CheckAndReport("CloneAlgorithmTests","TestExtractingMultipleClasses()", TestExtractingMultipleClasses());} catch: { CheckAndReport("CloneAlgorithmTests","!!! EXCEPTION IN TestExtractingMultipleClasses() !!!", false); } return false; }
+test bool TryTestRemovingDuplicates(){ try{ return CheckAndReport("CloneAlgorithmTests","TestRemovingDuplicates()", TestRemovingDuplicates());} catch: { CheckAndReport("CloneAlgorithmTests","!!! EXCEPTION IN TestRemovingDuplicates() !!!", false); } return false; }
+test bool TryTestGettingCloneClasses(){ try{ return CheckAndReport("CloneAlgorithmTests","TestGettingCloneClasses()", TestGettingCloneClasses());} catch: { CheckAndReport("CloneAlgorithmTests","!!! EXCEPTION IN TestGettingCloneClasses() !!!", false); } return false; }
+test bool TryTestDupesList(){ try{ return CheckAndReport("CloneHelpersTests","TestDupesList()", TestDupesList());} catch: { CheckAndReport("CloneHelpersTests","!!! EXCEPTION IN TestDupesList() !!!", false); } return false; }
+test bool TrySmallSqlDiff(){ try{ return CheckAndReport("DetailViewTests","SmallSqlDiff()", SmallSqlDiff());} catch: { CheckAndReport("DetailViewTests","!!! EXCEPTION IN SmallSqlDiff() !!!", false); } return false; }
+test bool TrySmallSqlBigDiff(){ try{ return CheckAndReport("DetailViewTests","SmallSqlBigDiff()", SmallSqlBigDiff());} catch: { CheckAndReport("DetailViewTests","!!! EXCEPTION IN SmallSqlBigDiff() !!!", false); } return false; }
 test bool TryFindFilesInDirectory(){ try{ return CheckAndReport("FileHelperTests","FindFilesInDirectory()", FindFilesInDirectory());} catch: { CheckAndReport("FileHelperTests","!!! EXCEPTION IN FindFilesInDirectory() !!!", false); } return false; }
 test bool TryFindFilesInEmptyDir(){ try{ return CheckAndReport("FileHelperTests","FindFilesInEmptyDir()", FindFilesInEmptyDir());} catch: { CheckAndReport("FileHelperTests","!!! EXCEPTION IN FindFilesInEmptyDir() !!!", false); } return false; }
 test bool TryCheckFindNameInDir(){ try{ return CheckAndReport("FileHelperTests","CheckFindNameInDir()", CheckFindNameInDir());} catch: { CheckAndReport("FileHelperTests","!!! EXCEPTION IN CheckFindNameInDir() !!!", false); } return false; }
@@ -131,10 +213,18 @@ test bool TryTestStrippingMultilineComments(){ try{ return CheckAndReport("FileH
 test bool TryTestStrippingExtension(){ try{ return CheckAndReport("FileHelperTests","TestStrippingExtension()", TestStrippingExtension());} catch: { CheckAndReport("FileHelperTests","!!! EXCEPTION IN TestStrippingExtension() !!!", false); } return false; }
 test bool TryTestSplittingIndexes(){ try{ return CheckAndReport("FileHelperTests","TestSplittingIndexes()", TestSplittingIndexes());} catch: { CheckAndReport("FileHelperTests","!!! EXCEPTION IN TestSplittingIndexes() !!!", false); } return false; }
 test bool TryTestSplittingContent(){ try{ return CheckAndReport("FileHelperTests","TestSplittingContent()", TestSplittingContent());} catch: { CheckAndReport("FileHelperTests","!!! EXCEPTION IN TestSplittingContent() !!!", false); } return false; }
+test bool TryTestExistingColor(){ try{ return CheckAndReport("FileHelperTests","TestExistingColor()", TestExistingColor());} catch: { CheckAndReport("FileHelperTests","!!! EXCEPTION IN TestExistingColor() !!!", false); } return false; }
+test bool TryTestDefaultColor(){ try{ return CheckAndReport("FileHelperTests","TestDefaultColor()", TestDefaultColor());} catch: { CheckAndReport("FileHelperTests","!!! EXCEPTION IN TestDefaultColor() !!!", false); } return false; }
+test bool TryTestSamplePath(){ try{ return CheckAndReport("FileHelperTests","TestSamplePath()", TestSamplePath());} catch: { CheckAndReport("FileHelperTests","!!! EXCEPTION IN TestSamplePath() !!!", false); } return false; }
+test bool TryTestSamplePathBack(){ try{ return CheckAndReport("FileHelperTests","TestSamplePathBack()", TestSamplePathBack());} catch: { CheckAndReport("FileHelperTests","!!! EXCEPTION IN TestSamplePathBack() !!!", false); } return false; }
 test bool TryTestNormalizingFile(){ try{ return CheckAndReport("FileHelperTests","TestNormalizingFile()", TestNormalizingFile());} catch: { CheckAndReport("FileHelperTests","!!! EXCEPTION IN TestNormalizingFile() !!!", false); } return false; }
-test bool TryCheckRed(){ try{ return CheckAndReport("GraphGeneratorTest","CheckRed()", CheckRed());} catch: { CheckAndReport("GraphGeneratorTest","!!! EXCEPTION IN CheckRed() !!!", false); } return false; }
-test bool TryCheckGreen(){ try{ return CheckAndReport("GraphGeneratorTest","CheckGreen()", CheckGreen());} catch: { CheckAndReport("GraphGeneratorTest","!!! EXCEPTION IN CheckGreen() !!!", false); } return false; }
-test bool TryCheckYellow(){ try{ return CheckAndReport("GraphGeneratorTest","CheckYellow()", CheckYellow());} catch: { CheckAndReport("GraphGeneratorTest","!!! EXCEPTION IN CheckYellow() !!!", false); } return false; }
+test bool TryTestNormalizingIndexes(){ try{ return CheckAndReport("FileHelperTests","TestNormalizingIndexes()", TestNormalizingIndexes());} catch: { CheckAndReport("FileHelperTests","!!! EXCEPTION IN TestNormalizingIndexes() !!!", false); } return false; }
+test bool TryTestDefaultFilePath(){ try{ return CheckAndReport("FileHelperTests","TestDefaultFilePath()", TestDefaultFilePath());} catch: { CheckAndReport("FileHelperTests","!!! EXCEPTION IN TestDefaultFilePath() !!!", false); } return false; }
+test bool TryTestFilePathWithColour(){ try{ return CheckAndReport("FileHelperTests","TestFilePathWithColour()", TestFilePathWithColour());} catch: { CheckAndReport("FileHelperTests","!!! EXCEPTION IN TestFilePathWithColour() !!!", false); } return false; }
+test bool TryTestFilePathWithoutColor(){ try{ return CheckAndReport("FileHelperTests","TestFilePathWithoutColor()", TestFilePathWithoutColor());} catch: { CheckAndReport("FileHelperTests","!!! EXCEPTION IN TestFilePathWithoutColor() !!!", false); } return false; }
+test bool TryCheckRed(){ try{ return CheckAndReport("GraphGeneratorTests","CheckRed()", CheckRed());} catch: { CheckAndReport("GraphGeneratorTests","!!! EXCEPTION IN CheckRed() !!!", false); } return false; }
+test bool TryCheckGreen(){ try{ return CheckAndReport("GraphGeneratorTests","CheckGreen()", CheckGreen());} catch: { CheckAndReport("GraphGeneratorTests","!!! EXCEPTION IN CheckGreen() !!!", false); } return false; }
+test bool TryCheckYellow(){ try{ return CheckAndReport("GraphGeneratorTests","CheckYellow()", CheckYellow());} catch: { CheckAndReport("GraphGeneratorTests","!!! EXCEPTION IN CheckYellow() !!!", false); } return false; }
 test bool TryTestFullClassPath(){ try{ return CheckAndReport("JavaHelpersTests","TestFullClassPath()", TestFullClassPath());} catch: { CheckAndReport("JavaHelpersTests","!!! EXCEPTION IN TestFullClassPath() !!!", false); } return false; }
 test bool TryTestClassName(){ try{ return CheckAndReport("JavaHelpersTests","TestClassName()", TestClassName());} catch: { CheckAndReport("JavaHelpersTests","!!! EXCEPTION IN TestClassName() !!!", false); } return false; }
 test bool TryTestMethodSize(){ try{ return CheckAndReport("JavaHelpersTests","TestMethodSize()", TestMethodSize());} catch: { CheckAndReport("JavaHelpersTests","!!! EXCEPTION IN TestMethodSize() !!!", false); } return false; }
@@ -159,69 +249,96 @@ test bool TryCheckListTrimmingRemoveEmptyLines(){ try{ return CheckAndReport("Li
 test bool TryTestListJoin(){ try{ return CheckAndReport("ListHelperTests","TestListJoin()", TestListJoin());} catch: { CheckAndReport("ListHelperTests","!!! EXCEPTION IN TestListJoin() !!!", false); } return false; }
 test bool TryTestTokenizedListTrimming(){ try{ return CheckAndReport("ListHelperTests","TestTokenizedListTrimming()", TestTokenizedListTrimming());} catch: { CheckAndReport("ListHelperTests","!!! EXCEPTION IN TestTokenizedListTrimming() !!!", false); } return false; }
 test bool TryTestPadding(){ try{ return CheckAndReport("ListHelperTests","TestPadding()", TestPadding());} catch: { CheckAndReport("ListHelperTests","!!! EXCEPTION IN TestPadding() !!!", false); } return false; }
-test bool TryBelowLower(){ try{ return CheckAndReport("MathHelpersTest","BelowLower()", BelowLower());} catch: { CheckAndReport("MathHelpersTest","!!! EXCEPTION IN BelowLower() !!!", false); } return false; }
-test bool TryAboveUpper(){ try{ return CheckAndReport("MathHelpersTest","AboveUpper()", AboveUpper());} catch: { CheckAndReport("MathHelpersTest","!!! EXCEPTION IN AboveUpper() !!!", false); } return false; }
-test bool TryNormal(){ try{ return CheckAndReport("MathHelpersTest","Normal()", Normal());} catch: { CheckAndReport("MathHelpersTest","!!! EXCEPTION IN Normal() !!!", false); } return false; }
-test bool TryInLimitsBelow(){ try{ return CheckAndReport("MathHelpersTest","InLimitsBelow()", InLimitsBelow());} catch: { CheckAndReport("MathHelpersTest","!!! EXCEPTION IN InLimitsBelow() !!!", false); } return false; }
-test bool TryInLimitsAbove(){ try{ return CheckAndReport("MathHelpersTest","InLimitsAbove()", InLimitsAbove());} catch: { CheckAndReport("MathHelpersTest","!!! EXCEPTION IN InLimitsAbove() !!!", false); } return false; }
-test bool TryInLimitsOk(){ try{ return CheckAndReport("MathHelpersTest","InLimitsOk()", InLimitsOk());} catch: { CheckAndReport("MathHelpersTest","!!! EXCEPTION IN InLimitsOk() !!!", false); } return false; }
-test bool TryDistributionOk(){ try{ return CheckAndReport("MathHelpersTest","DistributionOk()", DistributionOk());} catch: { CheckAndReport("MathHelpersTest","!!! EXCEPTION IN DistributionOk() !!!", false); } return false; }
-test bool TryDistributionRounding(){ try{ return CheckAndReport("MathHelpersTest","DistributionRounding()", DistributionRounding());} catch: { CheckAndReport("MathHelpersTest","!!! EXCEPTION IN DistributionRounding() !!!", false); } return false; }
-test bool TryFractionTest(){ try{ return CheckAndReport("MathHelpersTest","FractionTest()", FractionTest());} catch: { CheckAndReport("MathHelpersTest","!!! EXCEPTION IN FractionTest() !!!", false); } return false; }
-test bool TryPercentageTest(){ try{ return CheckAndReport("MathHelpersTest","PercentageTest()", PercentageTest());} catch: { CheckAndReport("MathHelpersTest","!!! EXCEPTION IN PercentageTest() !!!", false); } return false; }
-test bool TryTestVolumePlusPlus(){ try{ return CheckAndReport("SigScoresTester","TestVolumePlusPlus()", TestVolumePlusPlus());} catch: { CheckAndReport("SigScoresTester","!!! EXCEPTION IN TestVolumePlusPlus() !!!", false); } return false; }
-test bool TryTestVolumePlus(){ try{ return CheckAndReport("SigScoresTester","TestVolumePlus()", TestVolumePlus());} catch: { CheckAndReport("SigScoresTester","!!! EXCEPTION IN TestVolumePlus() !!!", false); } return false; }
-test bool TryTestVolumeNeutral(){ try{ return CheckAndReport("SigScoresTester","TestVolumeNeutral()", TestVolumeNeutral());} catch: { CheckAndReport("SigScoresTester","!!! EXCEPTION IN TestVolumeNeutral() !!!", false); } return false; }
-test bool TryTestVolumeMinus(){ try{ return CheckAndReport("SigScoresTester","TestVolumeMinus()", TestVolumeMinus());} catch: { CheckAndReport("SigScoresTester","!!! EXCEPTION IN TestVolumeMinus() !!!", false); } return false; }
-test bool TryTestVolumeMinusMinus(){ try{ return CheckAndReport("SigScoresTester","TestVolumeMinusMinus()", TestVolumeMinusMinus());} catch: { CheckAndReport("SigScoresTester","!!! EXCEPTION IN TestVolumeMinusMinus() !!!", false); } return false; }
-test bool TryTestVeryHigh(){ try{ return CheckAndReport("SigScoresTester","TestVeryHigh()", TestVeryHigh());} catch: { CheckAndReport("SigScoresTester","!!! EXCEPTION IN TestVeryHigh() !!!", false); } return false; }
-test bool TryTestHigh(){ try{ return CheckAndReport("SigScoresTester","TestHigh()", TestHigh());} catch: { CheckAndReport("SigScoresTester","!!! EXCEPTION IN TestHigh() !!!", false); } return false; }
-test bool TryTestMedium(){ try{ return CheckAndReport("SigScoresTester","TestMedium()", TestMedium());} catch: { CheckAndReport("SigScoresTester","!!! EXCEPTION IN TestMedium() !!!", false); } return false; }
-test bool TryTestLow(){ try{ return CheckAndReport("SigScoresTester","TestLow()", TestLow());} catch: { CheckAndReport("SigScoresTester","!!! EXCEPTION IN TestLow() !!!", false); } return false; }
-test bool TryTestDistributionPlusPlus(){ try{ return CheckAndReport("SigScoresTester","TestDistributionPlusPlus()", TestDistributionPlusPlus());} catch: { CheckAndReport("SigScoresTester","!!! EXCEPTION IN TestDistributionPlusPlus() !!!", false); } return false; }
-test bool TryTestDistributionPlus(){ try{ return CheckAndReport("SigScoresTester","TestDistributionPlus()", TestDistributionPlus());} catch: { CheckAndReport("SigScoresTester","!!! EXCEPTION IN TestDistributionPlus() !!!", false); } return false; }
-test bool TryTestDistributionNeutral(){ try{ return CheckAndReport("SigScoresTester","TestDistributionNeutral()", TestDistributionNeutral());} catch: { CheckAndReport("SigScoresTester","!!! EXCEPTION IN TestDistributionNeutral() !!!", false); } return false; }
-test bool TryTestDistributionMinus(){ try{ return CheckAndReport("SigScoresTester","TestDistributionMinus()", TestDistributionMinus());} catch: { CheckAndReport("SigScoresTester","!!! EXCEPTION IN TestDistributionMinus() !!!", false); } return false; }
-test bool TryTestDistributionMinusMinus(){ try{ return CheckAndReport("SigScoresTester","TestDistributionMinusMinus()", TestDistributionMinusMinus());} catch: { CheckAndReport("SigScoresTester","!!! EXCEPTION IN TestDistributionMinusMinus() !!!", false); } return false; }
-test bool TryTestSigRatingPlusPlus(){ try{ return CheckAndReport("SigScoresTester","TestSigRatingPlusPlus()", TestSigRatingPlusPlus());} catch: { CheckAndReport("SigScoresTester","!!! EXCEPTION IN TestSigRatingPlusPlus() !!!", false); } return false; }
-test bool TryTestSigRatingPlus(){ try{ return CheckAndReport("SigScoresTester","TestSigRatingPlus()", TestSigRatingPlus());} catch: { CheckAndReport("SigScoresTester","!!! EXCEPTION IN TestSigRatingPlus() !!!", false); } return false; }
-test bool TryTestSigRatingNeutral(){ try{ return CheckAndReport("SigScoresTester","TestSigRatingNeutral()", TestSigRatingNeutral());} catch: { CheckAndReport("SigScoresTester","!!! EXCEPTION IN TestSigRatingNeutral() !!!", false); } return false; }
-test bool TryTestSigRatingMinus(){ try{ return CheckAndReport("SigScoresTester","TestSigRatingMinus()", TestSigRatingMinus());} catch: { CheckAndReport("SigScoresTester","!!! EXCEPTION IN TestSigRatingMinus() !!!", false); } return false; }
-test bool TryTestSigRatingMinusMinus(){ try{ return CheckAndReport("SigScoresTester","TestSigRatingMinusMinus()", TestSigRatingMinusMinus());} catch: { CheckAndReport("SigScoresTester","!!! EXCEPTION IN TestSigRatingMinusMinus() !!!", false); } return false; }
-test bool TryScanColumnJava(){ try{ return CheckAndReport("SlocModuleTester","ScanColumnJava()", ScanColumnJava());} catch: { CheckAndReport("SlocModuleTester","!!! EXCEPTION IN ScanColumnJava() !!!", false); } return false; }
-test bool TryScanWhiteLineJavaFile(){ try{ return CheckAndReport("SlocModuleTester","ScanWhiteLineJavaFile()", ScanWhiteLineJavaFile());} catch: { CheckAndReport("SlocModuleTester","!!! EXCEPTION IN ScanWhiteLineJavaFile() !!!", false); } return false; }
-test bool TryScanSourceCodeLines(){ try{ return CheckAndReport("SlocModuleTester","ScanSourceCodeLines()", ScanSourceCodeLines());} catch: { CheckAndReport("SlocModuleTester","!!! EXCEPTION IN ScanSourceCodeLines() !!!", false); } return false; }
-test bool TryIndentTester(){ try{ return CheckAndReport("StringHelpersTester","IndentTester()", IndentTester());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN IndentTester() !!!", false); } return false; }
-test bool TryTabIndent(){ try{ return CheckAndReport("StringHelpersTester","TabIndent()", TabIndent());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN TabIndent() !!!", false); } return false; }
-test bool TryLineCountOfTwo(){ try{ return CheckAndReport("StringHelpersTester","LineCountOfTwo()", LineCountOfTwo());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN LineCountOfTwo() !!!", false); } return false; }
-test bool TryLineCountOfThree(){ try{ return CheckAndReport("StringHelpersTester","LineCountOfThree()", LineCountOfThree());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN LineCountOfThree() !!!", false); } return false; }
-test bool TryTestEncoding(){ try{ return CheckAndReport("StringHelpersTester","TestEncoding()", TestEncoding());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN TestEncoding() !!!", false); } return false; }
-test bool TryTestDecoding(){ try{ return CheckAndReport("StringHelpersTester","TestDecoding()", TestDecoding());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN TestDecoding() !!!", false); } return false; }
-test bool TryTestTrimAssumption(){ try{ return CheckAndReport("StringHelpersTester","TestTrimAssumption()", TestTrimAssumption());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN TestTrimAssumption() !!!", false); } return false; }
-test bool TryTestStringTokenFirst(){ try{ return CheckAndReport("StringHelpersTester","TestStringTokenFirst()", TestStringTokenFirst());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN TestStringTokenFirst() !!!", false); } return false; }
-test bool TryTestStringTokenLast(){ try{ return CheckAndReport("StringHelpersTester","TestStringTokenLast()", TestStringTokenLast());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN TestStringTokenLast() !!!", false); } return false; }
-test bool TryTestStringToken(){ try{ return CheckAndReport("StringHelpersTester","TestStringToken()", TestStringToken());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN TestStringToken() !!!", false); } return false; }
-test bool TryTestStringTokenOverLoad(){ try{ return CheckAndReport("StringHelpersTester","TestStringTokenOverLoad()", TestStringTokenOverLoad());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN TestStringTokenOverLoad() !!!", false); } return false; }
-test bool TryTestStringTokenOverLoad(){ try{ return CheckAndReport("StringHelpersTester","TestStringTokenOverLoad()", TestStringTokenOverLoad());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN TestStringTokenOverLoad() !!!", false); } return false; }
-test bool TryTestLargerStringToken(){ try{ return CheckAndReport("StringHelpersTester","TestLargerStringToken()", TestLargerStringToken());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN TestLargerStringToken() !!!", false); } return false; }
-test bool TryTestSubStringEquivalence(){ try{ return CheckAndReport("StringHelpersTester","TestSubStringEquivalence()", TestSubStringEquivalence());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN TestSubStringEquivalence() !!!", false); } return false; }
-test bool TryTestSubStringInt(){ try{ return CheckAndReport("StringHelpersTester","TestSubStringInt()", TestSubStringInt());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN TestSubStringInt() !!!", false); } return false; }
-test bool TryTestClipString(){ try{ return CheckAndReport("StringHelpersTester","TestClipString()", TestClipString());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN TestClipString() !!!", false); } return false; }
-test bool TryTestClipStringWithSplit(){ try{ return CheckAndReport("StringHelpersTester","TestClipStringWithSplit()", TestClipStringWithSplit());} catch: { CheckAndReport("StringHelpersTester","!!! EXCEPTION IN TestClipStringWithSplit() !!!", false); } return false; }
-test bool TryExpectEqualIntTest(){ try{ return CheckAndReport("TestHelpersTester","ExpectEqualIntTest()", ExpectEqualIntTest());} catch: { CheckAndReport("TestHelpersTester","!!! EXCEPTION IN ExpectEqualIntTest() !!!", false); } return false; }
-test bool TryExpectFalseIsEqualIntTest(){ try{ return CheckAndReport("TestHelpersTester","ExpectFalseIsEqualIntTest()", ExpectFalseIsEqualIntTest());} catch: { CheckAndReport("TestHelpersTester","!!! EXCEPTION IN ExpectFalseIsEqualIntTest() !!!", false); } return false; }
-test bool TryExpectNotEqualintTest(){ try{ return CheckAndReport("TestHelpersTester","ExpectNotEqualintTest()", ExpectNotEqualintTest());} catch: { CheckAndReport("TestHelpersTester","!!! EXCEPTION IN ExpectNotEqualintTest() !!!", false); } return false; }
-test bool TryExpectFalseIsNotEqualintTest(){ try{ return CheckAndReport("TestHelpersTester","ExpectFalseIsNotEqualintTest()", ExpectFalseIsNotEqualintTest());} catch: { CheckAndReport("TestHelpersTester","!!! EXCEPTION IN ExpectFalseIsNotEqualintTest() !!!", false); } return false; }
-test bool TryShowMeARedCell(){ try{ return CheckAndReport("TestHelpersTester","ShowMeARedCell()", ShowMeARedCell());} catch: { CheckAndReport("TestHelpersTester","!!! EXCEPTION IN ShowMeARedCell() !!!", false); } return false; }
-test bool TryShowMeAGreenCell(){ try{ return CheckAndReport("TestHelpersTester","ShowMeAGreenCell()", ShowMeAGreenCell());} catch: { CheckAndReport("TestHelpersTester","!!! EXCEPTION IN ShowMeAGreenCell() !!!", false); } return false; }
-test bool TryCheckColourCompare(){ try{ return CheckAndReport("TestHelpersTester","CheckColourCompare()", CheckColourCompare());} catch: { CheckAndReport("TestHelpersTester","!!! EXCEPTION IN CheckColourCompare() !!!", false); } return false; }
-test bool TryExpectTrueTestTrue(){ try{ return CheckAndReport("TestHelpersTester","ExpectTrueTestTrue()", ExpectTrueTestTrue());} catch: { CheckAndReport("TestHelpersTester","!!! EXCEPTION IN ExpectTrueTestTrue() !!!", false); } return false; }
-test bool TryExpectTrueTestFalse(){ try{ return CheckAndReport("TestHelpersTester","ExpectTrueTestFalse()", ExpectTrueTestFalse());} catch: { CheckAndReport("TestHelpersTester","!!! EXCEPTION IN ExpectTrueTestFalse() !!!", false); } return false; }
-test bool TryExpectFalseTestTrue(){ try{ return CheckAndReport("TestHelpersTester","ExpectFalseTestTrue()", ExpectFalseTestTrue());} catch: { CheckAndReport("TestHelpersTester","!!! EXCEPTION IN ExpectFalseTestTrue() !!!", false); } return false; }
-test bool TryExpectFalseTestTrue(){ try{ return CheckAndReport("TestHelpersTester","ExpectFalseTestTrue()", ExpectFalseTestTrue());} catch: { CheckAndReport("TestHelpersTester","!!! EXCEPTION IN ExpectFalseTestTrue() !!!", false); } return false; }
-test bool TryTestEqualFiles(){ try{ return CheckAndReport("TestHelpersTester","TestEqualFiles()", TestEqualFiles());} catch: { CheckAndReport("TestHelpersTester","!!! EXCEPTION IN TestEqualFiles() !!!", false); } return false; }
-test bool TryTestEqualFiles(){ try{ return CheckAndReport("TestHelpersTester","TestEqualFiles()", TestEqualFiles());} catch: { CheckAndReport("TestHelpersTester","!!! EXCEPTION IN TestEqualFiles() !!!", false); } return false; }
-test bool TryTestUnEqualFiles(){ try{ return CheckAndReport("TestHelpersTester","TestUnEqualFiles()", TestUnEqualFiles());} catch: { CheckAndReport("TestHelpersTester","!!! EXCEPTION IN TestUnEqualFiles() !!!", false); } return false; }
+test bool TryBelowLower(){ try{ return CheckAndReport("MathHelpersTests","BelowLower()", BelowLower());} catch: { CheckAndReport("MathHelpersTests","!!! EXCEPTION IN BelowLower() !!!", false); } return false; }
+test bool TryAboveUpper(){ try{ return CheckAndReport("MathHelpersTests","AboveUpper()", AboveUpper());} catch: { CheckAndReport("MathHelpersTests","!!! EXCEPTION IN AboveUpper() !!!", false); } return false; }
+test bool TryNormal(){ try{ return CheckAndReport("MathHelpersTests","Normal()", Normal());} catch: { CheckAndReport("MathHelpersTests","!!! EXCEPTION IN Normal() !!!", false); } return false; }
+test bool TryInLimitsBelow(){ try{ return CheckAndReport("MathHelpersTests","InLimitsBelow()", InLimitsBelow());} catch: { CheckAndReport("MathHelpersTests","!!! EXCEPTION IN InLimitsBelow() !!!", false); } return false; }
+test bool TryInLimitsAbove(){ try{ return CheckAndReport("MathHelpersTests","InLimitsAbove()", InLimitsAbove());} catch: { CheckAndReport("MathHelpersTests","!!! EXCEPTION IN InLimitsAbove() !!!", false); } return false; }
+test bool TryInLimitsOk(){ try{ return CheckAndReport("MathHelpersTests","InLimitsOk()", InLimitsOk());} catch: { CheckAndReport("MathHelpersTests","!!! EXCEPTION IN InLimitsOk() !!!", false); } return false; }
+test bool TryDistributionOk(){ try{ return CheckAndReport("MathHelpersTests","DistributionOk()", DistributionOk());} catch: { CheckAndReport("MathHelpersTests","!!! EXCEPTION IN DistributionOk() !!!", false); } return false; }
+test bool TryDistributionRounding(){ try{ return CheckAndReport("MathHelpersTests","DistributionRounding()", DistributionRounding());} catch: { CheckAndReport("MathHelpersTests","!!! EXCEPTION IN DistributionRounding() !!!", false); } return false; }
+test bool TryFractionTest(){ try{ return CheckAndReport("MathHelpersTests","FractionTest()", FractionTest());} catch: { CheckAndReport("MathHelpersTests","!!! EXCEPTION IN FractionTest() !!!", false); } return false; }
+test bool TryPercentageTest(){ try{ return CheckAndReport("MathHelpersTests","PercentageTest()", PercentageTest());} catch: { CheckAndReport("MathHelpersTests","!!! EXCEPTION IN PercentageTest() !!!", false); } return false; }
+test bool TryTestSampleSqlOverview(){ try{ return CheckAndReport("OverviewTests","TestSampleSqlOverview()", TestSampleSqlOverview());} catch: { CheckAndReport("OverviewTests","!!! EXCEPTION IN TestSampleSqlOverview() !!!", false); } return false; }
+test bool TryTestGenerationSampleIndexesForClass(){ try{ return CheckAndReport("OverviewTests","TestGenerationSampleIndexesForClass()", TestGenerationSampleIndexesForClass());} catch: { CheckAndReport("OverviewTests","!!! EXCEPTION IN TestGenerationSampleIndexesForClass() !!!", false); } return false; }
+test bool TryTestGenerateTitleBox(){ try{ return CheckAndReport("OverviewTests","TestGenerateTitleBox()", TestGenerateTitleBox());} catch: { CheckAndReport("OverviewTests","!!! EXCEPTION IN TestGenerateTitleBox() !!!", false); } return false; }
+test bool TryTestGenerateBox(){ try{ return CheckAndReport("OverviewTests","TestGenerateBox()", TestGenerateBox());} catch: { CheckAndReport("OverviewTests","!!! EXCEPTION IN TestGenerateBox() !!!", false); } return false; }
+test bool TryTestGenerateVBox(){ try{ return CheckAndReport("OverviewTests","TestGenerateVBox()", TestGenerateVBox());} catch: { CheckAndReport("OverviewTests","!!! EXCEPTION IN TestGenerateVBox() !!!", false); } return false; }
+test bool TryTestRenderFigure(){ try{ return CheckAndReport("OverviewTests","TestRenderFigure()", TestRenderFigure());} catch: { CheckAndReport("OverviewTests","!!! EXCEPTION IN TestRenderFigure() !!!", false); } return false; }
+test bool TryTestGetClassName(){ try{ return CheckAndReport("OverviewTests","TestGetClassName()", TestGetClassName());} catch: { CheckAndReport("OverviewTests","!!! EXCEPTION IN TestGetClassName() !!!", false); } return false; }
+test bool TryTestExecOnMouseDown(){ try{ return CheckAndReport("OverviewTests","TestExecOnMouseDown()", TestExecOnMouseDown());} catch: { CheckAndReport("OverviewTests","!!! EXCEPTION IN TestExecOnMouseDown() !!!", false); } return false; }
+test bool TryTestExecOnMouseEnter(){ try{ return CheckAndReport("OverviewTests","TestExecOnMouseEnter()", TestExecOnMouseEnter());} catch: { CheckAndReport("OverviewTests","!!! EXCEPTION IN TestExecOnMouseEnter() !!!", false); } return false; }
+test bool TryTestGenerateTooltip(){ try{ return CheckAndReport("OverviewTests","TestGenerateTooltip()", TestGenerateTooltip());} catch: { CheckAndReport("OverviewTests","!!! EXCEPTION IN TestGenerateTooltip() !!!", false); } return false; }
+test bool TryTestExtractAndNormalizeIndexes(){ try{ return CheckAndReport("OverviewTests","TestExtractAndNormalizeIndexes()", TestExtractAndNormalizeIndexes());} catch: { CheckAndReport("OverviewTests","!!! EXCEPTION IN TestExtractAndNormalizeIndexes() !!!", false); } return false; }
+test bool TryTestGenerateSampleIndexesForClass(){ try{ return CheckAndReport("OverviewTests","TestGenerateSampleIndexesForClass()", TestGenerateSampleIndexesForClass());} catch: { CheckAndReport("OverviewTests","!!! EXCEPTION IN TestGenerateSampleIndexesForClass() !!!", false); } return false; }
+test bool TryAssumeRegexTrue(){ try{ return CheckAndReport("RegexHelpersTests","AssumeRegexTrue()", AssumeRegexTrue());} catch: { CheckAndReport("RegexHelpersTests","!!! EXCEPTION IN AssumeRegexTrue() !!!", false); } return false; }
+test bool TryAssumeRegexWithColon(){ try{ return CheckAndReport("RegexHelpersTests","AssumeRegexWithColon()", AssumeRegexWithColon());} catch: { CheckAndReport("RegexHelpersTests","!!! EXCEPTION IN AssumeRegexWithColon() !!!", false); } return false; }
+test bool TryAssumeRegexWithEqual(){ try{ return CheckAndReport("RegexHelpersTests","AssumeRegexWithEqual()", AssumeRegexWithEqual());} catch: { CheckAndReport("RegexHelpersTests","!!! EXCEPTION IN AssumeRegexWithEqual() !!!", false); } return false; }
+test bool TryAssumeRegexNoLeadingSpace(){ try{ return CheckAndReport("RegexHelpersTests","AssumeRegexNoLeadingSpace()", AssumeRegexNoLeadingSpace());} catch: { CheckAndReport("RegexHelpersTests","!!! EXCEPTION IN AssumeRegexNoLeadingSpace() !!!", false); } return false; }
+test bool TryAssumeRegexNoTralingSpace(){ try{ return CheckAndReport("RegexHelpersTests","AssumeRegexNoTralingSpace()", AssumeRegexNoTralingSpace());} catch: { CheckAndReport("RegexHelpersTests","!!! EXCEPTION IN AssumeRegexNoTralingSpace() !!!", false); } return false; }
+test bool TryTestVolumePlusPlus(){ try{ return CheckAndReport("SigScoresTests","TestVolumePlusPlus()", TestVolumePlusPlus());} catch: { CheckAndReport("SigScoresTests","!!! EXCEPTION IN TestVolumePlusPlus() !!!", false); } return false; }
+test bool TryTestVolumePlus(){ try{ return CheckAndReport("SigScoresTests","TestVolumePlus()", TestVolumePlus());} catch: { CheckAndReport("SigScoresTests","!!! EXCEPTION IN TestVolumePlus() !!!", false); } return false; }
+test bool TryTestVolumeNeutral(){ try{ return CheckAndReport("SigScoresTests","TestVolumeNeutral()", TestVolumeNeutral());} catch: { CheckAndReport("SigScoresTests","!!! EXCEPTION IN TestVolumeNeutral() !!!", false); } return false; }
+test bool TryTestVolumeMinus(){ try{ return CheckAndReport("SigScoresTests","TestVolumeMinus()", TestVolumeMinus());} catch: { CheckAndReport("SigScoresTests","!!! EXCEPTION IN TestVolumeMinus() !!!", false); } return false; }
+test bool TryTestVolumeMinusMinus(){ try{ return CheckAndReport("SigScoresTests","TestVolumeMinusMinus()", TestVolumeMinusMinus());} catch: { CheckAndReport("SigScoresTests","!!! EXCEPTION IN TestVolumeMinusMinus() !!!", false); } return false; }
+test bool TryTestVeryHigh(){ try{ return CheckAndReport("SigScoresTests","TestVeryHigh()", TestVeryHigh());} catch: { CheckAndReport("SigScoresTests","!!! EXCEPTION IN TestVeryHigh() !!!", false); } return false; }
+test bool TryTestHigh(){ try{ return CheckAndReport("SigScoresTests","TestHigh()", TestHigh());} catch: { CheckAndReport("SigScoresTests","!!! EXCEPTION IN TestHigh() !!!", false); } return false; }
+test bool TryTestMedium(){ try{ return CheckAndReport("SigScoresTests","TestMedium()", TestMedium());} catch: { CheckAndReport("SigScoresTests","!!! EXCEPTION IN TestMedium() !!!", false); } return false; }
+test bool TryTestLow(){ try{ return CheckAndReport("SigScoresTests","TestLow()", TestLow());} catch: { CheckAndReport("SigScoresTests","!!! EXCEPTION IN TestLow() !!!", false); } return false; }
+test bool TryTestDistributionPlusPlus(){ try{ return CheckAndReport("SigScoresTests","TestDistributionPlusPlus()", TestDistributionPlusPlus());} catch: { CheckAndReport("SigScoresTests","!!! EXCEPTION IN TestDistributionPlusPlus() !!!", false); } return false; }
+test bool TryTestDistributionPlus(){ try{ return CheckAndReport("SigScoresTests","TestDistributionPlus()", TestDistributionPlus());} catch: { CheckAndReport("SigScoresTests","!!! EXCEPTION IN TestDistributionPlus() !!!", false); } return false; }
+test bool TryTestDistributionNeutral(){ try{ return CheckAndReport("SigScoresTests","TestDistributionNeutral()", TestDistributionNeutral());} catch: { CheckAndReport("SigScoresTests","!!! EXCEPTION IN TestDistributionNeutral() !!!", false); } return false; }
+test bool TryTestDistributionMinus(){ try{ return CheckAndReport("SigScoresTests","TestDistributionMinus()", TestDistributionMinus());} catch: { CheckAndReport("SigScoresTests","!!! EXCEPTION IN TestDistributionMinus() !!!", false); } return false; }
+test bool TryTestDistributionMinusMinus(){ try{ return CheckAndReport("SigScoresTests","TestDistributionMinusMinus()", TestDistributionMinusMinus());} catch: { CheckAndReport("SigScoresTests","!!! EXCEPTION IN TestDistributionMinusMinus() !!!", false); } return false; }
+test bool TryTestSigRatingPlusPlus(){ try{ return CheckAndReport("SigScoresTests","TestSigRatingPlusPlus()", TestSigRatingPlusPlus());} catch: { CheckAndReport("SigScoresTests","!!! EXCEPTION IN TestSigRatingPlusPlus() !!!", false); } return false; }
+test bool TryTestSigRatingPlus(){ try{ return CheckAndReport("SigScoresTests","TestSigRatingPlus()", TestSigRatingPlus());} catch: { CheckAndReport("SigScoresTests","!!! EXCEPTION IN TestSigRatingPlus() !!!", false); } return false; }
+test bool TryTestSigRatingNeutral(){ try{ return CheckAndReport("SigScoresTests","TestSigRatingNeutral()", TestSigRatingNeutral());} catch: { CheckAndReport("SigScoresTests","!!! EXCEPTION IN TestSigRatingNeutral() !!!", false); } return false; }
+test bool TryTestSigRatingMinus(){ try{ return CheckAndReport("SigScoresTests","TestSigRatingMinus()", TestSigRatingMinus());} catch: { CheckAndReport("SigScoresTests","!!! EXCEPTION IN TestSigRatingMinus() !!!", false); } return false; }
+test bool TryTestSigRatingMinusMinus(){ try{ return CheckAndReport("SigScoresTests","TestSigRatingMinusMinus()", TestSigRatingMinusMinus());} catch: { CheckAndReport("SigScoresTests","!!! EXCEPTION IN TestSigRatingMinusMinus() !!!", false); } return false; }
+test bool TryScanColumnJava(){ try{ return CheckAndReport("SlocModuleTests","ScanColumnJava()", ScanColumnJava());} catch: { CheckAndReport("SlocModuleTests","!!! EXCEPTION IN ScanColumnJava() !!!", false); } return false; }
+test bool TryScanWhiteLineJavaFile(){ try{ return CheckAndReport("SlocModuleTests","ScanWhiteLineJavaFile()", ScanWhiteLineJavaFile());} catch: { CheckAndReport("SlocModuleTests","!!! EXCEPTION IN ScanWhiteLineJavaFile() !!!", false); } return false; }
+test bool TryScanSourceCodeLines(){ try{ return CheckAndReport("SlocModuleTests","ScanSourceCodeLines()", ScanSourceCodeLines());} catch: { CheckAndReport("SlocModuleTests","!!! EXCEPTION IN ScanSourceCodeLines() !!!", false); } return false; }
+test bool TryIndentTester(){ try{ return CheckAndReport("StringHelpersTests","IndentTester()", IndentTester());} catch: { CheckAndReport("StringHelpersTests","!!! EXCEPTION IN IndentTester() !!!", false); } return false; }
+test bool TryTabIndent(){ try{ return CheckAndReport("StringHelpersTests","TabIndent()", TabIndent());} catch: { CheckAndReport("StringHelpersTests","!!! EXCEPTION IN TabIndent() !!!", false); } return false; }
+test bool TryLineCountOfTwo(){ try{ return CheckAndReport("StringHelpersTests","LineCountOfTwo()", LineCountOfTwo());} catch: { CheckAndReport("StringHelpersTests","!!! EXCEPTION IN LineCountOfTwo() !!!", false); } return false; }
+test bool TryLineCountOfThree(){ try{ return CheckAndReport("StringHelpersTests","LineCountOfThree()", LineCountOfThree());} catch: { CheckAndReport("StringHelpersTests","!!! EXCEPTION IN LineCountOfThree() !!!", false); } return false; }
+test bool TryTestEncoding(){ try{ return CheckAndReport("StringHelpersTests","TestEncoding()", TestEncoding());} catch: { CheckAndReport("StringHelpersTests","!!! EXCEPTION IN TestEncoding() !!!", false); } return false; }
+test bool TryTestDecoding(){ try{ return CheckAndReport("StringHelpersTests","TestDecoding()", TestDecoding());} catch: { CheckAndReport("StringHelpersTests","!!! EXCEPTION IN TestDecoding() !!!", false); } return false; }
+test bool TryTestTrimAssumption(){ try{ return CheckAndReport("StringHelpersTests","TestTrimAssumption()", TestTrimAssumption());} catch: { CheckAndReport("StringHelpersTests","!!! EXCEPTION IN TestTrimAssumption() !!!", false); } return false; }
+test bool TryTestStringTokenFirst(){ try{ return CheckAndReport("StringHelpersTests","TestStringTokenFirst()", TestStringTokenFirst());} catch: { CheckAndReport("StringHelpersTests","!!! EXCEPTION IN TestStringTokenFirst() !!!", false); } return false; }
+test bool TryTestStringTokenLast(){ try{ return CheckAndReport("StringHelpersTests","TestStringTokenLast()", TestStringTokenLast());} catch: { CheckAndReport("StringHelpersTests","!!! EXCEPTION IN TestStringTokenLast() !!!", false); } return false; }
+test bool TryTestStringToken(){ try{ return CheckAndReport("StringHelpersTests","TestStringToken()", TestStringToken());} catch: { CheckAndReport("StringHelpersTests","!!! EXCEPTION IN TestStringToken() !!!", false); } return false; }
+test bool TryTestStringTokenOverLoad(){ try{ return CheckAndReport("StringHelpersTests","TestStringTokenOverLoad()", TestStringTokenOverLoad());} catch: { CheckAndReport("StringHelpersTests","!!! EXCEPTION IN TestStringTokenOverLoad() !!!", false); } return false; }
+test bool TryTestStringTokenOverLoad(){ try{ return CheckAndReport("StringHelpersTests","TestStringTokenOverLoad()", TestStringTokenOverLoad());} catch: { CheckAndReport("StringHelpersTests","!!! EXCEPTION IN TestStringTokenOverLoad() !!!", false); } return false; }
+test bool TryTestLargerStringToken(){ try{ return CheckAndReport("StringHelpersTests","TestLargerStringToken()", TestLargerStringToken());} catch: { CheckAndReport("StringHelpersTests","!!! EXCEPTION IN TestLargerStringToken() !!!", false); } return false; }
+test bool TryTestSubStringEquivalence(){ try{ return CheckAndReport("StringHelpersTests","TestSubStringEquivalence()", TestSubStringEquivalence());} catch: { CheckAndReport("StringHelpersTests","!!! EXCEPTION IN TestSubStringEquivalence() !!!", false); } return false; }
+test bool TryTestSubStringInt(){ try{ return CheckAndReport("StringHelpersTests","TestSubStringInt()", TestSubStringInt());} catch: { CheckAndReport("StringHelpersTests","!!! EXCEPTION IN TestSubStringInt() !!!", false); } return false; }
+test bool TryTestClipString(){ try{ return CheckAndReport("StringHelpersTests","TestClipString()", TestClipString());} catch: { CheckAndReport("StringHelpersTests","!!! EXCEPTION IN TestClipString() !!!", false); } return false; }
+test bool TryTestClipStringWithSplit(){ try{ return CheckAndReport("StringHelpersTests","TestClipStringWithSplit()", TestClipStringWithSplit());} catch: { CheckAndReport("StringHelpersTests","!!! EXCEPTION IN TestClipStringWithSplit() !!!", false); } return false; }
+test bool TryExpectEqualIntTest(){ try{ return CheckAndReport("TestHelpersTests","ExpectEqualIntTest()", ExpectEqualIntTest());} catch: { CheckAndReport("TestHelpersTests","!!! EXCEPTION IN ExpectEqualIntTest() !!!", false); } return false; }
+test bool TryExpectFalseIsEqualIntTest(){ try{ return CheckAndReport("TestHelpersTests","ExpectFalseIsEqualIntTest()", ExpectFalseIsEqualIntTest());} catch: { CheckAndReport("TestHelpersTests","!!! EXCEPTION IN ExpectFalseIsEqualIntTest() !!!", false); } return false; }
+test bool TryExpectNotEqualintTest(){ try{ return CheckAndReport("TestHelpersTests","ExpectNotEqualintTest()", ExpectNotEqualintTest());} catch: { CheckAndReport("TestHelpersTests","!!! EXCEPTION IN ExpectNotEqualintTest() !!!", false); } return false; }
+test bool TryExpectFalseIsNotEqualintTest(){ try{ return CheckAndReport("TestHelpersTests","ExpectFalseIsNotEqualintTest()", ExpectFalseIsNotEqualintTest());} catch: { CheckAndReport("TestHelpersTests","!!! EXCEPTION IN ExpectFalseIsNotEqualintTest() !!!", false); } return false; }
+test bool TryShowMeARedCell(){ try{ return CheckAndReport("TestHelpersTests","ShowMeARedCell()", ShowMeARedCell());} catch: { CheckAndReport("TestHelpersTests","!!! EXCEPTION IN ShowMeARedCell() !!!", false); } return false; }
+test bool TryShowMeAGreenCell(){ try{ return CheckAndReport("TestHelpersTests","ShowMeAGreenCell()", ShowMeAGreenCell());} catch: { CheckAndReport("TestHelpersTests","!!! EXCEPTION IN ShowMeAGreenCell() !!!", false); } return false; }
+test bool TryCheckColourCompare(){ try{ return CheckAndReport("TestHelpersTests","CheckColourCompare()", CheckColourCompare());} catch: { CheckAndReport("TestHelpersTests","!!! EXCEPTION IN CheckColourCompare() !!!", false); } return false; }
+test bool TryExpectTrueTestTrue(){ try{ return CheckAndReport("TestHelpersTests","ExpectTrueTestTrue()", ExpectTrueTestTrue());} catch: { CheckAndReport("TestHelpersTests","!!! EXCEPTION IN ExpectTrueTestTrue() !!!", false); } return false; }
+test bool TryExpectTrueTestFalse(){ try{ return CheckAndReport("TestHelpersTests","ExpectTrueTestFalse()", ExpectTrueTestFalse());} catch: { CheckAndReport("TestHelpersTests","!!! EXCEPTION IN ExpectTrueTestFalse() !!!", false); } return false; }
+test bool TryExpectFalseTestTrue(){ try{ return CheckAndReport("TestHelpersTests","ExpectFalseTestTrue()", ExpectFalseTestTrue());} catch: { CheckAndReport("TestHelpersTests","!!! EXCEPTION IN ExpectFalseTestTrue() !!!", false); } return false; }
+test bool TryExpectFalseTestTrue(){ try{ return CheckAndReport("TestHelpersTests","ExpectFalseTestTrue()", ExpectFalseTestTrue());} catch: { CheckAndReport("TestHelpersTests","!!! EXCEPTION IN ExpectFalseTestTrue() !!!", false); } return false; }
+test bool TryTestEqualFiles(){ try{ return CheckAndReport("TestHelpersTests","TestEqualFiles()", TestEqualFiles());} catch: { CheckAndReport("TestHelpersTests","!!! EXCEPTION IN TestEqualFiles() !!!", false); } return false; }
+test bool TryTestEqualFiles(){ try{ return CheckAndReport("TestHelpersTests","TestEqualFiles()", TestEqualFiles());} catch: { CheckAndReport("TestHelpersTests","!!! EXCEPTION IN TestEqualFiles() !!!", false); } return false; }
+test bool TryTestUnEqualFiles(){ try{ return CheckAndReport("TestHelpersTests","TestUnEqualFiles()", TestUnEqualFiles());} catch: { CheckAndReport("TestHelpersTests","!!! EXCEPTION IN TestUnEqualFiles() !!!", false); } return false; }
+test bool TrySmallSqlSample(){ try{ return CheckAndReport("Type2ClonesTests","SmallSqlSample()", SmallSqlSample());} catch: { CheckAndReport("Type2ClonesTests","!!! EXCEPTION IN SmallSqlSample() !!!", false); } return false; }
+test bool TrySingleCloneSample(){ try{ return CheckAndReport("Type2ClonesTests","SingleCloneSample()", SingleCloneSample());} catch: { CheckAndReport("Type2ClonesTests","!!! EXCEPTION IN SingleCloneSample() !!!", false); } return false; }
+test bool TryType2NumericClones(){ try{ return CheckAndReport("Type2ClonesTests","Type2NumericClones()", Type2NumericClones());} catch: { CheckAndReport("Type2ClonesTests","!!! EXCEPTION IN Type2NumericClones() !!!", false); } return false; }
+test bool TryResetList(){ try{ return CheckAndReport("Type2ClonesTests","ResetList()", ResetList());} catch: { CheckAndReport("Type2ClonesTests","!!! EXCEPTION IN ResetList() !!!", false); } return false; }
+test bool TryAddList(){ try{ return CheckAndReport("Type2ClonesTests","AddList()", AddList());} catch: { CheckAndReport("Type2ClonesTests","!!! EXCEPTION IN AddList() !!!", false); } return false; }
+test bool TryRemoveType(){ try{ return CheckAndReport("Type2ClonesTests","RemoveType()", RemoveType());} catch: { CheckAndReport("Type2ClonesTests","!!! EXCEPTION IN RemoveType() !!!", false); } return false; }
+test bool TryTestType3(){ try{ return CheckAndReport("Type3ClonesTests","TestType3()", TestType3());} catch: { CheckAndReport("Type3ClonesTests","!!! EXCEPTION IN TestType3() !!!", false); } return false; }
+test bool TryTestValidClone(){ try{ return CheckAndReport("Type3ClonesTests","TestValidClone()", TestValidClone());} catch: { CheckAndReport("Type3ClonesTests","!!! EXCEPTION IN TestValidClone() !!!", false); } return false; }
+test bool TryCheckLastMatchingLine(){ try{ return CheckAndReport("Type3ClonesTests","CheckLastMatchingLine()", CheckLastMatchingLine());} catch: { CheckAndReport("Type3ClonesTests","!!! EXCEPTION IN CheckLastMatchingLine() !!!", false); } return false; }
+test bool TryValidateCloneSize(){ try{ return CheckAndReport("Type3ClonesTests","ValidateCloneSize()", ValidateCloneSize());} catch: { CheckAndReport("Type3ClonesTests","!!! EXCEPTION IN ValidateCloneSize() !!!", false); } return false; }
 bool RunAllTests()
 {
 InitializeTestReport();
@@ -233,6 +350,10 @@ if(false == TryTestAssumeForLoop()){ Result = false;}
 if(false == TryTestIntegerDivision()){ Result = false;}
 if(false == TryAssumeIteratorIncrementing()){ Result = false;}
 if(false == TryDoWithTry()){ Result = false;}
+if(false == TryHowManyLoops()){ Result = false;}
+if(false == TryHowManyLoops2()){ Result = false;}
+if(false == TryAssumeForCanhaveTonsOfConditions()){ Result = false;}
+if(false == TryAssumeForConditionsAnd()){ Result = false;}
 if(false == TryTestTernaryOperator()){ Result = false;}
 if(false == TryTestInfixOperatorAnd()){ Result = false;}
 if(false == TryTestInfixOperatorOr()){ Result = false;}
@@ -247,6 +368,13 @@ if(false == TryTestDualDifferentClone()){ Result = false;}
 if(false == TryTestBraceCase()){ Result = false;}
 if(false == TryTestNoClone()){ Result = false;}
 if(false == TryTestMaxOfList()){ Result = false;}
+if(false == TryTestExtractSingleClass()){ Result = false;}
+if(false == TryTestExtractingMultipleClasses()){ Result = false;}
+if(false == TryTestRemovingDuplicates()){ Result = false;}
+if(false == TryTestGettingCloneClasses()){ Result = false;}
+if(false == TryTestDupesList()){ Result = false;}
+if(false == TrySmallSqlDiff()){ Result = false;}
+if(false == TrySmallSqlBigDiff()){ Result = false;}
 if(false == TryFindFilesInDirectory()){ Result = false;}
 if(false == TryFindFilesInEmptyDir()){ Result = false;}
 if(false == TryCheckFindNameInDir()){ Result = false;}
@@ -257,7 +385,15 @@ if(false == TryTestStrippingMultilineComments()){ Result = false;}
 if(false == TryTestStrippingExtension()){ Result = false;}
 if(false == TryTestSplittingIndexes()){ Result = false;}
 if(false == TryTestSplittingContent()){ Result = false;}
+if(false == TryTestExistingColor()){ Result = false;}
+if(false == TryTestDefaultColor()){ Result = false;}
+if(false == TryTestSamplePath()){ Result = false;}
+if(false == TryTestSamplePathBack()){ Result = false;}
 if(false == TryTestNormalizingFile()){ Result = false;}
+if(false == TryTestNormalizingIndexes()){ Result = false;}
+if(false == TryTestDefaultFilePath()){ Result = false;}
+if(false == TryTestFilePathWithColour()){ Result = false;}
+if(false == TryTestFilePathWithoutColor()){ Result = false;}
 if(false == TryCheckRed()){ Result = false;}
 if(false == TryCheckGreen()){ Result = false;}
 if(false == TryCheckYellow()){ Result = false;}
@@ -295,6 +431,23 @@ if(false == TryDistributionOk()){ Result = false;}
 if(false == TryDistributionRounding()){ Result = false;}
 if(false == TryFractionTest()){ Result = false;}
 if(false == TryPercentageTest()){ Result = false;}
+if(false == TryTestSampleSqlOverview()){ Result = false;}
+if(false == TryTestGenerationSampleIndexesForClass()){ Result = false;}
+if(false == TryTestGenerateTitleBox()){ Result = false;}
+if(false == TryTestGenerateBox()){ Result = false;}
+if(false == TryTestGenerateVBox()){ Result = false;}
+if(false == TryTestRenderFigure()){ Result = false;}
+if(false == TryTestGetClassName()){ Result = false;}
+if(false == TryTestExecOnMouseDown()){ Result = false;}
+if(false == TryTestExecOnMouseEnter()){ Result = false;}
+if(false == TryTestGenerateTooltip()){ Result = false;}
+if(false == TryTestExtractAndNormalizeIndexes()){ Result = false;}
+if(false == TryTestGenerateSampleIndexesForClass()){ Result = false;}
+if(false == TryAssumeRegexTrue()){ Result = false;}
+if(false == TryAssumeRegexWithColon()){ Result = false;}
+if(false == TryAssumeRegexWithEqual()){ Result = false;}
+if(false == TryAssumeRegexNoLeadingSpace()){ Result = false;}
+if(false == TryAssumeRegexNoTralingSpace()){ Result = false;}
 if(false == TryTestVolumePlusPlus()){ Result = false;}
 if(false == TryTestVolumePlus()){ Result = false;}
 if(false == TryTestVolumeNeutral()){ Result = false;}
@@ -348,12 +501,23 @@ if(false == TryExpectFalseTestTrue()){ Result = false;}
 if(false == TryTestEqualFiles()){ Result = false;}
 if(false == TryTestEqualFiles()){ Result = false;}
 if(false == TryTestUnEqualFiles()){ Result = false;}
+if(false == TrySmallSqlSample()){ Result = false;}
+if(false == TrySingleCloneSample()){ Result = false;}
+if(false == TryType2NumericClones()){ Result = false;}
+if(false == TryResetList()){ Result = false;}
+if(false == TryAddList()){ Result = false;}
+if(false == TryRemoveType()){ Result = false;}
+if(false == TryTestType3()){ Result = false;}
+if(false == TryTestValidClone()){ Result = false;}
+if(false == TryCheckLastMatchingLine()){ Result = false;}
+if(false == TryValidateCloneSize()){ Result = false;}
 FinalizeTestReport();
 return Result;
 }
 module Quotes
 import IO;
 import List;
+import \data::Options;
 import \util::Math;
 public list[str] WaitingQuotes = [
 "If A equals success, then the formula is A equals X plus Y plus Z. X is work. Y is play. Z is keep your mouth shut.",
@@ -663,7 +827,6 @@ public list[str] WaitingQuotes = [
 "Albert Einstein said the definition of insanity is doing the same thing over and again and expecting different results, they have a clear road map from those three efforts... this is an enormous waste of time, energy and money."
 ];
 int GlobalCounter = 0;
-bool QuotesEnabled = false;
 void PrintQuote()
 {
 PrintQuote(GlobalCounter);
@@ -673,7 +836,7 @@ void PrintQuote(int Counter) = PrintQuote(Counter, 50);
 void PrintQuote(int Counter, int QuoteInterval)
 {
 if((0 == Counter % QuoteInterval)
-&& (true == QuotesEnabled))
+&& (true == Check_PrintQuotes))
 {
 println(WaitingQuotes[arbInt(size(WaitingQuotes))]) ;
 }
@@ -776,173 +939,199 @@ writeFile(toLocation("<OutputDir><SpecificName>/index.html"), TotalHtml);
 }
 module \clones::CloneAlgorithm
 import DateTime;
+import FileLocations;
 import IO;
 import List;
 import Map;
 import Quotes;
 import Set;
-import \metrics::SigScores;
+import \data::CloneData;
+import \data::DataTypes;
+import \helpers::CloneHelpers;
 import \helpers::Debugging;
 import \helpers::ListHelpers;
 import \helpers::MathHelpers;
 import \helpers::StringHelpers;
+import \helpers::TestHelpers;
 import \util::Math;
-alias TCloneList = list[TClone];
-alias TClone = tuple[int Start, int Size];
-alias TCloneClass = list[TClone];
-alias TCloneClasses = list[TCloneClass];
-int GetClonesPercentage(loc FileToCheck)
-{
-list[str] Lines = readFileLines(FileToCheck);
-return Percentage(GetClonesForFile(FileToCheck), size(Lines));
-}
-int GetClonesForFile(loc FileToCheck)
-{
-int Result = GetClonesForFile(HashFile(FileToCheck));
-return Result;
-}
-int GetClonesForFile(THashInfo Information) = ClonedLines(GetClonesList(Information));
+import \metrics::SigScores;
+int GetClonesPercentage(loc FileToCheck) = Percentage(GetClonesForFile(FileToCheck), size(readFileLines(FileToCheck)));
+int GetClonesForFile(loc FileToCheck) = GetClonesForFile(HashFile(FileToCheck));
+int GetClonesForFile(THashInfo Information) = ClonedLines(GetCloneList(Information));
 int ClonedLines([]) = 0;
 int ClonedLines(TCloneList Clones) = sum(Clones.Size);
-TStringMap Dictionary = ();
-THashMap Lines = ();
-int InvalidCloneStart = -1;
-TCloneClasses GetClonesClasses(loc FileToCheck) = GetClonesClasses(HashFile(FileToCheck));
-TCloneClasses GetClonesClasses(THashInfo Information)
-{
-Start = now();
-PrepareProcess(Information);
-TCloneClasses CloneClasses = [];
-for(LineNumber <- [0..size(Lines)], (Lines[LineNumber] != InvalidCloneStart))
-{
-PrintQuote(LineNumber, 250);
-CloneClasses += AddCloneClasses(Lines, LineNumber, CloneClasses);
-}
-Duration("Clone classes", Start);
-return CloneClasses;
-}
-TCloneClasses AddCloneClasses(THashMap Lines, int LineNumber, TCloneClasses CloneClasses)
-{
-list[int] Dupes = GetDupes(Lines, LineNumber);
-Dupes = RemovePreviousDupes(CloneClasses, Dupes, LineNumber);
-TCloneList Clones = GetClones(Lines, LineNumber, Dupes);
-return ExtractCloneClasses(LineNumber, Clones);
-}
-TCloneClasses ExtractCloneClasses(int LineNumber, []) = [];
-TCloneClasses ExtractCloneClasses(int LineNumber, TCloneList Clones)
-{
-TCloneClasses ResultClasses = [];
-for(Size <- [min(Clones.Size) ..  max(Clones.Size)+1], HasClones(Clones, Size))
-{
-TCloneClass ThisClass = [<LineNumber, Size>];
-for(Clone <- Clones, Size == Clone.Size)
-{
-ThisClass += Clone;
-}
-ResultClasses += [ThisClass];
-}
-return ResultClasses;
-}
-bool HasClones(TCloneList Clones, int Size)
-{
-for(Clone <- Clones, Size == Clone.Size)
-{
-return true;
-}
-return false;
-}
-list[int] RemovePreviousDupes(TCloneClasses CloneClasses, list[int] Dupes, int LineNumber)
-{
-if(false == KnownLine(CloneClasses, LineNumber))
-{
-return Dupes;
-}
-list[int] NewDupes = [];
-for(Dupe <- Dupes)
-{
-if((false == KnownLine(CloneClasses, Dupe))
-|| (false == KnownLine(CloneClasses, LineNumber)))
-{
-NewDupes += Dupe;
-}
-}
-return NewDupes;
-}
-bool KnownLine(TCloneClasses CloneClasses, int LineNumber)
-{
-for(CloneClass <- CloneClasses, AlreadyPartOfClone(CloneClass, LineNumber))
-{
-return true;
-}
-return false;
-}
-TCloneList GetClonesList(loc FileToCheck) = GetClonesList(HashFile(FileToCheck));
-TCloneList GetClonesList(THashInfo Information)
-{
-Start = now();
-PrepareProcess(Information);
-TCloneList Clones = [];
-for(LineNumber <- [0..size(Lines)], (Lines[LineNumber] != InvalidCloneStart))
-{
-PrintQuote(LineNumber, 250);
-list[int] Dupes = GetDupes(Lines, LineNumber);
-TCloneList CurrentClones = GetClones(Lines, LineNumber, Dupes);
-Clones = InsertNewClones(Clones, CurrentClones);
-Clones = MergeClonesWithEqualStart(Clones, CurrentClones);
-}
-Duration("Found all clones, now merging overlapping clones!", Start);
-Start = now();
-Clones = MergeClonesWithOverlap(Clones);
-Duration("Merged all clones!", Start);
-return Clones;
-}
 void PrepareProcess(THashInfo Information)
 {
 Lines = Information.HashMap;
 Dictionary = Information.StringMap;
 InvalidCloneStart = GetKey(Dictionary, "}");
 }
-int GetKey(TStringMap Dictionary, str Key)
+int GetKey(TStringMap Dictionary, str Key) = Key in Dictionary ? Dictionary[Key] : -1 ;
+TCloneClasses GetAndStoreClasses(loc FileToCheck) = GetAndStoreClasses(GetClonePairs(FileToCheck));
+TCloneClasses GetAndStoreClasses(TClonePairs Pairs)
 {
-try
+KnownClasses = GetMergedClasses(Pairs);
+return KnownClasses;
+}
+TCloneClasses GetMergedClasses(TClonePairs Pairs) = MergeCloneClasses(CreateClassesFromPairs(Pairs));
+TCloneClasses GetCloneClasses(loc FromFile) = CreateClassesFromPairs(GetClonePairs(FromFile));
+TCloneClasses CreateClassesFromPairs(TClonePairs Pairs)
 {
-println("Invalid key: <Dictionary[Key]>");
-return Dictionary[Key];
-}
-catch:
+DebugPrint("Creating Clone classes");
+TCloneClasses CloneClasses = {};
+while(0 != size(Pairs))
 {
-println("Invalid key");
+DebugPrint("<size(Pairs)> pairs left");
+TCloneClass ThisClass = {};
+<Pair, Pairs> = pop(Pairs);
+for(SubPair <- Pairs, SameClones(Pair, SubPair))
+{
+DebugPrint("Merging <Pair> and <SubPair>");
+ThisClass += {Pair.First, Pair.Second, SubPair.First, SubPair.Second};
 }
-return -1;
+if(false == isEmpty(ThisClass))
+{
+CloneClasses += {ThisClass};
 }
-int CloneSize = 6;
+}
+return CloneClasses;
+}
+TCloneClasses MergeCloneClasses(TCloneClasses CloneClasses)
+{
+Start = now();
+TCloneClasses Output = TryMerge(CloneClasses);
+while(CloneClasses != Output)
+{
+CloneClasses = Output;
+Output = TryMerge(CloneClasses);
+}
+Duration("Merging completed.", Start);
+return Output;
+}
+TCloneClasses TryMerge(TCloneClasses CloneClasses)
+{
+TCloneClasses Input = CloneClasses;
+DebugPrint("Starting iteration, <size(CloneClasses)> passes left.");
+while(0 < size(CloneClasses))
+{
+<Class, CloneClasses> = takeOneFrom(CloneClasses);
+for(TClone Clone <- Class)
+{
+for(TCloneClass CloneClass <- CloneClasses, Clone in CloneClass)
+{
+return CombineClass(Input, Class, CloneClass);
+}
+}
+}
+return Input;
+}
+TCloneClasses CombineClass(TCloneClasses Original, TCloneClass First, TCloneClass Second)
+{
+Original -= {First};
+Original -= {Second};
+TCloneClass CombinedSet = union({First,Second});
+DebugPrint("Combining <First> and <Second> to <CombinedSet>");
+return Original + {CombinedSet};
+}
+bool SameClones(TClonePair FirstClone, TClonePair SecondClone)
+{
+<First, Second> = FirstClone;
+<Third, Fourth> = SecondClone;
+return((First == Third)
+|| (First == Fourth)
+|| (Second == Third)
+|| (Second == Fourth));
+}
+TClonePairs GetClonePairs(loc FileToCheck) = GetClonePairs(HashFile(FileToCheck));
+TClonePairs GetClonePairs(THashInfo Information)
+{
+Start = now();
+PrepareProcess(Information);
+TClonePairs ClonePairs = [];
+ListOfDupes = SanitizeDupes(ListWithDupes(Lines), CloneSize, InvalidCloneStart);
+Size = size(ListOfDupes);
+for(LineNumber <- [0..Size])
+{
+PrintQuote(LineNumber, 250);
+<LineNumber, ListOfDupes> = pop(ListOfDupes);
+list[int] Dupes = GetDupes(Lines, ListOfDupes, LineNumber, ClonePairs);
+ClonePairs += GetPairs(Lines, LineNumber, Dupes);;
+}
+Duration("Extracted all pairs.", Start);
+return ClonePairs;
+}
+TCloneList GetCloneList(loc FileToCheck) = GetCloneList(HashFile(FileToCheck));
+TCloneList GetCloneList(THashInfo Information)
+{
+Start = now();
+PrepareProcess(Information);
+TCloneList Clones = [];
+ListOfDupes = SanitizeDupes(ListWithDupes(Lines), CloneSize, InvalidCloneStart);
+Size = size(ListOfDupes);
+for(LineNumber <- [0..Size])
+{
+PrintQuote(LineNumber, 250);
+<LineNumber, ListOfDupes> = pop(ListOfDupes);
+list[int] Dupes = GetDupes(Lines, ListOfDupes, LineNumber, []);
+CurrentClones = GetClones(Lines, LineNumber, Dupes);
+Clones = InsertNewClones(Clones, CurrentClones);
+Clones = MergeClonesWithEqualStart(Clones, CurrentClones);
+}
+Clones = MergeClonesWithOverlap(Clones);
+Duration("Extracted all clones.", Start);
+return Clones;
+}
 TCloneList GetClones(THashMap Lines, int LineNumber, list[int] Dupes)
 {
-TCloneList Results = [];
+TCloneList Clones = [];
 for(Dupe <- Dupes)
 {
 if(true == MinimumCloneSizeReached(Lines, LineNumber, Dupe))
 {
-Results += <Dupe, CalcCloneSize(Lines, LineNumber, Dupe)>;
+int CloneSize = CalcCloneSize(Lines, LineNumber, Dupe);
+Clones += <Dupe, CloneSize>;
 }
 }
-return Results;
+return Clones;
 }
-list[int] GetDupes(THashMap Lines, int LineNumber)
+TClonePairs GetPairs(THashMap Lines, int LineNumber, list[int] Dupes)
+{
+TClonePairs Pairs = [];
+for(Dupe <- Dupes)
+{
+if(true == MinimumCloneSizeReached(Lines, LineNumber, Dupe))
+{
+int CloneSize = CalcCloneSize(Lines, LineNumber, Dupe);
+Pairs += < <LineNumber, CloneSize>, <Dupe, CloneSize> >;
+}
+}
+return Pairs;
+}
+list[int] GetDupes(THashMap Lines, list[int] AllDupes, int LineNumber, TClonePairs ClonePairs)
 {
 int Find = Lines[LineNumber];
 list[int] Dupes = [];
-for(n <- [LineNumber+1 .. size(Lines)], Find == Lines[n])
+for(Dupe <- AllDupes, (Find == Lines[Dupe]), false == SameAsPreviousPairs(Dupe, LineNumber, ClonePairs))
 {
-Dupes += n;
+Dupes += Dupe;
 }
 return Dupes;
 }
-bool AlreadyPartOfClone(TCloneList Clones, int LineNumber)
+bool SameAsPreviousPairs(int Dupe, int LineNumber, []) = false;
+bool SameAsPreviousPairs(int Dupe, int LineNumber, TClonePairs ClonePairs)
 {
-for(Clone <- Clones, InLimits(Clone.Start, LineNumber, Clone.Start + Clone.Size))
+for(<First, Second> <- reverse(ClonePairs))
 {
+if(LineNumber > LastLine(First))
+{
+return false;
+}
+if((true == InClone(Second, Dupe))
+&& (true == InClone(First, LineNumber)))
+{
+DebugPrint("Subsumption <LineNumber> : <Dupe> is in \<<First>,<Second>\>");
 return true;
+}
 }
 return false;
 }
@@ -976,9 +1165,7 @@ for(int Second <- [(First+1) .. size(TotalClones)])
 TClone SecondClone = TotalClones[Second];
 if(true == HasOverlap(FirstClone, SecondClone))
 {
-DebugPrint("<FirstClone> overlaps with <SecondClone>");
 TClone MergedClone = MergeClones(FirstClone, SecondClone);
-DebugPrint("Added this <MergedClone> to the list");
 MergedList += MergedClone;
 SkipIndexes += Second;
 WasMerged = true ;
@@ -986,19 +1173,16 @@ WasMerged = true ;
 }
 if(false == WasMerged)
 {
-DebugPrint("Added <FirstClone> to the list");
 MergedList += FirstClone;
 }
 }
 if(TotalClones != MergedList)
 {
-DebugPrint("Made some changes, go another iteration!");
 MergedList = MergeClonesWithOverlap(MergedList);
 }
 return MergedList;
 }
 bool HasOverlap(TClone First, TClone Second) = InLimits(First.Start, Second.Start, LastLine(First));
-int LastLine(TClone Clone) = (Clone.Start + Clone.Size)-1;
 TClone MergeClones(TClone First, TClone Second)
 {
 int NewStart = min(First.Start, Second.Start);
@@ -1027,30 +1211,18 @@ int CalcCloneSize(THashMap Lines, int LineNumber, int CloneLine)
 int Distance = CloneLine - LineNumber;
 for(n <- [CloneSize .. size(Lines)], CodeOverlapsClone(n, Distance) || (EndOfCloneReached(Lines, LineNumber+n, CloneLine+n)))
 {
-println("<LineNumber>, \<<CloneLine>, <n>\>");
+DebugPrint("<LineNumber>, \<<CloneLine>, <n>\>");
 return n;
 }
 return size(Lines);
 }
-list[str] RetrieveDuplicatesFromFile(loc FileToCheck)
-{
-list[str] Lines = readFileLines(FileToCheck);
-ScannedLines = {};
-return
-for(Line <- Lines, "}" != Line)
-if(Line in ScannedLines)
-append Line;
-else
-ScannedLines += Line;
-}
-int LineIncrement([]) = 1;
-int LineIncrement(TCloneList Clones) = max(Clones.Size);
 bool EndOfCloneReached(THashMap Lines, int LineNumber, int CloneLine) = (CloneLine >= size(Lines)) || (Lines[LineNumber] != Lines[CloneLine]);
 bool CodeOverlapsClone(int Count, int Distance) = (Count >= Distance);
 module \clones::Type1Clones
 import DateTime;
 import FileLocations;
 import IO;
+import Set;
 import ParseTree;
 import Quotes;
 import vis::ParseTree;
@@ -1059,7 +1231,21 @@ import \helpers::Debugging;
 import \helpers::FileHelpers;
 import \helpers::ListHelpers;
 import lang::java::\syntax::Java15;
-void CreateAllOutput()
+import \data::CloneData;
+import \data::DataTypes;
+TCloneClasses GetSmallSqlMergedClasses() = GetAndStoreClasses(SmallSqlContent);
+TCloneClasses GetHsqlDbMergedClasses() = GetAndStoreClasses(HsqlDbContent);
+TCloneClasses GetSoftwareEvolutionMergedClasses() = GetAndStoreClasses(SoftwareEvolutionContent);
+TCloneList GetSmallSqlCloneList() = GetCloneList(SmallSqlContent);
+TCloneClasses GetSmallSqlCloneClasses() = CreateClassesFromPairs(GetSmallSqlClonePairs());
+TClonePairs GetSmallSqlClonePairs() = GetClonePairs(SmallSqlContent);
+TCloneList GetHsqlDbCloneList() = GetClonesList(HsqlDbContent);
+TCloneClasses GetHsqlDbCloneClasses() = GetCloneClasses(HsqlDbContent);
+TClonePairs GetHsqlDbClonePairs() = GetClonePairs(HsqlDbContent);
+TCloneList GetSoftwareEvolutionCloneList() = GetClonesList(SoftwareEvolutionContent);
+TCloneClasses GetSoftwareEvolutionCloneClasses() = GetCloneClasses(SoftwareEvolutionContent);
+TClonePairs GetSoftwareEvolutionClonePairs() = GetClonePairs(SoftwareEvolutionContent);
+void CreateAllIntermediateOutput()
 {
 CreateIntermediateOutput(EnumerateDirFiles(|project:
 CreateIntermediateOutput("smallsql", SmallSqlIntermediate, SmallSqlIndexes, SmallSqlContent);
@@ -1084,33 +1270,24 @@ Start = now();
 SplitIndexedFile(ProjectIntermediate, ProjectFilesIndexes, ProjectFilesContent);
 Duration("Done splitting indexed file.", Start);
 }
-TCloneList GetSmallSqlClones()
-{
-TCloneList Clones = GetClonesList(SmallSqlContent);
-return Clones;
-}
-TCloneClasses GetSmallSqlCloneClasses()
-{
-TCloneClasses CloneClasses = GetClonesClasses(SmallSqlContent);
-return CloneClasses;
-}
 module \clones::Type2Clones
 import FileLocations;
 import IO;
 import String;
+import \data::DataTypes;
+import \data::Options;
 import \helpers::Debugging;
 import \helpers::ListHelpers;
 import \helpers::RegexHelpers;
 void CreateAllOutput()
 {
-Type2ClonesSmallSql();
-Type2ClonesHsqlDb();
+Type2ContentSmallSql();
+Type2ContentsHsqlDb();
+Type2ContentSoftwareEvolution();
 }
-void Type2ClonesSmallSql() = CreateType2Output(SmallSqlContent, SmallSqlContent_Type2);
-void Type2ClonesHsqlDb() = CreateType2Output(HsqlDbContent, HsqlDbContent_Type2);
-public bool RemoveNumbers = false;
-public bool RemoveNames = false;
-public bool RemoveTypes = false;
+void Type2ContentSmallSql() = CreateType2Output(SmallSqlContent, SmallSqlContent_Type2);
+void Type2ContentsHsqlDb() = CreateType2Output(HsqlDbContent, HsqlDbContent_Type2);
+void Type2ContentSoftwareEvolution() = CreateType2Output(SoftwareEvolutionContent, SoftwareEvolutionContent_type);
 private str TypeChar = "ﺝ" ;
 private str NumChar = "ﻝ";
 private str NameChar = "ﻷ";
@@ -1126,9 +1303,9 @@ OutputLines += Line;
 }
 writeFile(OutputFile, replaceAll(JoinList(OutputLines), " ", ""));
 }
-str ReplaceNumbers(str Input) = RemoveNumbers ? DoReplacement(Input) : Input ;
-str ReplaceNames(str Input) = RemoveNames ? Input : Input ;
-str ReplaceTypes(str Input) = RemoveTypes ? StripTypes(Input) : Input ;
+str ReplaceNumbers(str Input) = Check_ReplaceNumbers ? DoReplacement(Input) : Input ;
+str ReplaceNames(str Input) = Check_ReplaceNames ? Input : Input ;
+str ReplaceTypes(str Input) = Check_ReplaceTypes ? StripTypes(Input) : Input ;
 str StripTypes(str Line) = ReplaceTypes(Line, TypesToReplace, TypeChar);
 str DoReplacement(str Line)
 {
@@ -1160,7 +1337,7 @@ Line = replaceAll(Line, "<Token><Token>", Token);
 }
 return Line;
 }
-str ReplaceTypes(str Line, list[str] Types, str Replacement)
+str ReplaceTypes(str Line, set[str] Types, str Replacement)
 {
 for(Type <- Types, startsWith(Line, Type))
 {
@@ -1169,19 +1346,190 @@ return replaceAll(Line, Type, Replacement);
 }
 return Line;
 }
+module clones::Type3Clones
+import FileLocations;
+import IO;
+import List;
+import Map;
+import Set;
+import \clones::CloneAlgorithm;
+import \data::CloneData;
+import \data::DataTypes;
+import \helpers::CloneHelpers;
+import \helpers::Debugging;
+import \helpers::StringHelpers;
+import \util::Math;
+int TheCloneSize = 6;
+TClonePairs Type3ClonesSmallSql() = FindType3ClonePairs(SmallSqlContent);
+TClonePairs Type3ClonesHsqlDb() = FindType3ClonePairs(HsqlDbContent);
+TClonePairs Type3ClonesSoftwareEvolution() = FindType3ClonePairs(SoftwareEvolutionContent);
+TClonePairs FindType3ClonePairs(loc FileToCheck) = FindType3ClonePairs(HashFile(FileToCheck));
+TClonePairs FindType3ClonePairs(THashInfo Information)
+{
+PrepareProcess(Information);
+TClonePairs ClonePairs = [];
+list[int] DuplicatedLines = ListWithDupes(Lines);
+DuplicatedLines = SanitizeDupes(DuplicatedLines, 1, InvalidCloneStart);
+while(0 < size(DuplicatedLines))
+{
+<DuplicatedLine, DuplicatedLines> = pop(DuplicatedLines);
+list[int] Dupes = GetDupes(Lines, DuplicatedLines, DuplicatedLine, ClonePairs);
+for(Dupe <- Dupes)
+{
+int LastMatching = GetLastMatchingLine(Lines, DuplicatedLine, Dupe);
+int CurrentCloneSize = LastMatching - DuplicatedLine;
+int DuplicatedLines = CalcDuplicatedLines(Lines, DuplicatedLine, Dupe, CurrentCloneSize);
+if((CurrentCloneSize > CloneSize)
+&& (CloneSize <= DuplicatedLines))
+{
+ThisPair = <<DuplicatedLine, CurrentCloneSize>, <Dupe, CurrentCloneSize>>;
+ClonePairs += ThisPair;
+DebugPrint("<ThisPair>");
+}
+}
+}
+return ClonePairs;
+}
+int CalcDuplicatedLines(loc File, int Line, int Dupe, int Size) = CalcDuplicatedLines(HashFile(File).HashMap , Line, Dupe, Size);
+int CalcDuplicatedLines(THashMap Lines, int Line, int Dupe, int Size)
+{
+int MatchingLines = 0;
+bool Found = false;
+for(n <- [0 .. Size+1])
+{
+for(i <- [0 .. Size+1], (false == Found), (Dupe + i) < size(Lines), Lines[Line+n] == Lines[Dupe+i])
+{
+MatchingLines += 1;
+Found = true;
+}
+Found = false;
+}
+return MatchingLines;
+}
+int GetLastMatchingLine(loc File, int LineNumber, int Dupe) = GetLastMatchingLine(HashFile(File).HashMap, LineNumber, Dupe);
+int GetLastMatchingLine(THashMap Lines, int LineNumber, int Dupe)
+{
+Size = 0;
+int Dist = 0;
+int LastDist = 0;
+Distance = Dupe - LineNumber;
+while(false == CodeOverlapsClone(Size, Distance))
+{
+LastDist = Dist;
+Dist = HasOverlap(Lines, LineNumber, Dupe);
+if(-1 == Dist)
+{
+break;
+}
+LineNumber += 1;
+Dupe += 1;
+Size +=1;
+}
+return LineNumber+LastDist;
+}
+int MaxDistance = 4;
+int HasOverlap(THashMap Lines, int LineNumber, int Dupe)
+{
+Limit = size(Lines);
+for(L <- [0 .. MaxDistance + 1])
+{
+for(D <- [0 .. MaxDistance + 1], Dupe+D < Limit)
+{
+if(Lines[LineNumber+L] == Lines[Dupe+D])
+{
+return max(L,D);
+}
+}
+}
+return -1;
+}
+module \data::CloneData
+import FileLocations;
+import IO;
+import List;
+import \data::DataTypes;
+import \helpers::CloneHelpers;
+import \helpers::FileHelpers;
+import \helpers::MathHelpers;
+import \util::Math;
+public TStringMap Dictionary = ();
+public THashMap Lines = ();
+public int InvalidCloneStart = -1;
+public int CloneSize = 6;
+public TCloneClasses KnownClasses = {};
+public list[str] ColoredIndexes = [];
+TCloneClasses GetCloneClasses(int LineNumber)
+{
+TotalClasses = {};
+for(CloneClass <- KnownClasses)
+{
+for(Clone <- CloneClass, InClone(Clone, LineNumber))
+{
+TotalClasses += {CloneClass};
+}
+}
+return TotalClasses;
+}
+list[list[str]] GetDiffData(TCloneClasses CloneClasses)
+{
+list[list[str]] TotalDiffs = [];
+for(CloneClass <- CloneClasses)
+{
+for(Clone <- CloneClass)
+{
+list[str] ThisClone = [];
+for(n <- [max(0,Clone.Start-2) .. min(size(ColoredIndexes),LastLine(Clone)+2)])
+{
+ThisClone += ColoredIndexes[n];
+}
+TotalDiffs += [ThisClone];
+}
+}
+return TotalDiffs;
+}
+module \data::DataTypes
+alias TCloneList = list[TClone];
+alias TClone = tuple[int Start, int Size];
+alias TCloneClass = set[TClone];
+alias TCloneClasses = set[TCloneClass];
+alias TClonePairs = list[TClonePair];
+alias TClonePair = tuple[TClone First, TClone Second];
+alias TCloneInfo = tuple[TCloneList CloneList, TClonePairs ClonePairs];
+alias THashInfo = tuple[THashMap HashMap, TStringMap StringMap];
+alias THashMap = map[int,int];
+alias TStringMap = map[str Source, int Encoding];
+module \data::Options
+import IO;
+import List;
+import Set;
+import \helpers::Debugging;
+import \graphics::ControlPanel;
+public bool Check_ShowEmtpyFiles = false;
+public bool Check_ReplaceNumbers = false;
+public bool Check_ReplaceNames = false ;
+public bool Check_ReplaceTypes = false ;
+public bool Check_PrintDebug = true;
+public bool Check_PrintQuotes = false ;
+public bool Check_EnableTiming = true ;
+public str Switch_CloneType = "Type 1" ;
 void ResetTypes()
 {
+DebugPrint("Resetting types");
 TypesToReplace = [];
 }
 void AddType(str Filter)
 {
+DebugPrint("Adding <Filter> to types");
+if(false == (Filter in TypesToReplace))
+{
 TypesToReplace += Filter;
+}
 }
 void RemoveType(str Filter)
 {
-TypesToReplace = RemoveFromList(Filter);
+DebugPrint("Removing <Filter> from types");
+TypesToReplace -= Filter;
 }
-list[str] RemoveFromList(str Filter) = [Type | Type <- TypesToReplace, Filter != Type];
 public list[str] TypesToReplace = [
 "private int ",
 "String ",
@@ -1194,42 +1542,95 @@ public list[str] TypesToReplace = [
 "final String ",
 "bool "
 ];
+void PrintOptions()
+{
+println("Show empty files: <Check_ShowEmtpyFiles>");
+println("Replace number: <Check_ReplaceNumbers>");
+println("Replace names: <Check_ReplaceNames>");
+println("Replace types: <Check_ReplaceTypes>");
+println("Show debug: <Check_PrintDebug>");
+println("Show quotes: <Check_PrintQuotes>");
+println("Show durations: <Check_EnableTiming>");
+}
 module graphics::ControlPanel
+import IO;
+import List;
 import vis::Figure;
 import vis::Render;
+import CloneVisualization;
 import FileLocations;
-import \clones::Type2Clones;
+import \data::Options;
 import \graphics::DetailView;
 void ControlPanel()
 {
-tmap = treemap([box(vcat([button("SmallSql", void(){DiffSmallSql();}),
-button("HsqlDb", void(){DiffHsqlDb();})
-])),
-box(vcat([text("Options"),
-ChoiceOptions()
-])),
-box(hcat([text("Types", top()),
-ComboTypes()
-]))
-]);
-render(tmap);
+Figure Box = box(hcat([	box(vcat([ChoiceTypes()]), size(400, 500), resizable(false), lineColor("white")),
+box(vcat([Buttons(), ChoiceOptions(), CheckBoxList()]), size(200, 500), resizable(false), lineColor("white"))
+]), shadow(true), size(700, 400), resizable(false), lineColor("white"));
+render("Control Panel", Box);
 }
 public Figure ChoiceOptions()
 {
 str state = "Type 1";
-return vcat([ choice(["Type 1","Type 2","Type 3","Type 4", "Priming Type"], void(str s){ state = s;}),
-text(str(){return "Current state: " + state ;}, left())
-]);
+return box(vcat([ text("Options"),
+choice(["Type 1","Type 2","Type 3"], void(str s){Switch_CloneType = s;})
+]), size(200, 200), resizable(false), top());
 }
-public Figure ComboTypes()
+public Figure ChoiceTypes()
 {
-str state = "";
-return vcat([ combo(TypesToReplace, void(str s){ state = s;}),
-text(str(){return "Current state: " + state ;}, left())
-]);
+str State = "";
+str Input = "";
+return box(vcat([
+choice(TypesToReplace, void(str s){ State = s;}, size(400, 350), resizable(false), left()),
+hcat([text("Types "),
+textfield("", void(str s){ Input = s;}, size(250, 30), resizable(false)),
+button(" + ", void(){Add(Input);}, size(30, 30), resizable(false)),
+button(" - ", void(){Delete(State);}, size(30, 30), resizable(false)),
+button(" x ", void(){Clear();}, size(30, 30), resizable(false))
+], size(400, 40), resizable(false), left()),
+box(text("Don\'t forget to hit enter before pressing the button"))
+]), size(400, 350), resizable(false), left());
 }
-void DiffSmallSql() = GenerateDiff(SampleFile("Visu/VisuSampleResult.txt"), SampleFile("Visu/VisuSampleResult2.txt"));
-void DiffHsqlDb() = GenerateDiff(SampleFile("Visu/VisuSampleResult.txt"), SampleFile("Visu/VisuSampleResult2.txt"));
+public list[Figure] CheckBoxes = [
+checkbox("Show uncloned files", void(bool s){ Check_ShowEmtpyFiles = s;}),
+checkbox("Replace numbers (type 2)", void(bool s){ Check_ReplaceNumbers = s;}),
+checkbox("Replace names (type 2)", void(bool s){ Check_ReplaceNames = s;}),
+checkbox("Replace types (type 2)", void(bool s){ Check_ReplaceTypes = s;}),
+checkbox("Show debug output", void(bool s){ Check_PrintDebug = s;}),
+checkbox("Print Quotes", void(bool s){ Check_PrintQuotes = s;}),
+checkbox("Enable timing", void(bool s){ Check_EnableTiming = s;})
+];
+int CheckBoxSize() = 25 * size(CheckBoxes);
+public Figure CheckBoxList() = box(
+vcat(CheckBoxes),
+size(200,CheckBoxSize()),
+resizable(false),
+lineColor("white")
+);
+void Add(str Type)
+{
+if(Type != "")
+{
+AddType(Type);
+}
+}
+void Delete(str Type)
+{
+if(Type != "")
+{
+RemoveType(Type);
+}
+}
+void Clear()
+{
+ResetTypes();
+}
+public Figure Buttons()
+{
+return box(vcat([button("SmallSql", void(){HandleSmallSql();}, size(80, 30), resizable(false)),
+button("HsqlDb", void(){HandleHsqlDb();}, size(80, 30), resizable(false)),
+button("Software Evolution", void(){HandleSoftwareEvolution();}, size(80, 30), resizable(false))
+], shrink(0.8), gap(10)), gap(10), size(100, 50), resizable(false), lineColor("white"));
+}
 module \graphics::DetailView
 import IO;
 import String;
@@ -1237,6 +1638,7 @@ import List;
 import vis::Figure;
 import vis::Render;
 import vis::KeySym;
+import \helpers::Debugging;
 import \helpers::FileHelpers;
 import \helpers::JavaHelpers;
 import \helpers::StringHelpers;
@@ -1253,6 +1655,7 @@ void GenerateDiff(loc FirstLoc, loc SecondLoc) = GenerateDiff([FirstLoc, SecondL
 void GenerateDiff(list[loc] Locations) = GenerateDiff([ readFileLines(Location) | Location <- Locations]);
 void GenerateDiff(list[list[str]] Clones)
 {
+DebugPrint("Size of Clones: <size(Clones)>");
 list[Figure] Boxes = [];
 for(Clone <- Clones)
 {
@@ -1262,16 +1665,32 @@ RenderFigure("Comparer", hcat(Boxes, hgap(3)));
 }
 Figure GenerateBox(list[str] indexedLines)
 {
-list[Figure] boxList = [];
-list[str] inputLines = readFileLines(SampleFile(GetFilePath(indexedLines[0])));
+str FilePath = GetFilePath(indexedLines[0]);
+list[str] inputLines = readFileLines(SampleFile(FilePath));
+list[Figure] boxList = [GenerateTitleBox("File: <FilePath>")];
 for(i <- [0 .. size(indexedLines)])
 {
-boxList += GenerateBox("<i+1>: <inputLines[i]>", indexedLines[i]);
+int FileLineNumber = LineNumber(indexedLines[i])-1;
+{
+boxList += GenerateBox("<FileLineNumber> : <inputLines[FileLineNumber]>", indexedLines[i]);
+}
 }
 return box(vcat(boxList));
 }
 Figure GenerateBox(Figure fig) = box(fig);
-Figure GenerateBox(str inputLine, str indexedLine) = box(text(inputLine, left()), fillColor(GetColor(indexedLine)), lineColor(GetColor(indexedLine)));
+Figure GenerateBox(str InputLine, str indexedLine) = GenerateTextBox(InputLine, GetColor(indexedLine));
+Figure GenerateTextBox(str InputLine, str Color) = box
+(
+text(InputLine, left()),
+fillColor(Color),
+lineColor(Color)
+);
+Figure GenerateTitleBox(str InputLine) = box
+(
+text(InputLine, fontColor("Blue")),
+fillColor("Lightgray"),
+lineColor("Lightgray")
+);
 void RenderFigure(str caption, Figure fig) = render(caption, fig);
 public void btn() = render(vcat([button("btn", void(){Comparer2();})]));
 module \graphics::GraphGenerator
@@ -1322,54 +1741,109 @@ Red = 255 - Distance;
 return rgb(Red, Green, 0);
 }
 module graphics::Overview
+import FileLocations;
 import IO;
-import String;
 import List;
+import Map;
+import Set;
+import String;
 import vis::Figure;
 import vis::Render;
 import vis::KeySym;
-import FileLocations;
-import \helpers::ListHelpers;
-import \helpers::FileHelpers;
 import \graphics::DetailView;
-Figure GenerateTitleBox(str IndexedLine) = box(text(GetClassName(toLocation(GetFilePath(IndexedLine))), fontSize(7), fontColor("Blue")), vresizable(false), vsize(30), top(), fillColor("Lightgray"));
-Figure GenerateBox(str IndexedLine, list[str] IndexedLines) = box(fillColor(GetColor(IndexedLine)), lineColor(GetColor(IndexedLine)), vresizable(false), vsize(5), top(), ExecOnMouseDown(IndexedLine, IndexedLines), ExecOnMouseEnter(IndexedLine, IndexedLines));
+import \helpers::Debugging;
+import \helpers::FileHelpers;
+import \helpers::ListHelpers;
+import \util::Math;
+import \data::CloneData;
+import \data::DataTypes;
+import \data::Options;
+Figure GenerateTitleBox(str IndexedLine) = box
+(
+text(GetClassName(toLocation(GetFilePath(IndexedLine))),
+fontSize(7),
+fontColor("Blue")),
+vresizable(false),
+vsize(30),
+top(),
+fillColor("Lightgray")
+);
+Figure GenerateBox(str IndexedLine, list[str] IndexedLines, int AbsoluteLine) = box
+(
+fillColor(GetColor(IndexedLine)),
+lineColor(GetColor(IndexedLine)),
+vresizable(false), vsize(5), top(),
+ExecOnMouseDown(AbsoluteLine),
+ExecOnMouseEnter(IndexedLine, IndexedLines)
+);
 Figure GenerateVBox(list[Figure] VBox) = !isEmpty(VBox) ? box(box(vcat(VBox), top(), shrink(0.9)), resizable(false), top()) : box();
 void RenderFigure(str Caption, Figure Fig) = render(Caption, Fig);
 str GetClassName(loc FileToCheck) = substring(FileToCheck.path, findLast(FileToCheck.path, "/")+1);
-void Overview(loc IndexedFile) = Overview(readFileLines(IndexedFile));
+void Overview(loc IndexedFile)
+{
+println("IndexedFile <IndexedFile>, path: <IndexedFile.path>");
+Overview(readFileLines(IndexedFile));
+}
 void Overview(list[str] IndexedLines)
 {
 list[str] FileNames = [];
 list[Figure] BoxList = [];
 list[Figure] VBox = [];
 str PrevFile = "";
+list[str] ClonedFiles = GetClonedFiles(IndexedLines);
 for(i <- [0 .. size(IndexedLines)])
 {
 if(PrevFile == GetFilePath(IndexedLines[i]))
 {
-VBox += GenerateBox(IndexedLines[i], IndexedLines);
+if(Contains(ClonedFiles, GetFilePath(IndexedLines[i])))
+{
+VBox += GenerateBox(IndexedLines[i], IndexedLines, i);
+}
 }
 else
 {
 BoxList += GenerateVBox(VBox);
 VBox = [];
+if(Contains(ClonedFiles, GetFilePath(IndexedLines[i])))
+{
 VBox += GenerateTitleBox(IndexedLines[i]);
-VBox += GenerateBox(IndexedLines[i], IndexedLines);
+VBox += GenerateBox(IndexedLines[i], IndexedLines, i);
+}
 PrevFile = GetFilePath(IndexedLines[i]);
+DebugPrint("<IndexedLines[i]>");
+DebugPrint("File path: <PrevFile>");
 }
 }
+DebugPrint("rendering figure");
 BoxList += GenerateVBox(VBox);
 RenderFigure("Overview", hcat(BoxList, hgap(3)));
 }
-FProperty ExecOnMouseDown(str IndexedLine, list[str] IndexedLines)
+list[str] GetClonedFiles(list[str] IndexedLines)
+{
+set[str] ListClonedFiles = {};
+for(i <- [0 .. size(IndexedLines)])
+{
+str IndexedLine = IndexedLines[i];
+str Path =  GetFilePath(IndexedLine);
+if(("Red" == GetColor(IndexedLine))
+|| (true == Check_ShowEmtpyFiles))
+{
+ListClonedFiles += Path;
+}
+}
+DebugPrint("List with <size(ListClonedFiles)> cloned files: <ListClonedFiles>");
+return toList(ListClonedFiles);
+}
+FProperty ExecOnMouseDown(int AbsoluteLineNumber)
 {
 return onMouseDown(bool (int butnr, map[KeyModifier,bool] modifiers)
 {
-if(GetColor(IndexedLine) == "Red")
+CloneClasses = GetCloneClasses(AbsoluteLineNumber);
+if(0 < size(CloneClasses))
 {
-list[str] NormalizedIndexes = ExtractAndNormalizeIndexes(IndexedLine, IndexedLines);
-GenerateDiff([NormalizedIndexes]);
+list[list[str]] DiffData = GetDiffData(CloneClasses);
+DebugPrint("Diff data: <DiffData>");
+GenerateDiff(DiffData);
 }
 return true;
 });
@@ -1389,8 +1863,8 @@ Figure GenerateTooltip(str IndexedLine, list[str] IndexedLines)
 list[Figure] Texts = [];
 list[str] inputLines = readFileLines(SampleFile(GetFilePath(IndexedLine)));
 int LineNumber = LineNumber(IndexedLine);
-int Min = ((LineNumber-5) > 0) ? (LineNumber-5) : 0;
-int Max = ((LineNumber+10) < size(inputLines)) ? (LineNumber+10) : size(inputLines);
+int Min = max((LineNumber-5), 0);
+int Max = min((LineNumber+10), size(inputLines)-1);
 Texts += text("...", fontItalic(true), fontBold(true), left());
 for(i <- [Min .. Max])
 {
@@ -1406,19 +1880,41 @@ Texts += text("<i+1>: <inputLines[i]>", fontSize(7), left());
 Texts += text("...", fontItalic(true), fontBold(true), left());
 return box(vcat(Texts), fillColor("lightyellow"), grow(1.2), resizable(false));
 }
+list[str] NormalizedIndexes = [];
+str LastPath = "";
+int TotalIterations = 0;
 list[str] ExtractAndNormalizeIndexes(str IndexedLine, list[str] IndexedLines)
 {
-list[str] SampleIndexes = GenerateSampleIndexesForClass(IndexedLine, IndexedLines);
-list[str] NormalizedIndexes = NormalizeIndexes(SampleIndexes);
+TotalIterations += 1;
+str Path = GetFilePath(IndexedLine);
+if(LastPath != Path)
+{
+list[str] SampleIndexes = GenerateSampleIndexesForClass(Path, IndexedLines);
+NormalizedIndexes = NormalizeIndexes(SampleIndexes);
+LastPath = Path;
+}
+println("Total iterations: <TotalIterations>");
 return NormalizedIndexes;
 }
-list[str] GenerateSampleIndexesForClass(str IndexedLine, list[str] IndexedLines)
+list[str] GenerateSampleIndexesForClass(str Path, list[str] IndexedLines)
 {
 list[str] SampleIndexes = [];
-for(Line <- IndexedLines, GetFilePath(IndexedLine) == GetFilePath(Line))
+bool Found = false;
+int Iterations = 0;
+for(n <- [0..size(IndexedLines)])
 {
-SampleIndexes += Line;
+Iterations += 1;
+if(true == contains(IndexedLines[n], Path))
+{
+SampleIndexes += IndexedLines[n];
+Found = true;
 }
+else if(true == Found)
+{
+break;
+}
+}
+DebugPrint("<Iterations> iterations, yielding <size(SampleIndexes)>");
 return SampleIndexes;
 }
 module graphics::PopUp
@@ -1468,19 +1964,82 @@ b3 = box(text("<Distribution[2]>%", fontSize(20), fontColor("black")), vshrink(D
 b4 = box(text("<Remain>%", fontSize(20), fontColor("black")), vshrink(Remain/100.0), fillColor("Red"));
 render(Caption,vcat([b4, b3,b2,b1]));
 }
+module helpers::CloneHelpers
+import FileLocations;
+import IO;
+import List;
+import Map;
+import Set;
+import \data::CloneData;
+import \data::DataTypes;
+import \helpers::ListHelpers;
+import \helpers::MathHelpers;
+import \helpers::StringHelpers;
+import \util::Math;
+bool StoreList = false;
+list[int] SanitizeDupes(list[int] Dupes, int MinSize, int InvalidToken)
+{
+int Distance = MinSize - 1;
+list[int] Result = [];
+for(n <- [0 .. size(Dupes)-Distance], Lines[Dupes[n]] != InvalidToken)
+{
+if(Dupes[n+Distance] - Dupes[n] == Distance)
+{
+Result += Dupes[n];
+}
+}
+if(true == StoreList)
+{
+writeFile(OutputFile("test/sanitizedDupes.txt"), JoinList(Result));
+}
+return Result;
+}
+list[int] ListWithDupes(THashMap Lines)
+{
+Dupes = GetSetOfDupes(Lines, 0, size(Lines));
+Dupes += GetSetOfDupes(Lines, size(Lines)-1, -1);
+list[int] ListOfDupes = sort(toList(Dupes));
+if(true == StoreList)
+{
+writeFile(OutputFile("test/listOfDupes.txt"), JoinList(ListOfDupes));
+}
+return ListOfDupes;
+}
+set[int] GetSetOfDupes(THashMap Lines, int First, int Last)
+{
+ProcessedLines = {};
+Dupes = {};
+for(n <- [First .. Last])
+{
+if(Lines[n] in ProcessedLines)
+{
+Dupes += n;
+}
+ProcessedLines += Lines[n];
+}
+return Dupes;
+}
+bool InClone(TClone Clone, int Line) = InLimits(Clone.Start, Line, LastLine(Clone));
+int LastLine(TClone Clone) = (Clone.Start + Clone.Size)-1;
 module \helpers::Debugging
 import DateTime;
 import IO;
-bool LoggingEnabled = false;
+import \data::Options;
 public void DebugPrint(str TextToPrint)
 {
-if(true == LoggingEnabled)
+if(true == Check_PrintDebug)
 {
 println(TextToPrint);
 }
 }
 public void Duration(datetime StartTime) = Duration("", StartTime);
-public void Duration(str Prefix, datetime StartTime) = println("<Prefix> duration: <createDuration(StartTime, now())>");
+public void Duration(str Prefix, datetime StartTime)
+{
+if(true == Check_EnableTiming)
+{
+println("<Prefix> duration: <createDuration(StartTime, now())>");
+}
+}
 module \helpers::FileHelpers
 import FileLocations;
 import IO;
@@ -1521,9 +2080,9 @@ FileLines = RemoveBlockComments(FileLines);
 FileLines = TrimList(FileLines, LineSplitter);
 return FileLines;
 }
-private str ColorSplitter = "Ѭ";
-private str FileSplitter = "۞";
-private str LineSplitter = "۩";
+private str ColorSplitter = "xXx";
+private str FileSplitter = "xXx";
+private str LineSplitter = "xXx";
 alias TIndexedLine = tuple[str Index, str Content];
 void SplitIndexedFile(loc FileToSplit, loc IndexFile, loc ContentFile)
 {
@@ -1547,9 +2106,18 @@ list[str] IndexLines(list[str] InputLines, str FileName)
 list[str] Results = [];
 for(int Line <- [0 .. size(InputLines)])
 {
-Results += "<FileName><FileSplitter><Line+1><LineSplitter><trim(InputLines[Line])>";
+Results += "<FileName><FileSplitter><Line+1><LineSplitter><Sanitize(trim(InputLines[Line]))>";
 }
 return Results;
+}
+str Sanitize(str Input)
+{
+list[str] ForbiddenTokens = [FileSplitter, LineSplitter, ColorSplitter];
+for(Token <- ForbiddenTokens)
+{
+Input = replaceAll(Input, Token, "xXx");
+}
+return Input;
 }
 str GetSamplePath(loc FileToCheck)
 {
@@ -1868,13 +2436,13 @@ return Results;
 }
 test bool TestSome() = ExpectEqual(1, 2);
 list[str] PadList(str Prefix, list[str] Lines, str Suffix) = ["<Prefix><Line><Suffix>" | Line <- Lines];
-str JoinList(list[str] Lines) = JoinList(Lines, "\r\n");
-str JoinList(list[str] Lines, str Token)
+str JoinList(list[&T] Lines) = JoinList(Lines, "\r\n");
+str JoinList(list[&T] Lines, str Token)
 {
 str Result = "";
 for(Line <- Lines)
 {
-Result += Line + Token;
+Result += "<Line><Token>";
 }
 return replaceLast(Result, Token, "");
 }
@@ -1909,6 +2477,7 @@ import List;
 import Map;
 import Set;
 import String;
+import \data::DataTypes;
 int TypedChars(str StringToCheck) = size(StringToCheck) - Indent(StringToCheck);
 int Indent(str StringToCheck)
 {
@@ -1973,9 +2542,6 @@ public str ClipString(str StringToClip, str Start, str End) = ClipString(StringT
 public str ClipString(str StringToClip, str Start, str End, str Split) = ClipString(StringToClip, findFirst(StringToClip, Start), findFirst(StringToClip, End) + size(End), Split);
 public str ClipString(str StringToClip, int StartPos, int EndPos) = ClipString(StringToClip, StartPos, EndPos, "");
 public str ClipString(str StringToClip, int StartPos, int EndPos, str Split) = substring(StringToClip, 0, StartPos) + Split + substring(StringToClip, EndPos);
-alias THashInfo = tuple[THashMap HashMap, TStringMap StringMap];
-alias THashMap = map[int,int];
-alias TStringMap = map[str Source, int Encoding];
 THashInfo HashFile(loc FileToHash) = HashFile(readFileLines(FileToHash));
 THashInfo HashFile(list[str] Lines)
 {
@@ -2038,9 +2604,10 @@ return false;
 return true;
 }
 bool ExpectEqualFiles(loc ExpectedFile, loc ActualFile) = ExpectEqualFiles(ExpectedFile, readFileLines(ActualFile));
-bool ExpectEqualFiles(loc FileToScan, list[str] ContentToCompare)
+bool ExpectEqualFiles(loc FileToScan, list[str] ContentToCompare) = ExpectEqualFiles(readFileLines(FileToScan), ContentToCompare);
+bool ExpectEqualFiles(list[str] FileToScan, list[str] ContentToCompare)
 {
-if(false == ExpectEqual(readFileLines(FileToScan), ContentToCompare))
+if(false == ExpectEqual(FileToScan, ContentToCompare))
 {
 AppendToFile(OutputFile("test/FailedFileCompares.txt"), JoinList(ContentToCompare));
 return false;
@@ -2346,6 +2913,7 @@ Results += Line;
 return Results;
 }
 module \test::AssumptionTests
+import IO;
 import List;
 import Set;
 import String;
@@ -2353,6 +2921,8 @@ import analysis::statistics::Descriptive;
 import \util::Math;
 import \helpers::ListHelpers;
 import \helpers::TestHelpers;
+import \vis::Figure;
+import \vis::Render;
 test bool TestAssumeIntToNumConversion() = ExpectEqual(2.5, mean([2, 3]));
 test bool TestAssumeRounding() = ExpectEqual(3, round(mean([2, 3])));
 list[str] TestList = ["Hello", "Goeie", "Goedendag"];
@@ -2400,7 +2970,65 @@ bool GetError()
 list[bool] Empty = [];
 return Empty[100];
 }
-module \test::CalculateCCTest
+test bool HowManyLoops()
+{
+ExpectedInt = 3;
+ActualInt = 0;
+for(n <- [0 .. 3])
+{
+ActualInt += 1;
+}
+return ExpectEqual(ExpectedInt, ActualInt);
+}
+test bool HowManyLoops2()
+{
+ExpectedInt = 0;
+ActualInt = 0 ;
+for(n <- [0 .. 0])
+{
+ActualInt += 1;
+}
+return ExpectEqual(ExpectedInt, ActualInt);
+}
+test bool AssumeForCanhaveTonsOfConditions()
+{
+bool Result = false;
+for(n <- [0 .. 10], true, true, true, true, true, true, true, true)
+{
+Result = true;
+}
+return ExpectTrue(Result);
+}
+test bool AssumeForConditionsAnd()
+{
+bool Result = false;
+for(n <- [0 .. 10], true, true, false, true, true, true, true, true)
+{
+Result = true;
+}
+return ExpectFalse(Result);
+}
+test bool SetTests()
+{
+set[int] m = {};
+m += 1;
+m += 5;
+m += 10;
+m -= 2;
+set[int] n = {1,4,432,43};
+m += n;
+println(m);
+return ExpectEqual(6, size(m));
+}
+public bool state = false;
+public bool state2 = false;
+test bool CheckBoxTutor()
+{
+render( vcat([ checkbox("Check me", void(bool s){ state = s;}),
+checkbox("Check me 2", void(bool s){ state2 = s;})]));
+return true;
+}
+module \test::CalculateCCTests
 import \metrics::CalculateCC;
 import FileLocations;
 import String;
@@ -2409,11 +3037,12 @@ int SampleCC(str FileToCheck) = CyclomaticComplexity(toLocation("<SampleDir>cycl
 test bool TestTernaryOperator() = ExpectEqual(2, SampleCC("TernaryOperator.java"));
 test bool TestInfixOperatorAnd() = ExpectEqual(2, SampleCC("InfixOperatorAnd.java"));
 test bool TestInfixOperatorOr() = ExpectEqual(2, SampleCC("InfixOperatorOr.java"));
-module \test::CloneAlgorithmTest
+module \test::CloneAlgorithmTests
 import FileLocations;
 import IO;
 import String;
 import \clones::CloneAlgorithm;
+import \data::DataTypes;
 import \helpers::JavaHelpers;
 import \helpers::ListHelpers;
 import \helpers::TestHelpers;
@@ -2438,22 +3067,163 @@ test bool TestDualOffsetClone() = ExpectEqual(12, GetClonesForSampleFile("Double
 test bool TestDualDifferentClone() = ExpectEqual(20, GetClonesForSampleFile("DoubleDifferentClones.txt"));
 test bool TestBraceCase() = ExpectEqual(0, GetClonesForSampleFile("BraceCase.txt"));
 test bool TestNoClone() = ExpectEqual(0, GetClonesForSampleFile("NoClone.txt"));
-TCloneList SomeClones = [ <34,6>,
-<45,8>,
-<60,9>,
-<50,1>
-];
-test bool TestMaxOfList() = ExpectEqual(9, LineIncrement(SomeClones));
-TCloneList SingleExtractionInput = [<10,6>, <20,6>];
-TCloneClasses SingleExtractionResult = [[<1,6>, <10,6>, <20,6>]];
-test bool TestExtractSingleClass() = ExpectEqual(SingleExtractionResult, ExtractCloneClasses(1, SingleExtractionInput));
-TCloneList MultipleExtractionInput = [<10,8>, <20,20>];
-TCloneClasses MultipleExtractionResult = [ [<1,8>, <10,8>], [<1,20>, <20,20>]];
-test bool TestExtractingMultipleClasses() = ExpectEqual(MultipleExtractionResult, ExtractCloneClasses(1, MultipleExtractionInput));
-TCloneClasses KnownClasses = [ [<1,8> , <10,8>] ];
-test bool TestRemovingDuplicates() = ExpectEqual( [], RemovePreviousDupes(KnownClasses, [12], 5));
-test bool TestGettingCloneClasses() = ExpectEqual([], GetClonesClasses(SampleFile("type2clones/SmallSqlContent.txt")));
-TCloneClasses RunSmallSql() = GetClonesClasses(SampleFile("clones/SmallSqlContent.txt"));
+TCloneClasses SampleCloneClasses = {
+{<247,7>, <767,7>, <803,7>, <818,7>},
+{<364,7>, <876,7>},
+{<464,7>, <474,7>, <247,7>}
+};
+TCloneClasses ResultCloneClasses = {
+{<464,7>, <474,7>, <247,7>,<767,7>, <803,7>, <818,7>},
+{<364,7>, <876,7>}
+};
+test bool TestGettingCloneClasses() = ExpectEqual(SampleCloneClasses, GetCloneClasses(SampleFile("type2clones/SmallSqlContent.txt")));
+TCloneClasses RunSmallSql() = GetCloneClasses(SampleFile("clones/SmallSqlContent.txt"));
+test bool TestMerging() = ExpectEqual(ResultCloneClasses, MergeCloneClasses(SampleCloneClasses));
+TCloneClasses SmallSqlClones = {
+{<2509,13>,<2550,13>,<2471,13>},
+{<19219,6>,<19500,6>,<19532,6>},
+{<803,7>,<767,7>,<818,7>},
+{<23662,6>,<23870,6>,<23746,6>,<23813,6>},
+{<4091,6>,<3523,6>,<3368,6>},
+{<8363,9>,<8338,9>,<8313,9>},
+{<7585,6>,<23870,6>,<186,6>},
+{<19499,7>,<19167,7>,<19432,7>,<19531,7>,<19471,7>,<19269,7>}
+};
+TCloneClasses SmallSqlClonesResult =
+{
+{<2509,13>,<2550,13>,<2471,13>},
+{<19219,6>,<19500,6>,<19532,6>},
+{<803,7>,<767,7>,<818,7>},
+{<23662,6>,<23870,6>,<23746,6>,<23813,6>,<7585,6>,<186,6>},
+{<4091,6>,<3523,6>,<3368,6>},
+{<8363,9>,<8338,9>,<8313,9>},
+{<19499,7>,<19167,7>,<19432,7>,<19531,7>,<19471,7>,<19269,7>}
+};
+test bool TestRealMerging() = ExpectEqual(SmallSqlClonesResult, MergeCloneClasses(SmallSqlClones));
+test bool TestNoMerging() = ExpectEqual(SmallSqlConesResult, MergeCloneClasses(SmallSqlConesResult));
+module \test::CloneDataTests
+import IO;
+import Set;
+import \data::CloneData;
+import \data::DataTypes;
+import \clones::Type1Clones;
+import \helpers::TestHelpers;
+bool Initialized = false;
+bool ResetClones()
+{
+KnownClones = {};
+ColoredIndexes = [];
+return ExpectEqual(0, size(KnownClones));
+}
+TCloneClass ExpectedClass = {
+<19433,6>,
+<19099,6>,
+<19340,6>,
+<19219,6>,
+<19500,6>,
+<19270,6>,
+<19125,6>,
+<19082,6>,
+<19472,6>,
+<19168,6>,
+<19532,6>,
+<19386,6>
+};
+test bool TestSmallSqlClasses()
+{
+ResetClones();
+GetSmallSqlMergedClasses();
+return ExpectTrue(ExpectedClass in GetCloneClasses(19130));
+}
+module \test::CloneHelpersTests
+import FileLocations;
+import IO;
+import List;
+import \clones::CloneAlgorithm;
+import \clones::Type3Clones;
+import \data::CloneData;
+import \helpers::CloneHelpers;
+import \helpers::StringHelpers;
+import \helpers::TestHelpers;
+THashInfo SmallSqlHash() = HashFile(SampleFile("clonehelpers/SampleDupes.txt"));
+test bool TestDupesList()
+{
+PrepareProcess(SmallSqlHash());
+list[int] Dupes  = ListWithDupes(Lines);
+return ExpectEqual(10, size(Dupes));
+}
+test bool TestSanitizeList()
+{
+PrepareProcess(SmallSqlHash());
+list[int] Dupes  = ListWithDupes(Lines);
+Dupes = SanitizeDupes(Dupes, 1, InvalidCloneStart);
+for(Dupe <- Dupes)
+{
+println("Line <Dupe> contains key <Lines[Dupe]>");
+}
+return ExpectEqual(8, size(Dupes));
+}
+TClone SomeClone = <1,10>;
+test bool TestInCloneLower() = ExpectTrue(InClone(SomeClone, 1));
+test bool TestInCloneUpper() = ExpectTrue(InClone(SomeClone, 10));
+test bool TestInCloneMiddle() = ExpectTrue(InClone(SomeClone, 5));
+test bool TestInCloneBelow() = ExpectFalse(InClone(SomeClone, 0));
+test bool TestInCloneAbove() = ExpectFalse(InClone(SomeClone, 11));
+module \test::CloneVisualizationTests
+import IO;
+import CloneVisualization;
+import FileLocations;
+import \clones::CloneAlgorithm;
+import \data::CloneData;
+import \data::DataTypes;
+import \graphics::DetailView;
+import \helpers::TestHelpers;
+loc InputFile = SampleFile("clones/ColorIndexesSampleIndexesInput.txt");
+loc ResultFile = SampleFile("clones/ColorIndexesSampleIndexesResult.txt");
+test bool TestHandleClones()
+{
+GenerateSmallSqlSample();
+return true;
+}
+test bool TestColorIndexes() = ExpectEqualFiles(readFileLines(ResultFile), ColorIndexes(InputFile, {{<1,2>}} ));
+test bool TestMultipleColorIndexes() = ExpectEqualFiles(readFileLines(ResultFile), ColorIndexes(InputFile, {{<1,2>}, {<1,2>}} ));
+TCloneClass ExpectedClass = {<803,7>, <767,7>, <818,7>};
+test bool CheckSmallSqlSample()
+{
+GenerateSmallSqlSample();
+ExpectTrue(ExpectedClass in KnownClasses);
+}
+test bool TestDiffData()
+{
+GenerateSmallSqlSample();
+list[list[str]] DiffData = GetDiffData({ExpectedClass});
+GenerateDiff(DiffData);
+return true;
+}
+module \test::ControlPanelTests
+import \graphics::ControlPanel;
+import \vis::Figure;
+import \vis::Render;
+test bool RenderCheckBoxList()
+{
+render(CheckBoxList());
+return true;
+}
+test bool RenderButtons()
+{
+render(Buttons());
+return true;
+}
+test bool RenderChoices()
+{
+render(ChoiceTypes());
+return true;
+}
+test bool RenderControlPanel()
+{
+ControlPanel();
+return true;
+}
 module \test::DetailViewTests
 import FileLocations;
 import \graphics::DetailView;
@@ -2505,24 +3275,24 @@ return ExpectEqualFiles(SimpleSampleContent, SimpleOutputContent);
 }
 list[str] ResultFile() = readFileLines(SampleFile("Visu/VisuSampleResult.txt"));
 loc VisuInput = SampleFile("Visu/VisuSampleInput.txt");
-list[str] ResultIndexes = ["smallsql/database/Column.java۞1",
-"RedѬsmallsql/database/Column.java۞2",
-"RedѬsmallsql/database/Column.java۞3",
-"RedѬsmallsql/database/Column.java۞4"
+list[str] ResultIndexes = ["smallsql/database/Column.javaxXx1",
+"RedxXxsmallsql/database/Column.javaxXx2",
+"RedxXxsmallsql/database/Column.javaxXx3",
+"RedxXxsmallsql/database/Column.javaxXx4"
 ];
-list[str] IndexesInput = ["RedѬsmallsql/database/Column.java۞2",
-"RedѬsmallsql/database/Column.java۞4"
+list[str] IndexesInput = ["RedxXxsmallsql/database/Column.javaxXx2",
+"RedxXxsmallsql/database/Column.javaxXx4"
 ];
-test bool TestExistingColor() = ExpectEqual("Red", GetColor("RedѬ"));
+test bool TestExistingColor() = ExpectEqual("Red", GetColor("RedxXx"));
 test bool TestDefaultColor() = ExpectEqual("White", GetColor("IHaveNoColur,Return the default one!!!"));
 test bool TestSamplePath() = ExpectEqual("type1clones/BraceCase.txt", GetSamplePath(|project:
 test bool TestSamplePathBack() = ExpectEqual("../src/RelativePath.txt", GetSamplePath(toLocation("project:
 test bool TestNormalizingFile() = ExpectEqual(ResultFile(), NormalizeIndexedFile(VisuInput), OutputFile("test/NormalizedOutput.txt"));
 test bool TestNormalizingIndexes() = ExpectEqual(ResultIndexes, NormalizeIndexes(IndexesInput));
 test bool TestDefaultFilePath() = ExpectEqual("Not Found", GetFilePath(""));
-test bool TestFilePathWithColour() = ExpectEqual("TestPassed.java", GetFilePath("RedѬTestPassed.java۞65۩"));
-test bool TestFilePathWithoutColor() = ExpectEqual("TestPassed.java", GetFilePath("TestPassed.java۞65۩"));
-module \test::GraphGeneratorTest
+test bool TestFilePathWithColour() = ExpectEqual("TestPassed.java", GetFilePath("RedxXxTestPassed.javaxXx65xXx"));
+test bool TestFilePathWithoutColor() = ExpectEqual("TestPassed.java", GetFilePath("TestPassed.javaxXx65xXx"));
+module \test::GraphGeneratorTests
 import \graphics::GraphGenerator;
 import List;
 import util::Math;
@@ -2607,7 +3377,7 @@ test bool TestListJoin() = ExpectEqual("Hello\r\nGoodbye", JoinList(["Hello", "G
 test bool TestTokenizedListTrimming() = ExpectEqual(["FilledLine$Hello", "FilledLineAsWell$GoodBye"], TrimList(["FilledLine$Hello", "EmptyLine$", "FilledLineAsWell$GoodBye"], "$"));
 list[str] ModuleNames = ["Package.rsc", "Package2.rsc"];
 test bool TestPadding() = ExpectEqual(["import Package.rsc;", "import Package2.rsc;"], PadList("import ", ModuleNames, ";"));
-module \test::MathHelpersTest
+module \test::MathHelpersTests
 import \helpers::MathHelpers;
 import \helpers::TestHelpers;
 test bool BelowLower() = ExpectEqual(5, Limit(5, -10, 20));
@@ -2623,25 +3393,60 @@ int Four = 4;
 test bool FractionTest() = ExpectEqual(2.5, Fraction(Ten, Four));
 test bool PercentageTest() = ExpectEqual(40, Percentage(4, 10));
 module \test::OverviewTests
+import IO;
+import String;
+import List;
 import FileLocations;
+import vis::Figure;
+import vis::Render;
+import vis::KeySym;
 import \graphics::Overview;
 import \helpers::TestHelpers;
+import \helpers::FileHelpers;
 loc SampleSql = SampleFile("clones/SmallSqlIndexes.txt");
 test bool TestSampleSqlOverview()
 {
 Overview(SampleSql);
 return true;
 }
-list[str] ResultIndexes = ["smallsql/database/Column.java۞1",
-"RedѬsmallsql/database/Column.java۞2"
+list[str] ResultIndexes = ["smallsql/database/Column.javaxXx1",
+"RedxXxsmallsql/database/Column.javaxXx2"
 ];
-str IndexInput = "smallsql/database/Column.java۞1";
-list[str] IndexesInput = ["smallsql/database/Column.java۞1",
-"RedѬsmallsql/database/Column.java۞2",
-"RedѬsmallsql/database/Row.java۞3",
-"RedѬsmallsql/database/ColumnAndRow.java۞4"
+str IndexInput = "smallsql/database/Column.javaxXx1";
+list[str] IndexesInput = ["smallsql/database/Column.javaxXx1",
+"RedxXxsmallsql/database/Column.javaxXx2",
+"RedxXxsmallsql/database/Row.javaxXx3",
+"RedxXxsmallsql/database/ColumnAndRow.javaxXx4"
 ];
 test bool TestGenerationSampleIndexesForClass() = ExpectEqual(ResultIndexes, GenerateSampleIndexesForClass(IndexInput, IndexesInput));
+Figure ResultTitleBox = box(text(GetClassName(toLocation(GetFilePath(IndexInput))), fontSize(7), fontColor("Blue")), vresizable(false), vsize(30), top(), fillColor("Lightgray"));
+test bool TestGenerateTitleBox() = ExpectEqual(ResultTitleBox, GenerateTitleBox(IndexInput));
+Figure ResultBox = box(fillColor(GetColor(IndexInput)), lineColor(GetColor(IndexInput)), vresizable(false), vsize(5), top(), ExecOnMouseDown(IndexInput, IndexesInput), ExecOnMouseEnter(IndexInput, IndexesInput));
+test bool TestGenerateBox() = ExpectEqual(ResultBox, GenerateBox(IndexInput, IndexesInput));
+list[Figure] VBox = [GenerateBox(IndexInput, IndexesInput),
+GenerateBox(IndexInput, IndexesInput),
+GenerateBox(IndexInput, IndexesInput)
+];
+Figure ResultVBox = !isEmpty(VBox) ? box(box(vcat(VBox), top(), shrink(0.9)), resizable(false), top()) : box();
+test bool TestGenerateVBox() = ExpectEqual(ResultVBox, GenerateVBox(VBox));
+test bool TestRenderFigure()
+{
+RenderFigure("Test", box(text("Empty Box")));
+return true;
+}
+loc FileToCheck = toLocation(GetFilePath(IndexInput));
+str ResultGetClassName = substring(FileToCheck.path, findLast(FileToCheck.path, "/")+1);
+test bool TestGetClassName() = ExpectEqual(ResultGetClassName, GetClassName(FileToCheck));
+FProperty ResultExecOnMouseDown = ExecOnMouseDown(IndexInput, IndexesInput);
+test bool TestExecOnMouseDown() = ExpectEqual(ResultExecOnMouseDown, ExecOnMouseDown(IndexInput, IndexesInput));
+FProperty ResultExecOnMouseEnter = ExecOnMouseEnter(IndexInput, IndexesInput);
+test bool TestExecOnMouseEnter() = ExpectEqual(ResultExecOnMouseEnter, ExecOnMouseEnter(IndexInput, IndexesInput));
+Figure ResultGenerateTooltip = GenerateTooltip(IndexInput, readFileLines(SampleSql));
+test bool TestGenerateTooltip() = ExpectEqual(ResultGenerateTooltip, GenerateTooltip(IndexInput, readFileLines(SampleSql)));
+list[str] ResultExtractAndNormalizeIndexes = ExtractAndNormalizeIndexes(IndexInput, IndexesInput);
+test bool TestExtractAndNormalizeIndexes() = ExpectEqual(ResultExtractAndNormalizeIndexes, ExtractAndNormalizeIndexes(IndexInput, IndexesInput));
+list[str] ResultGenerateSampleIndexesForClass = GenerateSampleIndexesForClass(IndexInput, IndexesInput);
+test bool TestGenerateSampleIndexesForClass() = ExpectEqual(ResultGenerateSampleIndexesForClass, GenerateSampleIndexesForClass(IndexInput, IndexesInput));
 module \test::RegexHelpersTests
 import \helpers::TestHelpers;
 import \helpers::RegexHelpers;
@@ -2651,11 +3456,11 @@ test bool AssumeRegexWithColon() = ExpectTrue(rexpMatch("String 88;", RegexForIn
 test bool AssumeRegexWithEqual() = ExpectTrue(rexpMatch("String=88;", RegexForInts));
 test bool AssumeRegexNoLeadingSpace() = ExpectFalse(rexpMatch("String88 ", RegexForInts));
 test bool AssumeRegexNoTralingSpace() = ExpectFalse(rexpMatch("String 88", RegexForInts));
-module \test::RiskProfileTest
+module \test::RiskProfileTests
 import \graphics::RiskProfile;
 import \test::SigScoresTester;
 void PlotRiskProfile() = RenderRisk([32,49,14,5]);
-module \test::SigScoresTester
+module \test::SigScoresTests
 import \metrics::SigScores;
 import \helpers::TestHelpers;
 test bool TestVolumePlusPlus() = ExpectEqual(0, VolumeScore(66000));
@@ -2682,7 +3487,7 @@ test bool TestSigRatingPlus() = ExpectEqual("★★★★☆", StarRating(1));
 test bool TestSigRatingNeutral() = ExpectEqual("★★★☆☆", StarRating(2));
 test bool TestSigRatingMinus() = ExpectEqual("★★☆☆☆", StarRating(3));
 test bool TestSigRatingMinusMinus() = ExpectEqual("★☆☆☆☆", StarRating(4));
-module \test::SlocModuleTester
+module \test::SlocModuleTests
 import \metrics::SlocModule;
 import \helpers::TestHelpers;
 import IO;
@@ -2710,7 +3515,7 @@ iprintln(Actual);
 }
 return Equal;
 }
-module \test::StringHelpersTester
+module \test::StringHelpersTests
 import Map;
 import FileLocations;
 import String;
@@ -2723,9 +3528,9 @@ test bool LineCountOfThree() = ExpectEqual(2, LineCount("Hello\r\nGoodBye\r\n"))
 test bool TestEncoding() = ExpectEqual("БЖД", EncodeString("publicstaticString"));
 test bool TestDecoding() = ExpectEqual("publicstaticString", DecodeString("БЖД"));
 test bool TestTrimAssumption() = ExpectEqual("Hallo", trim("\n\r\t   Hallo\n\r\t"));
-str ColorString = "RedѬBlue";
-test bool TestStringTokenFirst() = ExpectEqual("Red", StringToken(ColorString, "", "Ѭ"));
-test bool TestStringTokenLast() = ExpectEqual("Blue", StringToken(ColorString, "Ѭ", ""));
+str ColorString = "RedxXxBlue";
+test bool TestStringTokenFirst() = ExpectEqual("Red", StringToken(ColorString, "", "xXx"));
+test bool TestStringTokenLast() = ExpectEqual("Blue", StringToken(ColorString, "xXx", ""));
 test bool TestStringToken() = ExpectEqual("Substring", StringToken("{Substring}", "{", "}"));
 test bool TestStringTokenOverLoad() = ExpectEqual("Substring", StringToken("{Substring}", "{", 10));
 test bool TestStringTokenOverLoad() = ExpectEqual("Substring", StringToken("bool Substring()", 5, "()"));
@@ -2735,7 +3540,7 @@ test bool TestSubStringInt() = ExpectEqual("Pass", StringToken("FailPass", 4, ""
 str InlineCommentString = "HelloGoodBye";
 test bool TestClipString() = ExpectEqual("HelloGoodBye", ClipString(InlineCommentString, ""));
 test bool TestClipStringWithSplit() = ExpectEqual("Hello\r\nGoodBye", ClipString(InlineCommentString, "", "\r\n"));
-module \test::TestHelpersTester
+module \test::TestHelpersTests
 import FileLocations;
 import IO;
 import \helpers::TestHelpers;
@@ -2822,13 +3627,19 @@ void FinalizeTestReport()
 {
 AppendToFile(TestReport, CloseTable());
 }
-module \test::Type1ClonesTest
+module \test::Type1ClonesTests
 import FileLocations;
-import \clones::Type1Clones;
 import String;
-loc ColumnsFile = toLocation("<SampleDir>smallsql/database/Columns.java");
-start[CompilationUnit] ShowParseTreeColumns() = ShowParseTree(ColumnsFile);
-module \test::Type2ClonesTest
+import \clones::Type1Clones;
+import \data::DataTypes;
+TCloneClass FirstClass = {<1,10>, <30,10>, <50,10>};
+TCloneClass SecondClass = {<30,10>, <50,10>, <1000,10>};
+TCloneClass ExpectedClass = {<1,10>, <30,10>, <50,10>, <1000,10>};
+test bool TestCloneCombinations()
+{
+return true;
+}
+module \test::Type2ClonesTests
 import \clones::Type2Clones;
 import \clones::CloneAlgorithm;
 import \helpers::TestHelpers;
@@ -2906,3 +3717,23 @@ void RestoreList()
 {
 TypesToReplace = LocalTypes;
 }
+module \test::Type3ClonesTests
+import FileLocations;
+import IO;
+import Map;
+import \clones::CloneAlgorithm;
+import \clones::Type3Clones;
+import \data::DataTypes;
+import \helpers::StringHelpers;
+import \helpers::TestHelpers;
+loc SimpleClone = SampleFile("type3clones/SimpleClone.txt");
+test bool TestType3()
+{
+return true;
+}
+TClonePairs Pairs = [<<0,10>, <14,10>>];
+THashMap Lines = (0:0, 1:1, 2:2);
+loc ValidCloneFile = SampleFile("type3clones/ValidClone.txt");
+test bool TestValidClone() = ExpectEqual(Pairs, FindType3ClonePairs(ValidCloneFile));
+test bool CheckLastMatchingLine() = ExpectEqual(10, GetLastMatchingLine(ValidCloneFile, 0, 14));
+test bool ValidateCloneSize() = ExpectEqual(6, CalcDuplicatedLines(ValidCloneFile, 0, 14, 10));
