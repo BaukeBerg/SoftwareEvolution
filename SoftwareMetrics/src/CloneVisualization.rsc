@@ -24,7 +24,8 @@ import \util::Math;
 
 loc SmallSqlSampleContent = SampleFile("type2clones/SmallSqlContent.txt");
 loc SmallSqlSampleIndexes = SampleFile("type2clones/SmallSqlIndexes.txt");
-void Type1ClonesSmallSqlSample() = HandleClones(SmallSqlContent, SmallSqlSampleIndexes);
+
+void Type1ClonesSmallSqlSample() = HandleType1Clones(SmallSqlContent, SmallSqlSampleIndexes);
 
 void Type1ClonesSmallSql() = HandleType1Clones(SmallSqlContent, SmallSqlIndexes);
 void Type1ClonesHsqlDb() = HandleType1Clones(HsqlDbContent, HsqlDbIndexes);
