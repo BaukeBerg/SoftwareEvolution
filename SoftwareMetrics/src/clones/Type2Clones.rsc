@@ -77,7 +77,7 @@ str RemoveDupes(str Line, str Token)
   return Line;    
 }
 
-str ReplaceTypes(str Line, set[str] Types, str Replacement)
+str ReplaceTypes(str Line, list[str] Types, str Replacement)
 {
   for(Type <- Types)
   {
