@@ -10,9 +10,9 @@ import \graphics::ControlPanel;
 
 // options list
 public bool Check_ShowEmtpyFiles = false;
-public bool Check_ReplaceNumbers = false;
-public bool Check_ReplaceNames = false ;
-public bool Check_ReplaceTypes = false ;
+public bool Check_ReplaceNumbers = true;
+public bool Check_ReplaceNames = true ;
+public bool Check_ReplaceTypes = true ;
 public bool Check_PrintDebug = true;
 public bool Check_PrintQuotes = false ;
 public bool Check_EnableTiming = true ;
@@ -50,8 +50,8 @@ public list[str] TypesToReplace = [
                              "final void ",
                              "final int ",
                              "final bool ",
-                             "final String ",
-                             "bool "                        
+                             "final String ",                             
+                             "bool "                                                   
                            ];
                            
 void PrintOptions()
