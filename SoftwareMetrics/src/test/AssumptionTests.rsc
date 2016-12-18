@@ -11,6 +11,9 @@ import \util::Math;
 import \helpers::ListHelpers;
 import \helpers::TestHelpers;
 
+import \vis::Figure;
+import \vis::Render;
+
 // Simple module to test some assumptions about Rascal
 
 test bool TestAssumeIntToNumConversion() = ExpectEqual(2.5, mean([2, 3]));
@@ -130,3 +133,16 @@ test bool SetTests()
   println(m);
   return ExpectEqual(6, size(m)); 
 }
+
+public bool state = false;
+public bool state2 = false;
+
+test bool CheckBoxTutor()
+{  
+  render( vcat([ checkbox("Check me", void(bool s){ state = s;}),
+                 checkbox("Check me 2", void(bool s){ state2 = s;})]));
+  return true;
+}
+
+
+

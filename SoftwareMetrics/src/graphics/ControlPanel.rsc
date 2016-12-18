@@ -6,7 +6,10 @@ import vis::Figure;
 import vis::Render;
 
 import FileLocations;
+
 import \clones::Type2Clones;
+import \data::Options;
+
 import \graphics::DetailView;
 
 void ControlPanel()
@@ -53,6 +56,24 @@ public Figure ChoiceTypes()
                          ], size(400, 40), resizable(false), left())
               		]), size(400, 350), resizable(false), left());
 }
+
+
+public list[Figure] CheckBoxes = [
+                            checkbox("Show uncloned files", void(bool s){ Check_ShowEmtpyFiles = s;}),
+                            checkbox("Replace numbers (type 2)", void(bool s){ Check_ReplaceNumbers = s;}),
+                            checkbox("Show debug output", void(bool s){ Check_PrintDebug = s;}),
+                            checkbox("Print Quotes", void(bool s){ Check_PrintQuotes = s;})
+                          ];
+
+
+public Figure CheckBoxList() = box(
+                                  vcat(CheckBoxes), 
+                                  size(200,100), 
+                                  resizable(false), 
+                                  lineColor("white")
+                                  );
+
+
 
 void Add(str Type)
 {
