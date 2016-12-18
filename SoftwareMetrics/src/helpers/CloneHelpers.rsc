@@ -19,11 +19,13 @@ import \util::Math;
 //list[int] SantizeDupes(list[int] Dupes, int MinSize) = [ Dupes[n] | n <- [0 .. size(Dupes) - MinSize-1], Dupes[n + MinSize-1] - Dupes[n] == MinSize-1 ];
 bool StoreList = false;
 
-list[int] SanitizeDupes(list[int] Dupes, int MinSize, int InvalidToken)
+list[int] SanitizeDupes(list[int] Dupes, int MinSize, int InvalidToken) = SanitizeDupes(Dupes, MinSize, [InvalidToken]);
+list[int] SanitizeDupes(list[int] Dupes, int MinSize, list[str] InvalidTokens) = SanitizeDupes(Dupes, MinSize, ConvertValues(InvalidTokens));
+list[int] SanitizeDupes(list[int] Dupes, int MinSize, list[int] InvalidTokens)
 { 
   int Distance = MinSize - 1;
   list[int] Result = [];  
-  for(n <- [0 .. size(Dupes)-Distance], Lines[Dupes[n]] != InvalidToken)
+  for(n <- [0 .. size(Dupes)-Distance], (Lines[Dupes[n]] notin InvalidTokens))
   {
     if(Dupes[n+Distance] - Dupes[n] == Distance)
     {
@@ -66,3 +68,5 @@ set[int] GetSetOfDupes(THashMap Lines, int First, int Last)
 
 bool InClone(TClone Clone, int Line) = InLimits(Clone.Start, Line, LastLine(Clone));
 int LastLine(TClone Clone) = (Clone.Start + Clone.Size)-1;
+list[int] ConvertValues(list[str] Values) = [ GetKey(Dictionary, Value) | Value <- Values ];
+int GetKey(TStringMap Dictionary, str Key) = Key in Dictionary ? Dictionary[Key] : -1 ;

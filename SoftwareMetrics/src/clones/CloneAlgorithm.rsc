@@ -36,9 +36,6 @@ void PrepareProcess(THashInfo Information)
   InvalidCloneStart = GetKey(Dictionary, "}");
 }
 
-int GetKey(TStringMap Dictionary, str Key) = Key in Dictionary ? Dictionary[Key] : -1 ;
-
-
 TCloneClasses GetAndStoreClasses(loc FileToCheck) = GetAndStoreClasses(GetClonePairs(FileToCheck));
 TCloneClasses GetAndStoreClasses(TClonePairs Pairs)
 {

@@ -8,6 +8,7 @@ import \clones::CloneAlgorithm;
 import \clones::Type3Clones;
 
 import \data::CloneData;
+import \data::DataTypes;
 
 import \helpers::CloneHelpers;
 import \helpers::StringHelpers;
