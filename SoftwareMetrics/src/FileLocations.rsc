@@ -50,3 +50,4 @@ public loc SoftwareEvolutionContent = SampleFile("clones/SoftwareEvolutionConten
 
 public loc SmallSqlContent_Type2 = SampleFile("clones/SmallSqlContent_Type2.txt");
 public loc HsqlDbContent_Type2 = SampleFile("clones/HsqlDbContent_Type2.txt");
+public loc SoftwareEvolutionContent_Type2 = SampleFile("clones/SoftwareEvolutionContent_Type2.txt");
