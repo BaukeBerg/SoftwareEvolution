@@ -47,7 +47,14 @@ Figure GenerateBox(list[str] indexedLines)
 	for(i <- [0 .. size(indexedLines)])
 	{
 	  int FileLineNumber = LineNumber(indexedLines[i]);
-		boxList += GenerateBox("<FileLineNumber> : <inputLines[FileLineNumber]>", indexedLines[i]);
+	  try
+	  {
+		  boxList += GenerateBox("<FileLineNumber> : <inputLines[FileLineNumber]>", indexedLines[i]);
+		}
+		catch:
+		{
+		  println("FileLineNumber: <FileLineNumber>, Input lines zie: <size(inputLines)>, i: <i>, Indexes lines size: <size(indexedLines)>"); 
+		}
 	}	
 	return box(vcat(boxList));
 }

@@ -44,7 +44,9 @@ void Type3ClonesSmallSqlSample() = HandleType3Clones(SmallSqlSampleContent, Smal
 void HandleType3Clones(loc ContentFile, loc IndexesFile)
 {
   GetAndStoreClasses(FindType3ClonePairs(ContentFile));
+  DebugPrint("Known classes: <KnownClasses>");
   HandleOverView(IndexesFile);
+  
 }
 
 void HandleType2Clones(loc ContentFile, loc ContentOutput, loc IndexesFile)
