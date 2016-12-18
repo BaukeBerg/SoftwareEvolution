@@ -8,6 +8,7 @@ import vis::Figure;
 import vis::Render;
 import vis::KeySym;
 
+import \helpers::Debugging;
 import \helpers::FileHelpers;
 import \helpers::JavaHelpers;
 import \helpers::StringHelpers;
