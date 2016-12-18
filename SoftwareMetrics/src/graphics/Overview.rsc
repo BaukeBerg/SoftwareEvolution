@@ -158,20 +158,40 @@ Figure GenerateTooltip(str IndexedLine, list[str] IndexedLines)
 	return box(vcat(Texts), fillColor("lightyellow"), grow(1.2), resizable(false));
 }
 
+list[str] SampleIndexes = [];
+str LastPath = "";
+
 list[str] ExtractAndNormalizeIndexes(str IndexedLine, list[str] IndexedLines)
 {
-	list[str] SampleIndexes = GenerateSampleIndexesForClass(IndexedLine, IndexedLines);
+  str Path = GetFilePath(IndexedLine);
+  if(LastPath != Path)
+  {
+    SampleIndexes = GenerateSampleIndexesForClass(Path, IndexedLines);
+    LastPath = Path;
+  }
 	list[str] NormalizedIndexes = NormalizeIndexes(SampleIndexes);
 	return NormalizedIndexes;
 }
 
-list[str] GenerateSampleIndexesForClass(str IndexedLine, list[str] IndexedLines)
+// Break condition filtered out, it does not stop after finding the right line...
+list[str] GenerateSampleIndexesForClass(str Path, list[str] IndexedLines)
 {
-	list[str] SampleIndexes = [];
-	str Path =  GetFilePath(IndexedLine);
-	for(Line <- IndexedLines, contains(Line, Path))
-	{
-		SampleIndexes += Line;
+	list[str] SampleIndexes = [];	
+	bool Found = false;
+	int Iterations = 0;
+	for(n <- [0..size(IndexedLines)])
+  {
+    Iterations += 1;
+    if(true == contains(IndexedLines[n], Path))
+    {
+		  SampleIndexes += IndexedLines[n];
+		  Found = true;
+		}
+		else if(true == Found)
+		{
+		  break;
+		}
 	}
+	DebugPrint("<Iterations> iterations, yielding <size(SampleIndexes)>");
 	return SampleIndexes;
 }
