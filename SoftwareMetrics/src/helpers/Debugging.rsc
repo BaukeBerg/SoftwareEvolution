@@ -15,4 +15,10 @@ public void DebugPrint(str TextToPrint)
 }
 
 public void Duration(datetime StartTime) = Duration("", StartTime);
-public void Duration(str Prefix, datetime StartTime) = println("<Prefix> duration: <createDuration(StartTime, now())>");
+public void Duration(str Prefix, datetime StartTime)
+{
+  if(true == Check_EnableTiming)
+  {
+    println("<Prefix> duration: <createDuration(StartTime, now())>");
+  }
+}

@@ -76,7 +76,7 @@ TCloneClasses MergeCloneClasses(TCloneClasses CloneClasses)
 TCloneClasses TryMerge(TCloneClasses CloneClasses)
 {
   TCloneClasses Input = CloneClasses;
-  println("Starting iteration, <size(CloneClasses)> passes left.");
+  DebugPrint("Starting iteration, <size(CloneClasses)> passes left.");
   while(0 < size(CloneClasses))
   {
     <Class, CloneClasses> = takeOneFrom(CloneClasses);
@@ -96,7 +96,7 @@ TCloneClasses CombineClass(TCloneClasses Original, TCloneClass First, TCloneClas
   Original -= {First};
   Original -= {Second};
   TCloneClass CombinedSet = union({First,Second});
-  println("Combining <First> and <Second> to <CombinedSet>");
+  DebugPrint("Combining <First> and <Second> to <CombinedSet>");
   return Original + {CombinedSet};
 }
   
@@ -294,7 +294,7 @@ int CalcCloneSize(THashMap Lines, int LineNumber, int CloneLine)
   int Distance = CloneLine - LineNumber; // Distance between dupes
   for(n <- [CloneSize .. size(Lines)], CodeOverlapsClone(n, Distance) || (EndOfCloneReached(Lines, LineNumber+n, CloneLine+n)))
   {
-    println("<LineNumber>, \<<CloneLine>, <n>\>");
+    DebugPrint("<LineNumber>, \<<CloneLine>, <n>\>");
     return n;
   }
   return size(Lines);

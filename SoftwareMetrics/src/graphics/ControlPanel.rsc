@@ -1,6 +1,7 @@
 module graphics::ControlPanel
 
 import IO;
+import List;
 
 import vis::Figure;
 import vis::Render;
@@ -62,13 +63,16 @@ public list[Figure] CheckBoxes = [
                             checkbox("Show uncloned files", void(bool s){ Check_ShowEmtpyFiles = s;}),
                             checkbox("Replace numbers (type 2)", void(bool s){ Check_ReplaceNumbers = s;}),
                             checkbox("Show debug output", void(bool s){ Check_PrintDebug = s;}),
-                            checkbox("Print Quotes", void(bool s){ Check_PrintQuotes = s;})
+                            checkbox("Print Quotes", void(bool s){ Check_PrintQuotes = s;}),
+                            checkbox("Enable timing", void(bool s){ Check_EnableTiming = s;})
                           ];
 
 
+int CheckBoxSize() = 25 * size(CheckBoxes);
+
 public Figure CheckBoxList() = box(
                                   vcat(CheckBoxes), 
-                                  size(200,100), 
+                                  size(200,CheckBoxSize()), 
                                   resizable(false), 
                                   lineColor("white")
                                   );
