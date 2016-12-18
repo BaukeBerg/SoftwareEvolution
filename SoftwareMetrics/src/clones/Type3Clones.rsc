@@ -29,7 +29,7 @@ TClonePairs FindType3ClonePairs(THashInfo Information)
   PrepareProcess(Information);
   TClonePairs ClonePairs = []; 
   list[int] DuplicatedLines = ListWithDupes(Lines);
-  DuplicatedLines = SanitizeDupes(DuplicatedLines, 1, InvalidCloneStart);
+  DuplicatedLines = SanitizeDupes(DuplicatedLines, 1, ["{","}"]);
   while(0 < size(DuplicatedLines))
   {
     <DuplicatedLine, DuplicatedLines> = pop(DuplicatedLines);
