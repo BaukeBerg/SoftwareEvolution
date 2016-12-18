@@ -41,13 +41,15 @@ public Figure ChoiceTypes()
 {
 	str State = "";
 	str Input = "";
-  return box(vcat([ choice(GetTypesToReplace(), void(str s){ State = s;}, size(400, 350), resizable(false), left()),
+  return box(vcat([ 
+                    choice(TypesToReplace, void(str s){ State = s;}, size(400, 350), resizable(false), left()),
                     hcat([text("Types "),
                          textfield("", void(str s){ Input = s;}, size(250, 30), resizable(false)),
                          button(" + ", void(){Add(Input);}, size(30, 30), resizable(false)),
                          button(" - ", void(){Delete(State);}, size(30, 30), resizable(false)),
                          button(" x ", void(){Clear();}, size(30, 30), resizable(false))
-                         ], size(400, 40), resizable(false), left())
+                         ], size(400, 40), resizable(false), left()),
+              		box(text("Don\'t forget to hit enter before pressing the button"))
               		]), size(400, 350), resizable(false), left());
 }
 
@@ -76,8 +78,7 @@ void Add(str Type)
 {
   if(Type != "")
   {
-    AddType(Type);
-    ControlPanel();
+    AddType(Type);    
   }
 }
 
@@ -85,15 +86,13 @@ void Delete(str Type)
 {
   if(Type != "")
   {
-    RemoveType(Type);
-    ControlPanel();
+    RemoveType(Type);    
   }
 }
 
 void Clear()
 {
-  ResetTypes();
-  ControlPanel();
+  ResetTypes();  
 }
 
 public Figure Buttons()

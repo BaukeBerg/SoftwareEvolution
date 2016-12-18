@@ -2,6 +2,8 @@ module CloneVisualization
 
 import FileLocations;
 import IO;
+import List;
+import Set;
 import String;
 
 import \clones::CloneAlgorithm;
@@ -16,7 +18,6 @@ import \data::Options;
 import \graphics::Overview;
 
 import \helpers::Debugging;
-
 import \helpers::FileHelpers;
 
 import \util::Math;
@@ -87,9 +88,9 @@ void HandleSmallSql()
 {
   switch(Switch_CloneType)
   {
-    case 1: Type1ClonesSmallSql();    
-    case 2: Type2ClonesSmallSql();
-    case 3: Type3ClonesSmallSql();
+    case "Type 1": Type1ClonesSmallSql();    
+    case "Type 2": Type2ClonesSmallSql();
+    case "Type 3": Type3ClonesSmallSql();
   }
 }
 
@@ -97,9 +98,9 @@ void HandleHsqlDb()
 {
   switch(Switch_CloneType)
   {
-    case 1: Type1ClonesHsqlDb();    
-    case 2: Type2ClonesHsqlDb();
-    case 3: Type3ClonesHsqlDb();
+    case "Type 1": Type1ClonesHsqlDb();    
+    case "Type 2": Type2ClonesHsqlDb();
+    case "Type 3": Type3ClonesHsqlDb();
   }
 }
 
@@ -107,8 +108,8 @@ void HandleSoftwareEvolution()
 {
   switch(Switch_CloneType)
   {
-    case 1: Type1ClonesSoftwareEvolution();    
-    case 2: Type2ClonesSoftwareEvolution();
-    case 3: Type3ClonesSoftwareEvolution();
+    case "Type 1": Type1ClonesSoftwareEvolution();    
+    case "Type 2": Type2ClonesSoftwareEvolution();
+    case "Type 3": Type3ClonesSoftwareEvolution();
   }
 }
