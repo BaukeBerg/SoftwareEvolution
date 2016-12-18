@@ -1,11 +1,11 @@
 // Single Clone, very easy, since it only has to iterate over the thing once.
 // Should return 6 cloned lines
-int One
-int Two
-int Three
-int Four
-int Five
-int Six
+final int One
+final int Two
+final int Three
+final int Four
+final int Five
+final int Six
 bool One
 bool Two
 bool Three
