@@ -19,7 +19,7 @@ loc ResultFile = SampleFile("clones/ColorIndexesSampleIndexesResult.txt");
 
 test bool TestHandleClones()
 {
-	GenerateSmallSqlSample();
+	Type3ClonesSmallSqlSample();
 	return true;
 }
 
@@ -30,13 +30,13 @@ TCloneClass ExpectedClass = {<803,7>, <767,7>, <818,7>};
 
 test bool CheckSmallSqlSample()
 {
-  GenerateSmallSqlSample();
+  Type1ClonesSmallSqlSample();
   ExpectTrue(ExpectedClass in KnownClasses);
 }
 
 test bool TestDiffData()
 {
-  GenerateSmallSqlSample();
+  Type1ClonesSmallSqlSample();
   list[list[str]] DiffData = GetDiffData({ExpectedClass});
   GenerateDiff(DiffData);
   return true;  
