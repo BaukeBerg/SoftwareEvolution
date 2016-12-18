@@ -77,6 +77,7 @@ void Add(str Type)
   if(Type != "")
   {
     AddType(Type);
+    ControlPanel();
   }
 }
 
@@ -85,10 +86,15 @@ void Delete(str Type)
   if(Type != "")
   {
     RemoveType(Type);
+    ControlPanel();
   }
 }
 
-void Clear() = ResetTypes();
+void Clear()
+{
+  ResetTypes();
+  ControlPanel();
+}
 
 public Figure Buttons()
 {
