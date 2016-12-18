@@ -38,6 +38,8 @@ void Type3ClonesSmallSql() = HandleType3Clones(SmallSqlContent, SmallSqlIndexes)
 void Type3ClonesHsqlDb() = HandleType3Clones(HsqlDbContent, HsqlDbIndexes);
 void Type3ClonesSoftwareEvolution() = HandleType3Clones(SoftwareEvolutionContent, SoftwareEvolutionIndexes);
 
+void Type3ClonesSmallSqlSample() = HandleType3Clones(SmallSqlSampleContent, SmallSqlSampleIndexes);
+
 
 void HandleType3Clones(loc ContentFile, loc IndexesFile)
 {
