@@ -53,7 +53,8 @@ TCloneClasses ResultCloneClasses = {
                                     {<364,7>, <876,7>}
                                    };
 
-test bool TestGettingCloneClasses() = ExpectEqual(SampleCloneClasses, GetCloneClasses(SampleFile("type2clones/SmallSqlContent.txt")));
+test bool TestGettingCloneClasses() = ExpectEqual(SampleCloneClasses, GetCloneClasses(SampleFile("type2clones/SmallSqlContent.txt")));  
+
 TCloneClasses RunSmallSql() = GetCloneClasses(SampleFile("clones/SmallSqlContent.txt"));
 
 test bool TestMerging() = ExpectEqual(ResultCloneClasses, MergeCloneClasses(SampleCloneClasses));
@@ -83,7 +84,7 @@ TCloneClasses SmallSqlClonesResult =
                                 
 test bool TestRealMerging() = ExpectEqual(SmallSqlClonesResult, MergeCloneClasses(SmallSqlClones));
 
-test bool TestNoMerging() = ExpectEqual(SmallSqlConesResult, MergeCloneClasses(SmallSqlConesResult));
+test bool TestNoMerging() = ExpectEqual(SmallSqlClonesResult, MergeCloneClasses(SmallSqlClonesResult));
 
 
 
