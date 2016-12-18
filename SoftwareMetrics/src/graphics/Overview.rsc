@@ -160,9 +160,11 @@ Figure GenerateTooltip(str IndexedLine, list[str] IndexedLines)
 
 list[str] NormalizedIndexes = [];
 str LastPath = "";
+int TotalIterations = 0;
 
 list[str] ExtractAndNormalizeIndexes(str IndexedLine, list[str] IndexedLines)
 {
+  TotalIterations += 1;
   str Path = GetFilePath(IndexedLine);
   if(LastPath != Path)
   {
@@ -170,6 +172,7 @@ list[str] ExtractAndNormalizeIndexes(str IndexedLine, list[str] IndexedLines)
     NormalizedIndexes = NormalizeIndexes(SampleIndexes);
     LastPath = Path;
   }	
+  println("Total iterations: <TotalIterations>"); 
 	return NormalizedIndexes;
 }
 
