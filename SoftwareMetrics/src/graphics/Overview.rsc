@@ -138,7 +138,7 @@ Figure GenerateTooltip(str IndexedLine, list[str] IndexedLines)
 {
 	list[Figure] Texts = [];
 	list[str] inputLines = readFileLines(SampleFile(GetFilePath(IndexedLine)));
-	int LineNumber = LineNumber(IndexedLine);
+	int LineNumber = LineNumber(IndexedLine)-1;
 	int Min = max((LineNumber-5), 0);
 	int Max = min((LineNumber+10), size(inputLines)-1);
 	
