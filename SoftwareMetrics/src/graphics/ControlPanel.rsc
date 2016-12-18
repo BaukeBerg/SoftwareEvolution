@@ -16,7 +16,7 @@ import \graphics::DetailView;
 void ControlPanel()
 {             
   Figure Box = box(hcat([	box(vcat([ChoiceTypes()]), size(400, 500), resizable(false), lineColor("white")),
-  												box(vcat([Buttons(), ChoiceOptions()]), size(200, 500), resizable(false), lineColor("white"))
+  												box(vcat([Buttons(), ChoiceOptions(), CheckBoxList()]), size(200, 500), resizable(false), lineColor("white"))
   											]), shadow(true), size(700, 400), resizable(false), lineColor("white"));
   
   render("Control Panel", Box);
@@ -25,7 +25,8 @@ void ControlPanel()
 public Figure Buttons()
 {
 	return box(vcat([button("SmallSql", void(){;}, size(80, 30), resizable(false)),
-                   button("HsqlDb", void(){;}, size(80, 30), resizable(false))
+                   button("HsqlDb", void(){;}, size(80, 30), resizable(false)),
+                   button("Software Evolution", void(){;}, size(80, 30), resizable(false))
                  ], shrink(0.8), gap(10)), gap(10), size(100, 50), resizable(false), lineColor("white"));
 }
 
@@ -34,7 +35,7 @@ public Figure ChoiceOptions()
   str state = "Type 1";
   return box(vcat([ text("Options"),
   									choice(["Type 1","Type 2","Type 3","Type 4", "Priming Type"], void(str s){;})
-              		]), size(200, 300), resizable(false), top());
+              		]), size(200, 200), resizable(false), top());
 }
 
 // To add a Type, type your text in the textfield followed by enter or else the call back will not fire!!!. Then click on the "+" button. 
