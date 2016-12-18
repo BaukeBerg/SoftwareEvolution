@@ -12,13 +12,16 @@ import \data::CloneData;
 import \data::DataTypes;
 
 import \helpers::CloneHelpers;
+import \helpers::Debugging;
 import \helpers::StringHelpers;
 
 import \util::Math;
 
 int TheCloneSize = 6;
 
-TClonePairs SmallSqlType3Clones() = FindType3ClonePairs(SampleFile("clones/SmallSqlContent.txt"));
+TClonePairs Type3ClonesSmallSql() = FindType3ClonePairs(SmallSqlContent);
+TClonePairs Type3ClonesHsqlDb() = FindType3ClonePairs(HsqlDbContent);
+TClonePairs Type3ClonesSoftwareEvolution() = FindType3ClonePairs(SoftwareEvolutionContent);
 
 TClonePairs FindType3ClonePairs(loc FileToCheck) = FindType3ClonePairs(HashFile(FileToCheck));
 TClonePairs FindType3ClonePairs(THashInfo Information)
@@ -30,7 +33,7 @@ TClonePairs FindType3ClonePairs(THashInfo Information)
   while(0 < size(DuplicatedLines))
   {
     <DuplicatedLine, DuplicatedLines> = pop(DuplicatedLines);
-    list[int] Dupes = GetDupes(Lines, DuplicatedLines, DuplicatedLine, ClonePairs);
+    list[int] Dupes = GetDupes(Lines, DuplicatedLines, DuplicatedLine, ClonePairs);    
     for(Dupe <- Dupes)
     { 
       int LastMatching = GetLastMatchingLine(Lines, DuplicatedLine, Dupe);
@@ -41,7 +44,7 @@ TClonePairs FindType3ClonePairs(THashInfo Information)
       {
         ThisPair = <<DuplicatedLine, CurrentCloneSize>, <Dupe, CurrentCloneSize>>;
         ClonePairs += ThisPair;
-        println("<ThisPair>");
+        DebugPrint("<ThisPair>");
       }
     }
   }

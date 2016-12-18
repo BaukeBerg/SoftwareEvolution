@@ -20,27 +20,21 @@ import \data::CloneData;
 import \data::DataTypes;
 
 
-TCloneClasses GetSmallSqlMergedClasses()
-{
-  KnownClasses = MergeCloneClasses(GetSmallSqlCloneClasses());
-  return KnownClasses;
-}
-
-TCloneClasses GetHsqlDbMergedClasses()
-{
-  KnownClasses = MergeCloneClasses(GetHsqlDbCloneClasses());
-  return KnownClasses;
-}
+TCloneClasses GetSmallSqlMergedClasses() = GetAndStoreClasses(SmallSqlContent);
+TCloneClasses GetHsqlDbMergedClasses() = GetAndStoreClasses(HsqlDbContent);
+TCloneClasses GetSoftwareEvolutionMergedClasses() = GetAndStoreClasses(SoftwareEvolutionContent);
 
 TCloneList GetSmallSqlCloneList() = GetCloneList(SmallSqlContent);
 TCloneClasses GetSmallSqlCloneClasses() = CreateClassesFromPairs(GetSmallSqlClonePairs());
 TClonePairs GetSmallSqlClonePairs() = GetClonePairs(SmallSqlContent);
 
-TCloneList GetHsqlDbClones() = GetClonesList(HsqlDbContent);
+TCloneList GetHsqlDbCloneList() = GetClonesList(HsqlDbContent);
 TCloneClasses GetHsqlDbCloneClasses() = GetCloneClasses(HsqlDbContent);
 TClonePairs GetHsqlDbClonePairs() = GetClonePairs(HsqlDbContent);
 
-int QuickResultCheck() = size(GetSmallSqlClonePairs());
+TCloneList GetSoftwareEvolutionCloneList() = GetClonesList(SoftwareEvolutionContent);
+TCloneClasses GetSoftwareEvolutionCloneClasses() = GetCloneClasses(SoftwareEvolutionContent);
+TClonePairs GetSoftwareEvolutionClonePairs() = GetClonePairs(SoftwareEvolutionContent);
 
 void CreateAllIntermediateOutput()
 {

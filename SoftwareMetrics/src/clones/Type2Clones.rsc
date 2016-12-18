@@ -4,22 +4,23 @@ import FileLocations;
 import IO;
 import String;
 
+import \data::DataTypes;
+import \data::Options;
+
 import \helpers::Debugging;
 import \helpers::ListHelpers;
 import \helpers::RegexHelpers;
 
 void CreateAllOutput()
 {
-  Type2ClonesSmallSql();
-  Type2ClonesHsqlDb();
+  Type2ContentSmallSql();
+  Type2ContentsHsqlDb();
+  Type2ContentSoftwareEvolution();
 }
 
-void Type2ClonesSmallSql() = CreateType2Output(SmallSqlContent, SmallSqlContent_Type2);
-void Type2ClonesHsqlDb() = CreateType2Output(HsqlDbContent, HsqlDbContent_Type2);
-
-public bool RemoveNumbers = false;
-public bool RemoveNames = false;
-public bool RemoveTypes = false;
+void Type2ContentSmallSql() = CreateType2Output(SmallSqlContent, SmallSqlContent_Type2);
+void Type2ContentsHsqlDb() = CreateType2Output(HsqlDbContent, HsqlDbContent_Type2);
+void Type2ContentSoftwareEvolution() = CreateType2Output(SoftwareEvolutionContent, SoftwareEvolutionContent_type);
 
 private str TypeChar = "ﺝ" ;
 private str NumChar = "ﻝ";
@@ -38,9 +39,9 @@ void CreateType2Output(loc InputFile, loc OutputFile)
   writeFile(OutputFile, replaceAll(JoinList(OutputLines), " ", ""));
 }
 
-str ReplaceNumbers(str Input) = RemoveNumbers ? DoReplacement(Input) : Input ;
-str ReplaceNames(str Input) = RemoveNames ? Input : Input ;
-str ReplaceTypes(str Input) = RemoveTypes ? StripTypes(Input) : Input ;
+str ReplaceNumbers(str Input) = Check_ReplaceNumbers ? DoReplacement(Input) : Input ;
+str ReplaceNames(str Input) = Check_ReplaceNames ? Input : Input ;
+str ReplaceTypes(str Input) = Check_ReplaceTypes ? StripTypes(Input) : Input ;
 
 str StripTypes(str Line) = ReplaceTypes(Line, TypesToReplace, TypeChar);
 
@@ -77,7 +78,7 @@ str RemoveDupes(str Line, str Token)
 }
 
 // only replace one instance
-str ReplaceTypes(str Line, list[str] Types, str Replacement)
+str ReplaceTypes(str Line, set[str] Types, str Replacement)
 {
   for(Type <- Types, startsWith(Line, Type))
   {
@@ -87,35 +88,5 @@ str ReplaceTypes(str Line, list[str] Types, str Replacement)
   return Line;
 }
 
-void ResetTypes()
-{
-  TypesToReplace = [];
-}
 
-void AddType(str Filter)
-{
-  TypesToReplace += Filter;
-}
-
-void RemoveType(str Filter)
-{
-  TypesToReplace = RemoveFromList(Filter);
-}
-
-list[str] RemoveFromList(str Filter) = [Type | Type <- TypesToReplace, Filter != Type];
-
-
-public list[str] TypesToReplace = [
-                             // Earlier notation = higher priority!
-                             "private int ",
-                             "String ",
-                             "SSResultSet ",
-                             "Expression ",
-                             "ExpressionName ",
-                             "final void ",
-                             "final int ",
-                             "final bool ",
-                             "final String ",
-                             "bool "                        
-                           ];
                        

@@ -38,17 +38,29 @@ void PrepareProcess(THashInfo Information)
 
 int GetKey(TStringMap Dictionary, str Key) = Key in Dictionary ? Dictionary[Key] : -1 ;
 
+
+TCloneClasses GetAndStoreClasses(loc FileToCheck) = GetAndStoreClasses(GetClonePairs(FileToCheck));
+TCloneClasses GetAndStoreClasses(TClonePairs Pairs)
+{
+  KnownClasses = GetMergedClasses(Pairs);
+  return KnownClasses;
+}
+
+TCloneClasses GetMergedClasses(TClonePairs Pairs) = MergeCloneClasses(CreateClassesFromPairs(Pairs));
 TCloneClasses GetCloneClasses(loc FromFile) = CreateClassesFromPairs(GetClonePairs(FromFile));
 
 TCloneClasses CreateClassesFromPairs(TClonePairs Pairs)
 {
+  DebugPrint("Creating Clone classes");
   TCloneClasses CloneClasses = {};
   while(0 != size(Pairs))
   {
+    DebugPrint("<size(Pairs)> pairs left");
     TCloneClass ThisClass = {};
     <Pair, Pairs> = pop(Pairs);
     for(SubPair <- Pairs, SameClones(Pair, SubPair))
     {
+      DebugPrint("Merging <Pair> and <SubPair>");
       ThisClass += {Pair.First, Pair.Second, SubPair.First, SubPair.Second};      
     }
     if(false == isEmpty(ThisClass))
@@ -204,6 +216,7 @@ bool SameAsPreviousPairs(int Dupe, int LineNumber, TClonePairs ClonePairs)
     if((true == InClone(Second, Dupe))
      && (true == InClone(First, LineNumber)))
     {
+      DebugPrint("Subsumption <LineNumber> : <Dupe> is in \<<First>,<Second>\>");
       return true;
     }    
   }  
