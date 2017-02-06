@@ -129,7 +129,7 @@ TClonePairs GetClonePairs(THashInfo Information)
   Size = size(ListOfDupes);
   for(LineNumber <- [0..Size])
   {
-    PrintQuote(LineNumber, 250);
+    PrintQuote(LineNumber, 5000);
     <LineNumber, ListOfDupes> = pop(ListOfDupes);
     list[int] Dupes = GetDupes(Lines, ListOfDupes, LineNumber, ClonePairs);    
     ClonePairs += GetPairs(Lines, LineNumber, Dupes);;

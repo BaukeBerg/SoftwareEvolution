@@ -324,7 +324,7 @@ void PrintQuote()
   PrintQuote(GlobalCounter);
   GlobalCounter += 1;
 }
-void PrintQuote(int Counter) = PrintQuote(Counter, 50);                          
+void PrintQuote(int Counter) = PrintQuote(Counter, 500);                          
 void PrintQuote(int Counter, int QuoteInterval)
 {
   if((0 == Counter % QuoteInterval)

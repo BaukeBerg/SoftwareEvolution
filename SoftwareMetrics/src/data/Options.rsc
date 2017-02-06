@@ -10,12 +10,12 @@ import \graphics::ControlPanel;
 
 // options list
 public bool Check_ShowEmtpyFiles = false;
-public bool Check_ReplaceNumbers = true;
-public bool Check_ReplaceNames = true ;
-public bool Check_ReplaceTypes = true ;
-public bool Check_PrintDebug = true;
+public bool Check_ReplaceNumbers = false;
+public bool Check_ReplaceNames = false ;
+public bool Check_ReplaceTypes = false ;
+public bool Check_PrintDebug = false;
 public bool Check_PrintQuotes = false ;
-public bool Check_EnableTiming = true ;
+public bool Check_EnableTiming = false ;
 
 public str Switch_CloneType = "Type 1" ;
 

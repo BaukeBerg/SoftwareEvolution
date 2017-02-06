@@ -37,6 +37,9 @@ public Figure ChoiceOptions()
 // To remove a Type, select a Type from the list. Then click on the "-" button.
 //
 // To clear the whole list, click on the "x" button.
+
+// 
+
 public Figure ChoiceTypes()
 {
 	str State = "";

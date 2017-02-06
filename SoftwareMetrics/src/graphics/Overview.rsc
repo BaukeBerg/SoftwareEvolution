@@ -50,7 +50,7 @@ str GetClassName(loc FileToCheck) = substring(FileToCheck.path, findLast(FileToC
 
 void Overview(loc IndexedFile)
 {
-  println("IndexedFile <IndexedFile>, path: <IndexedFile.path>");
+  DebugPrint("IndexedFile <IndexedFile>, path: <IndexedFile.path>");
   Overview(readFileLines(IndexedFile));
 }
 
@@ -145,6 +145,8 @@ Figure GenerateTooltip(str IndexedLine, list[str] IndexedLines)
 	Texts += text("...", fontItalic(true), fontBold(true), left());
 	for(i <- [Min .. Max])
 	{
+	  try
+	  {
 		if(GetColor(IndexedLines[i]) == "Red")
 		{
 			Texts += text("<i+1>: <inputLines[i]>", fontSize(7), fontColor("red"), fontItalic(true), fontBold(true), left());
@@ -152,6 +154,11 @@ Figure GenerateTooltip(str IndexedLine, list[str] IndexedLines)
 		else
 		{
 			Texts += text("<i+1>: <inputLines[i]>", fontSize(7), left());
+		}
+		}
+		catch:
+		{
+		  DebugPrint("Caught exception dereferencing index <i>, size: <size(inputLines)>");
 		}
 	}
 	Texts += text("...", fontItalic(true), fontBold(true), left());
@@ -172,7 +179,7 @@ list[str] ExtractAndNormalizeIndexes(str IndexedLine, list[str] IndexedLines)
     NormalizedIndexes = NormalizeIndexes(SampleIndexes);
     LastPath = Path;
   }	
-  println("Total iterations: <TotalIterations>"); 
+  DebugPrint("Total iterations: <TotalIterations>"); 
 	return NormalizedIndexes;
 }
 
